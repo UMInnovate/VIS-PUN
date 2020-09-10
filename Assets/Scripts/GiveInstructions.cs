@@ -42,10 +42,20 @@ public class GiveInstructions : MonoBehaviour
                     "Trigger: place vector";
                 break;
             case Stage.m1view:
-                text.text = "VIEWING " + GLOBALS.displayMode.ToString() + "\n" +
-                    "Bumper: toggle labels" + "\n" +
-                    "Trigger: replace vector" + "\n" +
-                    "Home: Main Menu";
+                if (GLOBALS.displayMode.ToString() == "Units")
+                {
+                    text.text = "VIEWING UNIT VECTOR" + "\n" +
+                      "Bumper: toggle labels" + "\n" +
+                      "Trigger: replace vector" + "\n" +
+                      "Home: Main Menu";
+                }
+                else
+                {
+                    text.text = "VIEWING " + GLOBALS.displayMode.ToString() + "\n" +
+                        "Bumper: toggle labels" + "\n" +
+                        "Trigger: replace vector" + "\n" +
+                        "Home: Main Menu";
+                }
                 break;
             // note Module 1 vs. Module 2
             case Stage.m2orig:

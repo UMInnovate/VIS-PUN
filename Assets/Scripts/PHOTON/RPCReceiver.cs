@@ -15,6 +15,7 @@ public class RPCReceiver : MonoBehaviour
     private TextMeshPro _componentLabelV2;
 
     //VECTOR NAMES   
+    public BeamPlacementM1 beamPlacementM1_Ref;
     public BeamPlacementM2 beamPlacementM2_Ref;
     public VectorMath vectorMath_Ref;
     [SerializeField, Tooltip("The 3 vectors in the scene")]
@@ -89,6 +90,7 @@ public class RPCReceiver : MonoBehaviour
 
     public void CheckForLabels()
     {
+       // if(beamPlacementM1_Ref.bCa)
         if (beamPlacementM2_Ref.bCanPlaceVec1Labels) // V1 head & tail 
         {
             

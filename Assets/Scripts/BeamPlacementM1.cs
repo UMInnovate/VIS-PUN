@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.MagicLeap;
 using UnityEngine.UI;
+using Photon.Pun;
+using Photon.Realtime;
 
 /*  BeamPlacementM1.cs handles user input and the scene's state for Module 1
  *  This script handles placing the controller beam, opening/closing menus,
@@ -42,10 +44,19 @@ public class BeamPlacementM1 : MonoBehaviour
     [SerializeField, Tooltip("The angles")]
     private AngleControl _angles;
 
-   
+    //***PUN
+    private PhotonView PV;
+    [HideInInspector]
+    public bool bCanPlaceVec1 = false;
+    [HideInInspector]
+    public bool bCanPlaceVec2 = false;
+    [HideInInspector]
+    public bool bCanPlaceVec1Labels, bCanPlaceV1ComponentLabel;
+
 
     void Start()
     {
+        PV = GetComponent<PhotonView>(); //***PUN
         _root = GameObject.Find("Content Root");
         _origin = _root.transform.Find("Origin").gameObject;
         _controller = MLInput.GetController(MLInput.Hand.Left);
@@ -135,8 +146,6 @@ public class BeamPlacementM1 : MonoBehaviour
                     IncrementStage();
                     break;
                 case Stage.m1rotate:
-
-
                     _beamline.enabled = true;
                     placingHead = true;
                     GLOBALS.showingCoords = true;
@@ -184,6 +193,10 @@ public class BeamPlacementM1 : MonoBehaviour
             switch(GLOBALS.displayMode)
             {
                 case DispMode.Vector:
+                    if (PV)
+                    {
+                        PV.RPC("VectorView", RpcTarget.All, beamEnd);
+                    }
                     _origin.GetComponent<OriginControlM1>().Reset();
                     _angles.SetActive(false);
                     break;
