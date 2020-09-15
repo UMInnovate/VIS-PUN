@@ -568,7 +568,7 @@ PrefabInstance:
     - target: {fileID: 5619764785477124592, guid: 4b83d5952ef78964a987c932f7375418,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 155
       objectReference: {fileID: 0}
     - target: {fileID: 5619764785477124592, guid: 4b83d5952ef78964a987c932f7375418,
         type: 3}
@@ -1404,16 +1404,15 @@ MonoBehaviour:
   - {fileID: 3490680618649223005}
   - {fileID: 934842885017387854}
   - {fileID: 934842886285605776}
-  nameLabelPrefab: {fileID: 2687141213104381220, guid: 2f8449eddb0320e429b5d6b68ebcd710,
-    type: 3}
+  nameLabelPrefab: {fileID: 4361834241252407816}
   dotProjectionBody: {fileID: 1565450926}
   vector2: {fileID: 5109831959800916612}
-  angle: {fileID: 2687141213104381220, guid: f1442d5d75de57743a5b69bf78046468, type: 3}
+  angle: {fileID: 1813763191}
   myPlayerRef: {fileID: 716467020}
   storableObjectBin_Ref: {fileID: 716467021}
-  xLabel: {fileID: 9096491183232814840, guid: 201e47396dde72c439edb4a49c7c8000, type: 3}
-  yLabel: {fileID: 3606293440587010002, guid: 2c994580d40061843a9d62125ae32390, type: 3}
-  zLabel: {fileID: 7552423658831784497, guid: 9c307b287155c1c4ea43d7f57658e33a, type: 3}
+  xLabel: {fileID: 1892052304}
+  yLabel: {fileID: 1526802444}
+  zLabel: {fileID: 410903026}
   originControl_Ref: {fileID: 5781947291751293420}
   originSphere: {fileID: 2387620880190387821, guid: cc07689330f9c344cb5e54c39dc505bc,
     type: 3}
@@ -4136,6 +4135,46 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 20294507499185110, guid: 24158fb1437dc8e418d893939758764d,
+        type: 3}
+      propertyPath: far clip plane
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 20294507499185110, guid: 24158fb1437dc8e418d893939758764d,
+        type: 3}
+      propertyPath: m_ClearFlags
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 20294507499185110, guid: 24158fb1437dc8e418d893939758764d,
+        type: 3}
+      propertyPath: m_BackGroundColor.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 20294507499185110, guid: 24158fb1437dc8e418d893939758764d,
+        type: 3}
+      propertyPath: m_BackGroundColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 20294507499185110, guid: 24158fb1437dc8e418d893939758764d,
+        type: 3}
+      propertyPath: m_BackGroundColor.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 20294507499185110, guid: 24158fb1437dc8e418d893939758764d,
+        type: 3}
+      propertyPath: near clip plane
+      value: 0.371
+      objectReference: {fileID: 0}
+    - target: {fileID: 20294507499185110, guid: 24158fb1437dc8e418d893939758764d,
+        type: 3}
+      propertyPath: m_HDR
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 20294507499185110, guid: 24158fb1437dc8e418d893939758764d,
+        type: 3}
+      propertyPath: m_ForceIntoRT
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4214550324010282, guid: 24158fb1437dc8e418d893939758764d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -4178,46 +4217,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4214550324010282, guid: 24158fb1437dc8e418d893939758764d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 20294507499185110, guid: 24158fb1437dc8e418d893939758764d,
-        type: 3}
-      propertyPath: far clip plane
-      value: 1000
-      objectReference: {fileID: 0}
-    - target: {fileID: 20294507499185110, guid: 24158fb1437dc8e418d893939758764d,
-        type: 3}
-      propertyPath: m_ClearFlags
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 20294507499185110, guid: 24158fb1437dc8e418d893939758764d,
-        type: 3}
-      propertyPath: m_BackGroundColor.r
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 20294507499185110, guid: 24158fb1437dc8e418d893939758764d,
-        type: 3}
-      propertyPath: m_BackGroundColor.g
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 20294507499185110, guid: 24158fb1437dc8e418d893939758764d,
-        type: 3}
-      propertyPath: m_BackGroundColor.b
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 20294507499185110, guid: 24158fb1437dc8e418d893939758764d,
-        type: 3}
-      propertyPath: near clip plane
-      value: 0.371
-      objectReference: {fileID: 0}
-    - target: {fileID: 20294507499185110, guid: 24158fb1437dc8e418d893939758764d,
-        type: 3}
-      propertyPath: m_HDR
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 20294507499185110, guid: 24158fb1437dc8e418d893939758764d,
-        type: 3}
-      propertyPath: m_ForceIntoRT
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -6722,11 +6721,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: PUN
       objectReference: {fileID: 0}
-    - target: {fileID: 2758039440975243737, guid: 573457b88d822d940a5caeac336d645b,
-        type: 3}
-      propertyPath: viewIdField
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 2758039441085459575, guid: 573457b88d822d940a5caeac336d645b,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -6781,6 +6775,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2758039440975243737, guid: 573457b88d822d940a5caeac336d645b,
+        type: 3}
+      propertyPath: viewIdField
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2758039440975243742, guid: 573457b88d822d940a5caeac336d645b,
         type: 3}

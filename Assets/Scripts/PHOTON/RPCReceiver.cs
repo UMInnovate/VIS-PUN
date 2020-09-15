@@ -239,6 +239,7 @@ public class RPCReceiver : MonoBehaviour
             beamPlacementM2_Ref.bCanPlaceVec1 = false; // reset 
         }           
 
+
         else if (beamPlacementM2_Ref.bCanPlaceVec2) // B
         {            
             PV.RPC("InitVectorNames", RpcTarget.OthersBuffered, 1, vectors[1]._nameLabel.transform.position, myPlayerRef.myPlayerActorNumber);
