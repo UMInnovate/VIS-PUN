@@ -63,10 +63,13 @@ public class MenuPanel : MonoBehaviour
     //Button:Reset.OnClick() in Module 2
     public void ResetMod2Clicked()
     {
-       
         SceneManager.LoadScene(6, LoadSceneMode.Single);
     }
 
+    public void ResetMod3Clicked()
+    {
+        SceneManager.LoadScene(12, LoadSceneMode.Single);
+    }
     //Button:BackToStart.OnClick()
     public void BackToStartClicked()
     {

@@ -23,6 +23,9 @@ public enum Stage
     v2p1,       // repeat for second vector...
     v2p2,
     v2calc,
+    m3orig,     //MODULE 3 Begins HERE:
+    m3rotate,   //rotate origin
+    m3poc,      //point of concurrency
     opSel,      // Choose an operation to perform
     opView      // watch the app animate/show the operation
 };

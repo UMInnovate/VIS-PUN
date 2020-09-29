@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
  *  Buttons launch the instruction scene for selected module
  */
 
-public class ModuleSelectPUN : MonoBehaviour
+public class ModuleSelect2: MonoBehaviour
 {
     private MLInputController _controller = null;
 
@@ -23,22 +23,21 @@ public class ModuleSelectPUN : MonoBehaviour
         switch (_controller.TouchpadGesture.Direction)
         {
             case MLInputControllerTouchpadGestureDirection.Left:
-                LaunchMod1();
+                LaunchMod2Single();
                 break;
             case MLInputControllerTouchpadGestureDirection.Right:
-                LaunchMod2();
+                LaunchMod2Multi();
                 break;
         }
     }
 
-    //Button:Module1.OnClick()
-    private void LaunchMod1()
+    //Button:Module2.OnClick()
+    private void LaunchMod2Single()
     {
         SceneManager.LoadScene(8, LoadSceneMode.Single); 
     }
 
-    //Button:Module2.OnClick()
-    private void LaunchMod2()
+    private void LaunchMod2Multi()
     {
         SceneManager.LoadScene(10, LoadSceneMode.Single);
     }
