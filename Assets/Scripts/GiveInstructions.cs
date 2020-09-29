@@ -97,6 +97,23 @@ public class GiveInstructions : MonoBehaviour
                 text.text = "VECTOR 2 COMPONENTS" + "\n" +
                     "Trigger: continue";
                 break;
+            case Stage.m3orig:
+                text.text = "PLACE YOUR ORIGIN" + "\n" +
+                    "Touchpad: adjust beam length" + "\n" +
+                    "Trigger: continue";
+                break;
+            case Stage.m3rotate:
+                text.text = "ROTATE ORIGIN" + "\n" +
+                    "Touchpad: rotate" + "\n" +
+                    "(swipe clockwise/anticlockwise around touchpad) " + "\n" +
+                    "Trigger: continue";
+                break;
+            case Stage.m3poc:
+                text.text = "PLACE POINT OF CONCURRENCY" + "\n" +
+                    "Touchpad: rotate" + "\n" +
+                    "(swipe clockwise/anticlockwise around touchpad) " + "\n" +
+                    "Trigger: continue";
+                break;
             case Stage.opSel:
                 text.text = "";
                 break;
@@ -188,10 +205,15 @@ public class GiveInstructions : MonoBehaviour
                 audioSource.PlayOneShot(clip);
 
                 break;
+            case Stage.m3orig:
+                break;
+            case Stage.m3rotate:
+                break;
+            case Stage.m3poc:
+                break;
             case Stage.opSel:
                 clip = Resources.Load("select_an_opertation") as AudioClip;
                 audioSource.PlayOneShot(clip);
-
                 break;
             case Stage.opView:
                 

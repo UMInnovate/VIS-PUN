@@ -23,24 +23,23 @@ public class ModuleSelect : MonoBehaviour
         switch (_controller.TouchpadGesture.Direction)
         {
             case MLInputControllerTouchpadGestureDirection.Left:
-                LaunchMod1();
+                LaunchMod1Single();
                 break;
             case MLInputControllerTouchpadGestureDirection.Right:
-                LaunchMod2();
+                LaunchMod1Multi();
                 break;
         }
     }
 
     //Button:Module1.OnClick()
-    private void LaunchMod1()
+    private void LaunchMod1Multi()
     {
-        SceneManager.LoadScene(4, LoadSceneMode.Single);
+        SceneManager.LoadScene(8, LoadSceneMode.Single);
     }
 
-    //Button:Module2.OnClick()
-    private void LaunchMod2()
+    private void LaunchMod1Single()
     {
-        SceneManager.LoadScene(6, LoadSceneMode.Single);
+        SceneManager.LoadScene(4, LoadSceneMode.Single);
     }
 
 }
