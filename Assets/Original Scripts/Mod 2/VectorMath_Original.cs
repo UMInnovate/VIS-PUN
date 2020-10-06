@@ -86,6 +86,18 @@ public class VectorMath_Original : MonoBehaviour
         }
     }
 
+    public bool ValidateVectorPlacement(int v, Vector3 pocLoc)
+    {
+        Vector3 headPos = vectors[v].transform.Find("Head").transform.position;
+        Vector3 tailPos = vectors[v].transform.Find("Tail").transform.position;
+
+        if (headPos + Vector3.one == pocLoc || headPos - Vector3.one == pocLoc)
+            return true;
+        else if (tailPos + Vector3.one == pocLoc || tailPos + Vector3.one == pocLoc)
+            return true;
+        else
+            return false;
+    }
     // BeamPlacement.cs can set which vector labels are displayed via this function
     public void SetVectorLabels(int v, bool tail, bool head, bool components, bool units)
     {

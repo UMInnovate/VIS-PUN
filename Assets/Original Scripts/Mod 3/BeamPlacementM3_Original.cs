@@ -44,6 +44,8 @@ public class BeamPlacementM3_Original : MonoBehaviour
     private int vec;
     // True when vector head must follow the end of the beam.
     private bool placingHead;
+    // True when the vector placed is valid
+    private bool isValidVector;
     // display the instructions, stored in other script
     GiveInstructions _giveInstructions = null;
     // Is a menu being displayed?
@@ -73,6 +75,7 @@ public class BeamPlacementM3_Original : MonoBehaviour
         menuPanel.SetActive(false);
         operationsPanel.SetActive(false);
         placingHead = false;
+        isValidVector = false; 
         _giveInstructions.DisplayText();
     }
 
@@ -101,6 +104,19 @@ public class BeamPlacementM3_Original : MonoBehaviour
             _giveInstructions.PlayAudio();
     }
 
+    public void DecrementStage()
+    {
+        //decrement our stage variable to return to previous set
+        if (GLOBALS.stage > Stage.m3v1p1 && GLOBALS.stage < Stage.m3val)
+        {
+            GLOBALS.stage--;
+            GLOBALS.stage--;
+        }
+        else //else, normal decrementation
+            GLOBALS.stage--;
+
+    }
+
     private void HandleBeamPlacement()
     {
         // handle the beam out of the controller
@@ -123,6 +139,10 @@ public class BeamPlacementM3_Original : MonoBehaviour
     {
         if (!aMenuIsActive)
         {
+            if (GLOBALS.stage < Stage.m3v2p1 && isValidVector == false)
+            {
+                DecrementStage();
+            }
             switch (GLOBALS.stage)
             {
                 case Stage.m2orig:
@@ -183,6 +203,45 @@ public class BeamPlacementM3_Original : MonoBehaviour
                 case Stage.m3poc:
                     _poc.SetActive(true);
                     _poc.transform.position = beamEnd;
+                    IncrementStage();
+                    break;
+                case Stage.m3v1p1:
+                    _vectorMath.PlaceVectorPoint(vec, false, beamEnd);
+                    placingHead = true;
+                    break;
+                case Stage.m3v1p2:
+                    placingHead = false;
+                    isValidVector = _vectorMath.ValidateVectorPlacement(vec, _poc.transform.position);
+                    vec++;
+                    IncrementStage();
+                    break;
+                case Stage.m3v2p1:
+                    _vectorMath.PlaceVectorPoint(vec, false, beamEnd);
+                    placingHead = true;
+                    break;
+                case Stage.m3v2p2:
+                    placingHead = false;
+                    isValidVector = _vectorMath.ValidateVectorPlacement(vec, _poc.transform.position);
+                    vec++;
+                    IncrementStage();
+                    break;
+                case Stage.m3v3p1:
+                    _vectorMath.PlaceVectorPoint(vec, false, beamEnd);
+                    placingHead = true;
+                    break;
+                case Stage.m3v3p2:
+                    placingHead = false;
+                    isValidVector = _vectorMath.ValidateVectorPlacement(vec, _poc.transform.position);
+                    vec++;
+                    IncrementStage();
+                    break;
+                case Stage.m3v4p1:
+                    _vectorMath.PlaceVectorPoint(vec, false, beamEnd);
+                    placingHead = true;
+                    break;
+                case Stage.m3v4p2:
+                    placingHead = false;
+                    isValidVector = _vectorMath.ValidateVectorPlacement(vec, _poc.transform.position);
                     IncrementStage();
                     break;
                 default:

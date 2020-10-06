@@ -23,11 +23,23 @@ public enum Stage
     v2p1,       // repeat for second vector...
     v2p2,
     v2calc,
+    opSel,      // Choose an operation to perform
+    opView,     // watch the app animate/show the operation
     m3orig,     //MODULE 3 Begins HERE:
     m3rotate,   //rotate origin
     m3poc,      //point of concurrency
-    opSel,      // Choose an operation to perform
-    opView      // watch the app animate/show the operation
+    m3v1p1,     //place a vector tail
+    m3v1p2,     //place a vector head
+    m3v2p1,     //place a vector tail
+    m3v2p2,     //place a vector head
+    m3v3p1,     //place a vector tail
+    m3v3p2,     //place a vector head
+    m3v4p1,     //place a vector tail
+    m3v4p2,     //place a vector head
+    m3val,      //validate vector
+    m3pop,      //popup for user interaction, "is this a correct vector?"
+    m3opSel,    //choose a force vector
+    m3opView   //watch the app animate force 
 };
 
 public enum VecOp
