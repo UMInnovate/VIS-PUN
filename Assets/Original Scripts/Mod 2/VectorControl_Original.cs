@@ -9,6 +9,7 @@ public class VectorControl_Original : MonoBehaviour
     #region public references
     public Camera _camera;
     public Transform _head;
+    public Transform _tail;
     public TextMeshPro _xCompLabel;
     public TextMeshPro _yCompLabel;
     public TextMeshPro _zCompLabel;
@@ -17,7 +18,6 @@ public class VectorControl_Original : MonoBehaviour
     public Color vecColor;
     private Color lastColor;
 
-    private Transform _tail;
     private LineRenderer _body;
     private float beamWidth = 0.01f;
     private float mag;

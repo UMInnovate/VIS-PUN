@@ -34,12 +34,12 @@ public class ModuleSelect2: MonoBehaviour
     //Button:Module2.OnClick()
     private void LaunchMod2Single()
     {
-        SceneManager.LoadScene(8, LoadSceneMode.Single); 
+        SceneManager.LoadScene(7, LoadSceneMode.Single); 
     }
 
     private void LaunchMod2Multi()
     {
-        SceneManager.LoadScene(10, LoadSceneMode.Single);
+        SceneManager.LoadScene(11, LoadSceneMode.Single);
     }
 
 }

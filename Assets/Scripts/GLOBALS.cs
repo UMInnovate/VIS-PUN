@@ -66,6 +66,8 @@ public static class GLOBALS
     public static bool inFeet = true;
     // add audio settings
     public static bool soundOn = true;
+    // is the vector correctly placed?
+    public static bool isCorrectVectorPlacement; 
     // conversion value
     public const float m2ft = 3.28084f;
     // Unity is lefthanded, typical math is righthanded
@@ -95,6 +97,11 @@ public static class GLOBALS
 
     public static bool showingCoords = false;
 
+
+    /* DEBUG GLOBALS */
+    public static Vector3 headPos;
+    public static Vector3 tailPos;
+    public static Vector3 pocPos; 
     #region premade colors
     public static Color visCyan = new Color(0.4f, 1, 1, 0.5f);
     public static Color visOrange = new Color(1, 0.7f, 0, 0.5f);

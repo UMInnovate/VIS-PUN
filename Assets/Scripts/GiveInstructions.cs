@@ -4,7 +4,7 @@ using UnityEngine.UI;
 public class GiveInstructions : MonoBehaviour
 {
     [SerializeField, Tooltip("The instruction text field, in  headpose canvas")]
-    private Text text;
+    public Text text;
    // [SerializeField]
    private AudioSource audioSource;
 
@@ -116,13 +116,43 @@ public class GiveInstructions : MonoBehaviour
             case Stage.m3v1p1:
                 text.text = "VECTOR TAIL" + "\n" +
                     "Touchpad: adjust beam length" + "\n" +
-                    "Trigger: place tail";
-                break;
+                    "Trigger: place tail" + "\n";
+                     break;
             case Stage.m3v1p2:
-              text.text = "VECTOR HEAD" + "\n" +
-              "Touchpad: adjust beam length" + "\n" +
-              "Trigger: place head";
+                text.text = "VECTOR HEAD" + "\n" +
+                "Touchpad: adjust beam length" + "\n" +
+                "Trigger: place head" + "\n";
+              break;
+            case Stage.m3v2p1:
+                text.text = "VECTOR TAIL" + "\n" +
+                    "Touchpad: adjust beam length" + "\n" +
+                    "Trigger: place tail" + "\n";
+                    break;
+            case Stage.m3v2p2:
+                text.text = "VECTOR HEAD" + "\n" +
+                "Touchpad: adjust beam length" + "\n" +
+                "Trigger: place head" + "\n";
                 break;
+            case Stage.m3v3p1:
+                text.text = "VECTOR TAIL" + "\n" +
+                    "Touchpad: adjust beam length" + "\n" +
+                    "Trigger: place tail" + "\n";
+                    break;
+            case Stage.m3v3p2:
+                text.text = "VECTOR HEAD" + "\n" +
+                "Touchpad: adjust beam length" + "\n" +
+                "Trigger: place head" + "\n";
+                break;
+            case Stage.m3v4p1:
+                text.text = "VECTOR TAIL" + "\n" +
+                    "Touchpad: adjust beam length" + "\n" +
+                    "Trigger: place tail" + "\n";
+                    break;
+            case Stage.m3v4p2:
+                text.text = "VECTOR HEAD" + "\n" +
+                "Touchpad: adjust beam length" + "\n" +
+                "Trigger: place head" + "\n";
+                 break;
             case Stage.m3val:
                 text.text = "Your VECTOR is " + "create globals method for valid";
                 break;
