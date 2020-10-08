@@ -1,8 +1,8 @@
-# Magic Leap Unity Project Template
+# Vectors in Space
 
 ## Project
 
-Hello, Cube!
+Vectors in Space
 
 ## Versions
 

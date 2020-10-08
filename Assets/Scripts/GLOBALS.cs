@@ -23,11 +23,23 @@ public enum Stage
     v2p1,       // repeat for second vector...
     v2p2,
     v2calc,
+    opSel,      // Choose an operation to perform
+    opView,     // watch the app animate/show the operation
     m3orig,     //MODULE 3 Begins HERE:
     m3rotate,   //rotate origin
     m3poc,      //point of concurrency
-    opSel,      // Choose an operation to perform
-    opView      // watch the app animate/show the operation
+    m3v1p1,     //place a vector tail
+    m3v1p2,     //place a vector head
+    m3v2p1,     //place a vector tail
+    m3v2p2,     //place a vector head
+    m3v3p1,     //place a vector tail
+    m3v3p2,     //place a vector head
+    m3v4p1,     //place a vector tail
+    m3v4p2,     //place a vector head
+    m3val,      //validate vector
+    m3pop,      //popup for user interaction, "is this a correct vector?"
+    m3opSel,    //choose a force vector
+    m3opView   //watch the app animate force 
 };
 
 public enum VecOp
@@ -54,6 +66,8 @@ public static class GLOBALS
     public static bool inFeet = true;
     // add audio settings
     public static bool soundOn = true;
+    // is the vector correctly placed?
+    public static bool isCorrectVectorPlacement; 
     // conversion value
     public const float m2ft = 3.28084f;
     // Unity is lefthanded, typical math is righthanded
@@ -83,6 +97,11 @@ public static class GLOBALS
 
     public static bool showingCoords = false;
 
+
+    /* DEBUG GLOBALS */
+    public static Vector3 headPos;
+    public static Vector3 tailPos;
+    public static Vector3 pocPos; 
     #region premade colors
     public static Color visCyan = new Color(0.4f, 1, 1, 0.5f);
     public static Color visOrange = new Color(1, 0.7f, 0, 0.5f);

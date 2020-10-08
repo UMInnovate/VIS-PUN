@@ -84,8 +84,47 @@ public class VectorMath_Original : MonoBehaviour
             vectors[v].gameObject.SetActive(true);
             vectors[v].SetEnabledLabels(true, false, false, false);
         }
+
+        if (GLOBALS.stage >= Stage.m3v1p1)
+            ValidateVectorPlacement(v, GLOBALS.pocPos);
     }
 
+    public bool ValidateVectorPlacement(int v, Vector3 pocLoc)
+    {
+        Vector3 headPos = GLOBALS.headPos;
+        Vector3 tailPos = GLOBALS.tailPos;
+
+        if (headPos == null)
+            Debug.Log("headpos not found");
+
+        if (tailPos == null)
+            Debug.Log("tailpos not found");
+        
+        GLOBALS.headPos = headPos;
+        GLOBALS.tailPos = tailPos;
+        GLOBALS.pocPos = pocLoc;
+
+        Debug.Log("HEAD POS: " + headPos.ToString() + "TAIL POS: " + tailPos.ToString());
+        if ((headPos.x + 0.05f >= pocLoc.x || headPos.x - 0.05f <= pocLoc.x)
+            && (headPos.y + 0.05f >= pocLoc.y || headPos.y - 0.05f <= pocLoc.y)
+            && (headPos.z + 0.05f >= pocLoc.z || headPos.z - 0.05f <= pocLoc.z))
+        { GLOBALS.isCorrectVectorPlacement = true;
+            Debug.Log("POC: " + pocLoc.ToString() + " HEAD: " + headPos.ToString() + " MATCH");
+            return true; 
+        }
+        else if ((tailPos.x + 0.05f >= pocLoc.x || tailPos.x - 0.05f <= pocLoc.x)
+            && (tailPos.y + 0.05f >= pocLoc.y || tailPos.y - 0.05f <= pocLoc.y)
+            && (tailPos.z + 0.05f >= pocLoc.z || tailPos.z - 0.05f <= pocLoc.z))
+        { GLOBALS.isCorrectVectorPlacement = true;
+            Debug.Log("POC: " + pocLoc.ToString() + " TAIL: " + tailPos.ToString() + " MATCH ");
+            return true; 
+        }
+        else
+        { GLOBALS.isCorrectVectorPlacement = false;
+            Debug.Log("headpos: " + headPos.ToString() + " tailpos: " + tailPos.ToString() + " poc: " + pocLoc.ToString());
+            return false; 
+        }
+    }
     // BeamPlacement.cs can set which vector labels are displayed via this function
     public void SetVectorLabels(int v, bool tail, bool head, bool components, bool units)
     {

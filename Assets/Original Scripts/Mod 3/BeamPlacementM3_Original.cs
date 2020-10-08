@@ -44,6 +44,8 @@ public class BeamPlacementM3_Original : MonoBehaviour
     private int vec;
     // True when vector head must follow the end of the beam.
     private bool placingHead;
+    // True when the vector placed is valid
+    private bool isValidVector;
     // display the instructions, stored in other script
     GiveInstructions _giveInstructions = null;
     // Is a menu being displayed?
@@ -60,7 +62,7 @@ public class BeamPlacementM3_Original : MonoBehaviour
         _beamSphere = GameObject.Find("BeamSphere");
         _vectorMath = GetComponent<VectorMath_Original>();
         _giveInstructions = GetComponent<GiveInstructions>();
-
+        vec = 0;
         GLOBALS.stage = Stage.m3orig;
         vec = 0;
         if (!MLInput.IsStarted)
@@ -83,11 +85,20 @@ public class BeamPlacementM3_Original : MonoBehaviour
             SnapToGrid();
         HandleBeamPlacement();
         HandleTouchpadInput();
+
         // if placingHead, have vector head follow beam
         if (placingHead && !aMenuIsActive)
         {
             _vectorMath.PlaceVectorPoint(vec, true, beamEnd);
+            GLOBALS.headPos = beamEnd;
         }
+
+        GLOBALS.isCorrectVectorPlacement = _vectorMath.ValidateVectorPlacement(vec, _poc.transform.position);
+        //  GLOBALS.isCorrectVectorPlacement = _vectorMath.ValidateVectorPlacement(vec, _poc.transform.position);
+        //  if ((GLOBALS.stage == Stage.m3v1p2 || GLOBALS.stage == Stage.m3v3p2 || GLOBALS.stage == Stage.m3v4p1)  && !GLOBALS.isCorrectVectorPlacement)
+        //     DecrementStage();
+        //Debug.Log("CURRENT STAGE: " + GLOBALS.stage);
+        // Debug.Log("Vector is valid: " + GLOBALS.isCorrectVectorPlacement);
     }
 
     public void IncrementStage()
@@ -101,6 +112,19 @@ public class BeamPlacementM3_Original : MonoBehaviour
             _giveInstructions.PlayAudio();
     }
 
+    public void DecrementStage()
+    {
+        //decrement our stage variable to return to previous set
+        if (GLOBALS.stage > Stage.m3v1p1 && GLOBALS.stage < Stage.m3val)
+        {
+            GLOBALS.stage--;
+            GLOBALS.stage--;
+        }
+        else //else, normal decrementation
+            GLOBALS.stage--;
+
+    }
+
     private void HandleBeamPlacement()
     {
         // handle the beam out of the controller
@@ -110,6 +134,7 @@ public class BeamPlacementM3_Original : MonoBehaviour
             _beamline.SetPosition(0, _controller.Position);
             _beamline.SetPosition(1, beamEnd);
             _beamSphere.transform.position = beamEnd;
+
             // the beam sphere is only active for some moments
             _beamSphere.SetActive(!aMenuIsActive && !placingHead);
         }
@@ -123,53 +148,9 @@ public class BeamPlacementM3_Original : MonoBehaviour
     {
         if (!aMenuIsActive)
         {
+           
             switch (GLOBALS.stage)
             {
-                case Stage.m2orig:
-                    _origin.SetActive(true);
-                    _origin.transform.position = beamEnd;
-                    _beamline.enabled = false;
-                    IncrementStage();
-                    break;
-                case Stage.m2rotate:
-                    _beamline.enabled = true;
-                    IncrementStage();
-                    break;
-                case Stage.v1p1:
-                    _vectorMath.PlaceVectorPoint(vec, false, beamEnd);
-                    placingHead = true;
-                    IncrementStage();
-                    break;
-                case Stage.v1p2:
-                    placingHead = false;
-                    vec++;
-                    IncrementStage();
-                    break;
-                case Stage.v1calc:
-                    // the user must click to launch the animation of the component calculations
-                    StartCoroutine(ComponentCalculation(0));
-                    // this Corroutine animates the display of calculations
-                    // it increments the stage AFTER completion
-                    break;
-                case Stage.v2p1:
-                    _vectorMath.SetVectorLabels(0, false, false, true, false);
-                    _vectorMath.PlaceVectorPoint(vec, false, beamEnd);
-                    placingHead = true;
-                    IncrementStage();
-                    break;
-                case Stage.v2p2:
-                    placingHead = false;
-                    IncrementStage();
-                    break;
-                case Stage.v2calc:
-                    StartCoroutine(ComponentCalculation(1));
-                    // this case it should make the operations panel launch upon completion
-                    break;
-                case Stage.opSel:
-                    _vectorMath.SetVectorLabels(1, false, false, true, false);
-                    break;
-                case Stage.opView:
-                    break;
                 case Stage.m3orig:
                     _origin.SetActive(true);
                     _origin.transform.position = beamEnd;
@@ -183,6 +164,52 @@ public class BeamPlacementM3_Original : MonoBehaviour
                 case Stage.m3poc:
                     _poc.SetActive(true);
                     _poc.transform.position = beamEnd;
+                    beamEnd = GLOBALS.pocPos;
+                    IncrementStage();
+                    placingHead = true;
+                    break;
+                case Stage.m3v1p1:
+                    _vectorMath.PlaceVectorPoint(vec, false, beamEnd);
+                    GLOBALS.tailPos = beamEnd;
+                    placingHead = true;
+                    IncrementStage();
+                    break;
+                case Stage.m3v1p2:
+                    placingHead = false;
+                    vec++;
+                    IncrementStage();
+                    break;
+                case Stage.m3v2p1:
+                    _vectorMath.PlaceVectorPoint(vec, false, beamEnd);
+                    GLOBALS.tailPos = beamEnd;
+                    placingHead = true;
+                    IncrementStage();
+                    break;
+                case Stage.m3v2p2:
+                    placingHead = false;
+                    vec++;
+                    IncrementStage();
+                    break;
+                case Stage.m3v3p1:
+                    _vectorMath.PlaceVectorPoint(vec, false, beamEnd);
+                    GLOBALS.tailPos = beamEnd;
+                    placingHead = true;
+                    IncrementStage();
+                    break;
+                case Stage.m3v3p2:
+                    placingHead = false;
+                    vec++;
+                    IncrementStage();
+                    break;
+                case Stage.m3v4p1:
+                    _vectorMath.PlaceVectorPoint(vec, false, beamEnd);
+                    GLOBALS.tailPos = beamEnd;
+                    placingHead = true;
+                    IncrementStage();
+                    break;
+                case Stage.m3v4p2:
+                    placingHead = false;
+                    vec++;
                     IncrementStage();
                     break;
                 default:

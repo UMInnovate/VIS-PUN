@@ -86,6 +86,9 @@ public class BeamPlacementM2_Original : MonoBehaviour
         {
             _vectorMath.PlaceVectorPoint(vec, true, beamEnd);
         }
+
+        Debug.Log("Current stage: " + GLOBALS.stage);
+
     }
 
     public void IncrementStage()
