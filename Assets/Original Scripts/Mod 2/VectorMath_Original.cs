@@ -36,13 +36,10 @@ public class VectorMath_Original : MonoBehaviour
 
         vectors[0].SetName("A");
         vectors[1].SetName("B");
-        vectors[2].SetName("C");
-        vectors[3].SetName("D");
 
         vectors[0].vecColor = GLOBALS.visCyan;
         vectors[1].vecColor = GLOBALS.visOrange;
-        vectors[2].vecColor = GLOBALS.visLime;
-        vectors[3].vecColor = GLOBALS.visMagenta; 
+        vectors[2].vecColor = GLOBALS.visMagenta;
 
         foreach (VectorControl_Original v in vectors)
         {

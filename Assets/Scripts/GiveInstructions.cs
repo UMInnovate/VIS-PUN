@@ -153,13 +153,15 @@ public class GiveInstructions : MonoBehaviour
                 "Touchpad: adjust beam length" + "\n" +
                 "Trigger: place head" + "\n";
                  break;
-            case Stage.m3sel:
-                text.text = "SELECT a vector" + "\n" +
-                    "Touchpad: adjust beam length" + "\n"
-                    + "Trigger: select vector";
+            case Stage.m3val:
+                text.text = "Your VECTOR is " + "create globals method for valid";
                 break;
             case Stage.m3pop:
                 text.text = "";
+                break;
+            case Stage.m3opSel:
+                break;
+            case Stage.m3opView:
                 break;
             case Stage.opSel:
                 text.text = "";

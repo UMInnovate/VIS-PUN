@@ -19,8 +19,6 @@ public class VectorControl_Original : MonoBehaviour
     private Color lastColor;
 
     private LineRenderer _body;
-    private MeshCollider meshCollider;
-    private Mesh mesh; 
     private float beamWidth = 0.01f;
     private float mag;
     
@@ -45,13 +43,6 @@ public class VectorControl_Original : MonoBehaviour
     private void Start()
     {
         _body = GetComponent<LineRenderer>();
-        meshCollider = GetComponent<MeshCollider>();
-        
-        mesh = new Mesh();
-        _body.BakeMesh(mesh, true);
-        meshCollider.sharedMesh = mesh;
-
-        meshCollider.isTrigger = true; 
         _tail = transform.Find("Tail");
         _head = transform.Find("Head");
 
@@ -61,11 +52,6 @@ public class VectorControl_Original : MonoBehaviour
 
         SetEnabledLabels(false, false, false, false);
         InitComps();
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        
     }
 
     private void Update()

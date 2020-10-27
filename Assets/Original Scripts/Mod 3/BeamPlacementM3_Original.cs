@@ -94,9 +94,6 @@ public class BeamPlacementM3_Original : MonoBehaviour
         }
 
         GLOBALS.isCorrectVectorPlacement = _vectorMath.ValidateVectorPlacement(vec, _poc.transform.position);
-
-        if (!GLOBALS.isCorrectVectorPlacement)
-            DecrementStage();
         //  GLOBALS.isCorrectVectorPlacement = _vectorMath.ValidateVectorPlacement(vec, _poc.transform.position);
         //  if ((GLOBALS.stage == Stage.m3v1p2 || GLOBALS.stage == Stage.m3v3p2 || GLOBALS.stage == Stage.m3v4p1)  && !GLOBALS.isCorrectVectorPlacement)
         //     DecrementStage();
@@ -118,7 +115,7 @@ public class BeamPlacementM3_Original : MonoBehaviour
     public void DecrementStage()
     {
         //decrement our stage variable to return to previous set
-        if (GLOBALS.stage >= Stage.m3v2p1 && GLOBALS.stage <= Stage.m3sel)
+        if (GLOBALS.stage > Stage.m3v1p1 && GLOBALS.stage < Stage.m3val)
         {
             GLOBALS.stage--;
             GLOBALS.stage--;
