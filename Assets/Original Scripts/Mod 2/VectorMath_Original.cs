@@ -69,7 +69,7 @@ public class VectorMath_Original : MonoBehaviour
     {
         if (v >= vectors.Count)
         {
-            Debug.LogError("Error: Vector index out of bounds.");
+           // Debug.LogError("Error: Vector index out of bounds.");
             return;
         }
 
@@ -95,33 +95,33 @@ public class VectorMath_Original : MonoBehaviour
         Vector3 tailPos = GLOBALS.tailPos;
 
         if (headPos == null)
-            Debug.Log("headpos not found");
+           // Debug.Log("headpos not found");
 
         if (tailPos == null)
-            Debug.Log("tailpos not found");
+         //   Debug.Log("tailpos not found");
         
         GLOBALS.headPos = headPos;
         GLOBALS.tailPos = tailPos;
         GLOBALS.pocPos = pocLoc;
 
-        Debug.Log("HEAD POS: " + headPos.ToString() + "TAIL POS: " + tailPos.ToString());
+      //  Debug.Log("HEAD POS: " + headPos.ToString() + "TAIL POS: " + tailPos.ToString());
         if ((headPos.x + 0.05f >= pocLoc.x || headPos.x - 0.05f <= pocLoc.x)
             && (headPos.y + 0.05f >= pocLoc.y || headPos.y - 0.05f <= pocLoc.y)
             && (headPos.z + 0.05f >= pocLoc.z || headPos.z - 0.05f <= pocLoc.z))
         { GLOBALS.isCorrectVectorPlacement = true;
-            Debug.Log("POC: " + pocLoc.ToString() + " HEAD: " + headPos.ToString() + " MATCH");
+           // Debug.Log("POC: " + pocLoc.ToString() + " HEAD: " + headPos.ToString() + " MATCH");
             return true; 
         }
         else if ((tailPos.x + 0.05f >= pocLoc.x || tailPos.x - 0.05f <= pocLoc.x)
             && (tailPos.y + 0.05f >= pocLoc.y || tailPos.y - 0.05f <= pocLoc.y)
             && (tailPos.z + 0.05f >= pocLoc.z || tailPos.z - 0.05f <= pocLoc.z))
         { GLOBALS.isCorrectVectorPlacement = true;
-            Debug.Log("POC: " + pocLoc.ToString() + " TAIL: " + tailPos.ToString() + " MATCH ");
+          //  Debug.Log("POC: " + pocLoc.ToString() + " TAIL: " + tailPos.ToString() + " MATCH ");
             return true; 
         }
         else
         { GLOBALS.isCorrectVectorPlacement = false;
-            Debug.Log("headpos: " + headPos.ToString() + " tailpos: " + tailPos.ToString() + " poc: " + pocLoc.ToString());
+           // Debug.Log("headpos: " + headPos.ToString() + " tailpos: " + tailPos.ToString() + " poc: " + pocLoc.ToString());
             return false; 
         }
     }

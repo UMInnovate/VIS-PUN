@@ -7,6 +7,9 @@ TagManager:
   - Vector
   - Math
   - axisLR
+  - PINKeyPadNumButton
+  - poc
+  - pointer
   layers:
   - Default
   - TransparentFX
