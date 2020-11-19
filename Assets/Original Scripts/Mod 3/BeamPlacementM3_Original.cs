@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.MagicLeap;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using System;
 
 /*  BeamPlacementM2.cs handles user input and the scene's state for Module 2
  *  This script handles placing the controller beam, opening/closing menus,
@@ -16,6 +18,9 @@ public class BeamPlacementM3_Original : MonoBehaviour
     public GameObject menuPanel;
     // Operations Panel
     public GameObject operationsPanel;
+    //Keypad
+    public GameObject keypad;
+    public Text inputText;
     #endregion
     #region Private member variables
     // Content root
@@ -72,7 +77,9 @@ public class BeamPlacementM3_Original : MonoBehaviour
         _beamline.startWidth = 0.007f;
         _beamline.endWidth = 0.01f;
         _origin.SetActive(false);
+
         menuPanel.SetActive(false);
+        keypad.SetActive(false);
         operationsPanel.SetActive(false);
         placingHead = false;
         _giveInstructions.DisplayText();
@@ -92,7 +99,8 @@ public class BeamPlacementM3_Original : MonoBehaviour
             _vectorMath.PlaceVectorPoint(vec, true, beamEnd);
             GLOBALS.headPos = beamEnd;
         }
-
+        if(GLOBALS.stage == Stage.m3pin)
+            keypad.SetActive(true);
         GLOBALS.isCorrectVectorPlacement = _vectorMath.ValidateVectorPlacement(vec, _poc.transform.position);
         //  GLOBALS.isCorrectVectorPlacement = _vectorMath.ValidateVectorPlacement(vec, _poc.transform.position);
         //  if ((GLOBALS.stage == Stage.m3v1p2 || GLOBALS.stage == Stage.m3v3p2 || GLOBALS.stage == Stage.m3v4p1)  && !GLOBALS.isCorrectVectorPlacement)
@@ -123,6 +131,15 @@ public class BeamPlacementM3_Original : MonoBehaviour
         else //else, normal decrementation
             GLOBALS.stage--;
 
+    }
+
+    public void PINButtonClicked(GameObject btn)
+    {
+        Text btnText = btn.GetComponentInChildren<Text>();
+        inputText = btnText;
+        Debug.Log("Button Clicked: " + btnText);
+        if (btn.gameObject.name == "Button Send")
+            IncrementStage();
     }
 
     private void HandleBeamPlacement()
@@ -167,6 +184,9 @@ public class BeamPlacementM3_Original : MonoBehaviour
                     beamEnd = GLOBALS.pocPos;
                     IncrementStage();
                     placingHead = true;
+                    break;
+                case Stage.m3pin:
+                    
                     break;
                 case Stage.m3v1p1:
                     _vectorMath.PlaceVectorPoint(vec, false, beamEnd);
@@ -217,6 +237,8 @@ public class BeamPlacementM3_Original : MonoBehaviour
             }
         }
     }
+
+
 
     // Home or Bumper clicks handled here
     private void OnButtonUp(byte controllerId, MLInputControllerButton button)

@@ -27,7 +27,7 @@ public enum Stage
     opView,     // watch the app animate/show the operation
     m3orig,     //MODULE 3 Begins HERE:
     m3rotate,   //rotate origin
-   // m3pin,
+    m3pin,
     m3poc,      //point of concurrency
     m3v1p1,     //place a vector tail
     m3v1p2,     //place a vector head
