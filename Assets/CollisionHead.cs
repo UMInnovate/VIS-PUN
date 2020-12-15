@@ -14,7 +14,7 @@ public class CollisionHead : MonoBehaviour
     {
         // _collider = GetComponent<SphereCollider>();
         if (_collider == null) Debug.Log("SphereCollider is null");
-        _collider.radius = 0.5f;
+        _collider.radius = 0.25f;
         _collider.center = Vector3.zero;
 
        // initialColor = Renderer.material.color;
@@ -28,14 +28,14 @@ public class CollisionHead : MonoBehaviour
         Debug.Log("Collision detected between " + this.gameObject.name + " and " + other.gameObject.name);
         if (other.gameObject.tag == "pointer")
         {
-            Renderer.material.color = GLOBALS.visHovered;
-            Debug.Log("Changing color to hovered.");
+          //  Renderer.material.color = GLOBALS.visHovered;
+           // Debug.Log("Changing color to hovered.");
         }
         if (other.gameObject.tag == "poc")
         {
-            Renderer.material.color = GLOBALS.visValid;
+            //Renderer.material.color = GLOBALS.visValid;
             
-            Debug.Log("Chaning color to valid");
+            //Debug.Log("Changing color to valid");
         }
     }
 

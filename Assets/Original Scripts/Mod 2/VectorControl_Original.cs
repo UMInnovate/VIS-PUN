@@ -29,6 +29,8 @@ public class VectorControl_Original : MonoBehaviour
     private Vector3 relTailPos;
     private Vector3 vectorComponents;
 
+    public bool isCorrectPlacement = false;
+
     [SerializeField, Tooltip("xComp, yComp, zComp objects")]
     private List<LineRenderer> comps;
     [SerializeField, Tooltip("Show/Hide xComp, yComp, zComp")]

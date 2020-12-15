@@ -22,6 +22,8 @@ public class BeamPlacementM3_Original : MonoBehaviour
     public GameObject keypad;
     public Text inputText;
     #endregion
+
+    public Vector3 pocPos;
     #region Private member variables
     // Content root
     private GameObject _root;
@@ -55,6 +57,7 @@ public class BeamPlacementM3_Original : MonoBehaviour
     GiveInstructions _giveInstructions = null;
     // Is a menu being displayed?
     private bool aMenuIsActive;
+    private int debugCount;
     #endregion
 
     void Start()
@@ -62,6 +65,7 @@ public class BeamPlacementM3_Original : MonoBehaviour
         _root = GameObject.Find("Content Root");
         _origin = _root.transform.Find("Origin").gameObject;
         _poc = _origin.transform.Find("POC").gameObject;
+        pocPos = _poc.transform.position;
         _controller = MLInput.GetController(MLInput.Hand.Left);
         _beamline = GetComponent<LineRenderer>();
         _beamSphere = GameObject.Find("BeamSphere");
@@ -69,7 +73,6 @@ public class BeamPlacementM3_Original : MonoBehaviour
         _giveInstructions = GetComponent<GiveInstructions>();
         vec = 0;
         GLOBALS.stage = Stage.m3orig;
-        vec = 0;
         if (!MLInput.IsStarted)
             MLInput.Start();
         MLInput.OnControllerButtonUp += OnButtonUp;
@@ -83,6 +86,7 @@ public class BeamPlacementM3_Original : MonoBehaviour
         operationsPanel.SetActive(false);
         placingHead = false;
         _giveInstructions.DisplayText();
+        debugCount = 0; 
     }
 
     void Update()
@@ -93,19 +97,13 @@ public class BeamPlacementM3_Original : MonoBehaviour
         HandleBeamPlacement();
         HandleTouchpadInput();
 
+        pocPos = _poc.transform.position;
+       // Debug.Log("POC POS: " + pocPos);
         // if placingHead, have vector head follow beam
         if (placingHead && !aMenuIsActive)
         {
             _vectorMath.PlaceVectorPoint(vec, true, beamEnd);
-            GLOBALS.headPos = beamEnd;
         }
-        if(GLOBALS.stage == Stage.m3pin)
-            keypad.SetActive(true);
-        GLOBALS.isCorrectVectorPlacement = _vectorMath.ValidateVectorPlacement(vec, _poc.transform.position);
-        //  GLOBALS.isCorrectVectorPlacement = _vectorMath.ValidateVectorPlacement(vec, _poc.transform.position);
-        //  if ((GLOBALS.stage == Stage.m3v1p2 || GLOBALS.stage == Stage.m3v3p2 || GLOBALS.stage == Stage.m3v4p1)  && !GLOBALS.isCorrectVectorPlacement)
-        //     DecrementStage();
-        //Debug.Log("CURRENT STAGE: " + GLOBALS.stage);
         // Debug.Log("Vector is valid: " + GLOBALS.isCorrectVectorPlacement);
     }
 
@@ -181,14 +179,11 @@ public class BeamPlacementM3_Original : MonoBehaviour
                 case Stage.m3poc:
                     _poc.SetActive(true);
                     _poc.transform.position = beamEnd;
-                    beamEnd = GLOBALS.pocPos;
                     IncrementStage();
                     placingHead = true;
                     break;
-                case Stage.m3pin:
-                    
-                    break;
                 case Stage.m3v1p1:
+
                     _vectorMath.PlaceVectorPoint(vec, false, beamEnd);
                     GLOBALS.tailPos = beamEnd;
                     placingHead = true;

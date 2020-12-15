@@ -6009,7 +6009,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.01
+  m_Radius: 0.1
   m_Center: {x: 0, y: 0.0000000037252903, z: -0.000000014901161}
 --- !u!114 &787668068
 MonoBehaviour:
@@ -6034,7 +6034,7 @@ Rigidbody:
   serializedVersion: 2
   m_Mass: 1
   m_Drag: 0
-  m_AngularDrag: 0.05
+  m_AngularDrag: 0.5
   m_UseGravity: 0
   m_IsKinematic: 1
   m_Interpolate: 0
@@ -12923,7 +12923,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Radius: 0.1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &1916391996
 MeshRenderer:
@@ -12994,7 +12994,7 @@ Rigidbody:
   serializedVersion: 2
   m_Mass: 1
   m_Drag: 0
-  m_AngularDrag: 0.05
+  m_AngularDrag: 0.5
   m_UseGravity: 0
   m_IsKinematic: 1
   m_Interpolate: 0
@@ -15406,7 +15406,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Radius: 0.1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!135 &3579507083525431704
 SphereCollider:
@@ -15419,7 +15419,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Radius: 0.1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!135 &3579507084575562054
 SphereCollider:
@@ -15432,7 +15432,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Radius: 0.1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &3799945902723857343
 MeshRenderer:
@@ -16860,6 +16860,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af38a920f7fb70e44bfd3e318bb27678, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  screenText: {fileID: 0}
 --- !u!1 &4380659461871904384
 GameObject:
   m_ObjectHideFlags: 0
@@ -17245,7 +17246,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.01
+  m_Radius: 0.1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &4664034520357950521
 MonoBehaviour:
@@ -17439,7 +17440,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _camera: {fileID: 287766257}
   _head: {fileID: 8949113769115936804}
-  _tail: {fileID: 0}
+  _tail: {fileID: 5398697246162782355}
   _xCompLabel: {fileID: 889957809}
   _yCompLabel: {fileID: 364559678}
   _zCompLabel: {fileID: 1394735186}
@@ -17617,7 +17618,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _camera: {fileID: 287766257}
   _head: {fileID: 8949113767815254266}
-  _tail: {fileID: 0}
+  _tail: {fileID: 5398697247262142541}
   _xCompLabel: {fileID: 211196361}
   _yCompLabel: {fileID: 1419406725}
   _zCompLabel: {fileID: 1949638129}
@@ -17712,7 +17713,7 @@ Rigidbody:
   serializedVersion: 2
   m_Mass: 1
   m_Drag: 0
-  m_AngularDrag: 0.05
+  m_AngularDrag: 0.5
   m_UseGravity: 0
   m_IsKinematic: 1
   m_Interpolate: 0
@@ -17762,7 +17763,7 @@ Rigidbody:
   serializedVersion: 2
   m_Mass: 1
   m_Drag: 0
-  m_AngularDrag: 0.05
+  m_AngularDrag: 0.5
   m_UseGravity: 0
   m_IsKinematic: 1
   m_Interpolate: 0
@@ -19326,7 +19327,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.01
+  m_Radius: 0.1
   m_Center: {x: 0, y: 0.0000000037252903, z: -0.000000014901161}
 --- !u!54 &8949113767815254270
 Rigidbody:
@@ -19338,7 +19339,7 @@ Rigidbody:
   serializedVersion: 2
   m_Mass: 1
   m_Drag: 0
-  m_AngularDrag: 0.05
+  m_AngularDrag: 0.5
   m_UseGravity: 0
   m_IsKinematic: 1
   m_Interpolate: 0
@@ -19449,7 +19450,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.010000001
+  m_Radius: 0.1
   m_Center: {x: -0.000000007450581, y: 0.000000022351742, z: -0.000000059604645}
 --- !u!54 &8949113769115936810
 Rigidbody:
@@ -19461,7 +19462,7 @@ Rigidbody:
   serializedVersion: 2
   m_Mass: 1
   m_Drag: 0
-  m_AngularDrag: 0.05
+  m_AngularDrag: 0.5
   m_UseGravity: 0
   m_IsKinematic: 1
   m_Interpolate: 0
