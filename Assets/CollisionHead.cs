@@ -25,6 +25,9 @@ public class CollisionHead : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (this.gameObject.tag == "tail" && other.gameObject.tag == "poc")
+        { this.GetComponent<VectorControl_Original>().isCorrectPlacement = true;
+            Debug.Log("this " + this.GetComponentInParent<GameObject>().gameObject.name + "has valid placement");  }
         Debug.Log("Collision detected between " + this.gameObject.name + " and " + other.gameObject.name);
         if (other.gameObject.tag == "pointer")
         {

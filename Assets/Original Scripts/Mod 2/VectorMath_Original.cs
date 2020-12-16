@@ -72,11 +72,44 @@ public class VectorMath_Original : MonoBehaviour
 
 
     /// <summary>
-    /// MUST FIX FOR MODULE 2
+    /// USE ONLY FOR TRIGGER DOWN
     /// </summary>
     /// <param name="v"></param>
     /// <param name="isHead"></param>
     /// <param name="loc"></param>
+    /// 
+    public void PlaceVector3(int v, bool isHead, Vector3 loc)
+    {
+        if (isHead)
+        {
+            if (vectors[v].GetComponent<VectorControl_Original>().isCorrectPlacement) //if the tail is on the poc, let the user place wherever
+            {
+                vectors[v].GetComponent<VectorControl_Original>()._head.position = loc;
+            }
+            else //if the tail is not on the poc, the user can't choose a place, it auto fills to the poc 
+            {
+                vectors[v].GetComponent<VectorControl_Original>()._head.position = GetComponent<BeamPlacementM3_Original>().pocPos;
+            }
+            vectors[v].SetEnabledLabels(true, true, false, false);
+        }
+        else
+        {
+            if (Vector3.Distance(loc, GetComponent<BeamPlacementM3_Original>().pocPos) < 0.20f)
+            {
+                vectors[v].transform.position = GetComponent<BeamPlacementM3_Original>().pocPos;
+                vectors[v].GetComponent<VectorControl_Original>().isCorrectPlacement = true;
+            }
+            else
+            {
+                vectors[v].transform.position = loc;
+                vectors[v].GetComponent<VectorControl_Original>().isCorrectPlacement = false;
+            }
+            vectors[v].gameObject.SetActive(true);
+            vectors[v].SetEnabledLabels(true, false, false, false);
+        }
+
+    }
+
     public void PlaceVectorPoint(int v, bool isHead, Vector3 loc)  //v is vector index in list, loc is the position
     {
         if (v >= vectors.Count)
@@ -87,7 +120,7 @@ public class VectorMath_Original : MonoBehaviour
 
 
 
-        if (GLOBALS.stage >= Stage.m3v1p1) {
+        /*if (GLOBALS.stage >= Stage.m3v1p1) {
             if (isHead) //
             {
                 if (vectors[v].GetComponent<VectorControl_Original>().isCorrectPlacement == true) //if the placed point has already been placed on the poc, everything is gucci u can continue
@@ -116,10 +149,11 @@ public class VectorMath_Original : MonoBehaviour
                     vectors[v].transform.position = loc; 
                    // Debug.Log("assigning to poc");
                 }
-                vectors[v].gameObject.SetActive(true);
+
                 vectors[v].SetEnabledLabels(true, false, false, false);
             }
-        }
+            vectors[v].gameObject.SetActive(true);
+        }*/
 
         else
         {

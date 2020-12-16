@@ -102,7 +102,7 @@ public class BeamPlacementM3_Original : MonoBehaviour
         // if placingHead, have vector head follow beam
         if (placingHead && !aMenuIsActive)
         {
-            _vectorMath.PlaceVectorPoint(vec, true, beamEnd);
+            _vectorMath.PlaceVector3(vec, true, beamEnd);
         }
         // Debug.Log("Vector is valid: " + GLOBALS.isCorrectVectorPlacement);
     }
@@ -183,8 +183,7 @@ public class BeamPlacementM3_Original : MonoBehaviour
                     placingHead = true;
                     break;
                 case Stage.m3v1p1:
-
-                    _vectorMath.PlaceVectorPoint(vec, false, beamEnd);
+                    _vectorMath.PlaceVector3(vec, false, beamEnd);
                     GLOBALS.tailPos = beamEnd;
                     placingHead = true;
                     IncrementStage();
@@ -195,7 +194,7 @@ public class BeamPlacementM3_Original : MonoBehaviour
                     IncrementStage();
                     break;
                 case Stage.m3v2p1:
-                    _vectorMath.PlaceVectorPoint(vec, false, beamEnd);
+                    _vectorMath.PlaceVector3(vec, false, beamEnd);
                     GLOBALS.tailPos = beamEnd;
                     placingHead = true;
                     IncrementStage();
@@ -206,7 +205,7 @@ public class BeamPlacementM3_Original : MonoBehaviour
                     IncrementStage();
                     break;
                 case Stage.m3v3p1:
-                    _vectorMath.PlaceVectorPoint(vec, false, beamEnd);
+                    _vectorMath.PlaceVector3(vec, false, beamEnd);
                     GLOBALS.tailPos = beamEnd;
                     placingHead = true;
                     IncrementStage();
@@ -217,7 +216,7 @@ public class BeamPlacementM3_Original : MonoBehaviour
                     IncrementStage();
                     break;
                 case Stage.m3v4p1:
-                    _vectorMath.PlaceVectorPoint(vec, false, beamEnd);
+                    _vectorMath.PlaceVector3(vec, false, beamEnd);
                     GLOBALS.tailPos = beamEnd;
                     placingHead = true;
                     IncrementStage();

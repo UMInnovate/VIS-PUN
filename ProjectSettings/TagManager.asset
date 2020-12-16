@@ -10,6 +10,8 @@ TagManager:
   - PINKeyPadNumButton
   - poc
   - pointer
+  - head
+  - tail
   layers:
   - Default
   - TransparentFX

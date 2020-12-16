@@ -4656,12 +4656,12 @@ PrefabInstance:
     - target: {fileID: 5619764785288450844, guid: 4b83d5952ef78964a987c932f7375418,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.17
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5619764785288450844, guid: 4b83d5952ef78964a987c932f7375418,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.75
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5619764785288450844, guid: 4b83d5952ef78964a987c932f7375418,
         type: 3}
@@ -6299,7 +6299,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Radius: 0.1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &833892679
 MeshRenderer:
@@ -7735,6 +7735,7 @@ MonoBehaviour:
   _yCompLabel: {fileID: 1418068375}
   _zCompLabel: {fileID: 1244903626}
   vecColor: {r: 0.9254902, g: 0, b: 1, a: 1}
+  isCorrectPlacement: 0
   comps:
   - {fileID: 1983408710}
   - {fileID: 1671093066}
@@ -7762,7 +7763,7 @@ LineRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 6cb5d07cc695e4101ac4ce38f7140f17, type: 2}
+  - {fileID: 2100000, guid: b06844f3bfa6c45d8876a150b8b06681, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -12099,6 +12100,7 @@ MonoBehaviour:
   operationsPanel: {fileID: 547288400}
   keypad: {fileID: 4380659461845200015}
   inputText: {fileID: 4380659461871904386}
+  pocPos: {x: 0, y: 0, z: 0}
 --- !u!1 &1813763189
 GameObject:
   m_ObjectHideFlags: 0
@@ -17445,6 +17447,7 @@ MonoBehaviour:
   _yCompLabel: {fileID: 364559678}
   _zCompLabel: {fileID: 1394735186}
   vecColor: {r: 0.9254902, g: 0, b: 1, a: 1}
+  isCorrectPlacement: 0
   comps:
   - {fileID: 192030545}
   - {fileID: 239325788}
@@ -17516,7 +17519,7 @@ LineRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 6cb5d07cc695e4101ac4ce38f7140f17, type: 2}
+  - {fileID: 2100000, guid: b06844f3bfa6c45d8876a150b8b06681, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -17623,6 +17626,7 @@ MonoBehaviour:
   _yCompLabel: {fileID: 1419406725}
   _zCompLabel: {fileID: 1949638129}
   vecColor: {r: 0.9254902, g: 0, b: 1, a: 1}
+  isCorrectPlacement: 0
   comps:
   - {fileID: 1122017299}
   - {fileID: 1547563851}
@@ -19093,6 +19097,7 @@ MonoBehaviour:
   _yCompLabel: {fileID: 1276872772}
   _zCompLabel: {fileID: 2021218735}
   vecColor: {r: 0.92549026, g: 0, b: 1, a: 1}
+  isCorrectPlacement: 0
   comps:
   - {fileID: 486588306}
   - {fileID: 1276036120}
