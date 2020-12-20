@@ -120,13 +120,7 @@ public class BeamPlacementM3_Original : MonoBehaviour
 
     public void DecrementStage()
     {
-        //decrement our stage variable to return to previous set
-        if (GLOBALS.stage > Stage.m3v1p1 && GLOBALS.stage < Stage.m3val)
-        {
-            GLOBALS.stage--;
-            GLOBALS.stage--;
-        }
-        else //else, normal decrementation
+
             GLOBALS.stage--;
 
     }
@@ -226,6 +220,9 @@ public class BeamPlacementM3_Original : MonoBehaviour
                     vec++;
                     IncrementStage();
                     break;
+                case Stage.m3keypad:
+                    keypad.SetActive(true);
+                    return;
                 default:
                     return;
             }

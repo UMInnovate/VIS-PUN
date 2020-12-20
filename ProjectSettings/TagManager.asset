@@ -12,6 +12,7 @@ TagManager:
   - pointer
   - head
   - tail
+  - NameLabel
   layers:
   - Default
   - TransparentFX

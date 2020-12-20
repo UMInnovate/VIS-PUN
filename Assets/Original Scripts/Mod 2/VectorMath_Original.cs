@@ -89,6 +89,7 @@ public class VectorMath_Original : MonoBehaviour
             else //if the tail is not on the poc, the user can't choose a place, it auto fills to the poc 
             {
                 vectors[v].GetComponent<VectorControl_Original>()._head.position = GetComponent<BeamPlacementM3_Original>().pocPos;
+              //  GLOBALS.stage++;
             }
             vectors[v].SetEnabledLabels(true, true, false, false);
         }
@@ -98,6 +99,7 @@ public class VectorMath_Original : MonoBehaviour
             {
                 vectors[v].transform.position = GetComponent<BeamPlacementM3_Original>().pocPos;
                 vectors[v].GetComponent<VectorControl_Original>().isCorrectPlacement = true;
+              //  GLOBALS.stage++;
             }
             else
             {
