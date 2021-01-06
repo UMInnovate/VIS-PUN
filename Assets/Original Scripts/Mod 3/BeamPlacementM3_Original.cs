@@ -86,7 +86,8 @@ public class BeamPlacementM3_Original : MonoBehaviour
         operationsPanel.SetActive(false);
         placingHead = false;
         _giveInstructions.DisplayText();
-        debugCount = 0; 
+        debugCount = 0;
+
     }
 
     void Update()
@@ -104,6 +105,7 @@ public class BeamPlacementM3_Original : MonoBehaviour
         {
             _vectorMath.PlaceVector3(vec, true, beamEnd);
         }
+        
         // Debug.Log("Vector is valid: " + GLOBALS.isCorrectVectorPlacement);
     }
 
@@ -120,19 +122,10 @@ public class BeamPlacementM3_Original : MonoBehaviour
 
     public void DecrementStage()
     {
-
             GLOBALS.stage--;
 
     }
 
-    public void PINButtonClicked(GameObject btn)
-    {
-        Text btnText = btn.GetComponentInChildren<Text>();
-        inputText = btnText;
-        Debug.Log("Button Clicked: " + btnText);
-        if (btn.gameObject.name == "Button Send")
-            IncrementStage();
-    }
 
     private void HandleBeamPlacement()
     {
@@ -173,10 +166,12 @@ public class BeamPlacementM3_Original : MonoBehaviour
                 case Stage.m3poc:
                     _poc.SetActive(true);
                     _poc.transform.position = beamEnd;
+                    GLOBALS.pocPos = _poc.transform.position; //save to global for use in calc canv
                     IncrementStage();
                     placingHead = true;
                     break;
                 case Stage.m3v1p1:
+                    GLOBALS.displayMode = DispMode.Vector;
                     _vectorMath.PlaceVector3(vec, false, beamEnd);
                     GLOBALS.tailPos = beamEnd;
                     placingHead = true;
@@ -250,42 +245,9 @@ public class BeamPlacementM3_Original : MonoBehaviour
         else if (button == MLInputControllerButton.Bumper)
         {
             // If we're viewing the completed operation, bumper will toggle the labels we are viewing
-            if (GLOBALS.stage == Stage.opView)
+            if (GLOBALS.stage == Stage.m3view)
             {
-                GLOBALS.showingCoords = !GLOBALS.showingCoords;
-                if (GLOBALS.showingCoords)
-                {
-                    switch (GLOBALS.opSelected)
-                    {
-                        case VecOp.none:
-                            break;
-                        case VecOp.Addition:
-                            _vectorMath.SetVectorLabels(0, false, false, false, false);
-                            _vectorMath.SetVectorLabels(1, true, false, false, false);
-                            _vectorMath.SetVectorLabels(2, true, true, false, false);
-                            break;
-                        case VecOp.Subtraction:
-                            _vectorMath.SetVectorLabels(0, false, false, false, false);
-                            _vectorMath.SetVectorLabels(1, true, false, false, false);
-                            _vectorMath.SetVectorLabels(2, true, true, false, false);
-                            break;
-                        case VecOp.Dot:
-                            _vectorMath.SetVectorLabels(0, false, false, false, true);
-                            _vectorMath.SetVectorLabels(1, true, false, false, true);
-                            break;
-                        case VecOp.Cross:
-                            _vectorMath.SetVectorLabels(0, false, true, false, false);
-                            _vectorMath.SetVectorLabels(1, false, true, false, false);
-                            _vectorMath.SetVectorLabels(2, true, true, false, false);
-                            break;
-                    }
-                }
-                else
-                {
-                    _vectorMath.SetVectorLabels(0, false, false, true, false);
-                    _vectorMath.SetVectorLabels(1, false, false, true, false);
-                    _vectorMath.SetVectorLabels(2, false, false, true, false);
-                }
+                
             }
         }
     }

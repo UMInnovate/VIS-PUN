@@ -11,14 +11,18 @@ public class KeypadPanel : MonoBehaviour
 {
     [SerializeField] List<Button> ValueButtons;
     [SerializeField] Button CheckButton;
-    [SerializeField] Button ConfirmButton;
+    //[SerializeField] Button ConfirmButton;
+    [SerializeField] Text IFText;
+
+    private GameObject panel;
 
     //PhotonView PV;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        panel = GetComponent<GameObject>();
+        IFText.text = "";
     }
 
     // Update is called once per frame
@@ -27,10 +31,15 @@ public class KeypadPanel : MonoBehaviour
         
     }
 
-    public void CheckClicked()
+    public void CheckClicked(GameObject button)
     {
-        GetComponent<GameObject>().SetActive(false);
+        panel.SetActive(false);
         //go back to v selection
-        GLOBALS.stage = Stage.m3v4p2;
+        GLOBALS.stage++;
+    }
+
+    public void NumberButtonClicked(int buttonValue)
+    {
+        IFText.text += buttonValue.ToString();
     }
 }

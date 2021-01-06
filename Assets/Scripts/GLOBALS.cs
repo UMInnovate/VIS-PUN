@@ -38,7 +38,7 @@ public enum Stage
     m3v4p1,     //place a vector tail
     m3v4p2,     //place a vector head
     m3keypad,      //validate vector
-    m3pop,      //popup for user interaction, "is this a correct vector?"
+    m3view,      //popup for user interaction, "is this a correct vector?"
     m3opSel,    //choose a force vector
     m3opView   //watch the app animate force 
 };
@@ -102,6 +102,7 @@ public static class GLOBALS
     /* DEBUG GLOBALS */
     public static Vector3 headPos;
     public static Vector3 tailPos;
+    public static Vector3 pocPos;
     #region premade colors
     public static Color visCyan = new Color(0.4f, 1, 1, 0.5f);
     public static Color visOrange = new Color(1, 0.7f, 0, 0.5f);

@@ -6,7 +6,7 @@ using TMPro;
 public class VectorMath_Original : MonoBehaviour
 {
     [SerializeField, Tooltip("The 3 vectors in the scene")]
-    private List<VectorControl_Original> vectors;
+    public List<VectorControl_Original> vectors;
     
     // display the equations, stored in other script
     DisplayEquation _displayEquation = null;
@@ -85,13 +85,15 @@ public class VectorMath_Original : MonoBehaviour
             if (vectors[v].GetComponent<VectorControl_Original>().isCorrectPlacement) //if the tail is on the poc, let the user place wherever
             {
                 vectors[v].GetComponent<VectorControl_Original>()._head.position = loc;
+                vectors[v].SetEnabledLabels(true, false, false, false);
             }
             else //if the tail is not on the poc, the user can't choose a place, it auto fills to the poc 
             {
                 vectors[v].GetComponent<VectorControl_Original>()._head.position = GetComponent<BeamPlacementM3_Original>().pocPos;
-              //  GLOBALS.stage++;
+                vectors[v].SetEnabledLabels(true, true, false, false);
+                //  GLOBALS.stage++;
             }
-            vectors[v].SetEnabledLabels(true, true, false, false);
+            
         }
         else
         {
@@ -99,15 +101,16 @@ public class VectorMath_Original : MonoBehaviour
             {
                 vectors[v].transform.position = GetComponent<BeamPlacementM3_Original>().pocPos;
                 vectors[v].GetComponent<VectorControl_Original>().isCorrectPlacement = true;
-              //  GLOBALS.stage++;
+                vectors[v].SetEnabledLabels(false, false, false, false);
+                //  GLOBALS.stage++;
             }
             else
             {
                 vectors[v].transform.position = loc;
                 vectors[v].GetComponent<VectorControl_Original>().isCorrectPlacement = false;
+                vectors[v].SetEnabledLabels(true, false, false, false);
             }
             vectors[v].gameObject.SetActive(true);
-            vectors[v].SetEnabledLabels(true, false, false, false);
         }
 
     }

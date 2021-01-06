@@ -154,10 +154,10 @@ public class GiveInstructions : MonoBehaviour
                 "Trigger: place head" + "\n";
                  break;
             case Stage.m3keypad:
-               // text.text = "Your VECTOR is " +  "create globals method for valid";
+                text.text = "Keypad stage";
                 break;
-            case Stage.m3pop:
-                text.text = "";
+            case Stage.m3view:
+                text.text = "View";
                 break;
             case Stage.m3opSel:
                 break;
