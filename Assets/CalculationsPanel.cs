@@ -20,7 +20,7 @@ public class CalculationsPanel : MonoBehaviour
 
     public void StartCalculationsSequence()
     {
-        panel.transform.position = GLOBALS.pocPos + Vector3.one;
+        panel.transform.position = GLOBALS.pocPos + new Vector3(1f, 0f, 1f);
 
         panel.SetActive(true);
     }

@@ -5673,7 +5673,7 @@ MonoBehaviour:
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_hasFontAssetChanged: 1
+  m_hasFontAssetChanged: 0
   m_renderer: {fileID: 835452616}
   m_subTextObjects:
   - {fileID: 0}
@@ -9345,7 +9345,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1497456799
 RectTransform:
   m_ObjectHideFlags: 0
@@ -10682,6 +10682,7 @@ MonoBehaviour:
   menuPanel: {fileID: 6820424789484509397}
   operationsPanel: {fileID: 1170517305}
   keypad: {fileID: 389159362}
+  calcPanel: {fileID: 1955310095}
   inputText: {fileID: 128091837}
   pocPos: {x: 0, y: 0, z: 0}
 --- !u!1 &1813763189
@@ -12313,7 +12314,7 @@ GameObject:
   - component: {fileID: 1955310097}
   - component: {fileID: 1955310100}
   m_Layer: 5
-  m_Name: panel
+  m_Name: CalcPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

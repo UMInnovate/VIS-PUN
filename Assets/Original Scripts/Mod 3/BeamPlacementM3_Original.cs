@@ -20,6 +20,8 @@ public class BeamPlacementM3_Original : MonoBehaviour
     public GameObject operationsPanel;
     //Keypad
     public GameObject keypad;
+    //Calculations Panel
+    public GameObject calcPanel;
     public Text inputText;
     #endregion
 
@@ -85,6 +87,7 @@ public class BeamPlacementM3_Original : MonoBehaviour
         menuPanel.SetActive(false);
         keypad.SetActive(false);
         operationsPanel.SetActive(false);
+        calcPanel.SetActive(false);
         placingHead = false;
         _giveInstructions.DisplayText();
         debugCount = 0;
@@ -224,6 +227,8 @@ public class BeamPlacementM3_Original : MonoBehaviour
                     break;
                 case Stage.m3view:
                     Debug.Log("trigg in m3view");
+                    //  calcPanel.SetActive(true);
+                    calcPanel.GetComponent<CalculationsPanel>().StartCalculationsSequence();
                     break;
                 default:
                     return;

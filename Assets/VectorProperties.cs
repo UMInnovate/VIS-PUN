@@ -16,11 +16,18 @@ public class VectorProperties : MonoBehaviour
     [SerializeField] private MLInputController inputController;
     public GameObject keypad;
 
+    [SerializeField] BeamPlacementM3_Original beamPlacement;
+
     #region Public Methods
     public void SetNameLabelHoverState(bool isHovered)
     { nameLabelHovered = isHovered; }
 
-    [SerializeField] BeamPlacementM3_Original beamPlacement;
+    //set force value of vector from keypad panel
+    public void SetForceVal(int fval)
+    {
+        forceValue = fval;
+        gameObject.GetComponent<VectorControl>()._nameLabel.text += (" = " + fval.ToString());
+    }
 
     #endregion
     
@@ -47,15 +54,12 @@ public class VectorProperties : MonoBehaviour
                 keypad.SetActive(true);
 
                 keypad.GetComponent<KeypadPanel>().ReceiveVector(gameObject);
-              //  string value = beamPlacement.keypad.GetComponent<KeypadPanel>().IFText.text;
-                //float adjValue = float.Parse(value, System.Globalization.NumberStyles.Float);
                 GLOBALS.stage++; //now in keypad
             }
-               // case (Stage.m): //selecting a vector for components
-               //     return;
-                    //selecting a vector to give force val
+
             }
         }
+
     }
 
     

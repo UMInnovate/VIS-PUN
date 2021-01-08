@@ -85,12 +85,14 @@ public class VectorMath_Original : MonoBehaviour
             if (vectors[v].GetComponent<VectorControl_Original>().isCorrectPlacement) //if the tail is on the poc, let the user place wherever
             {
                 vectors[v].GetComponent<VectorControl_Original>()._head.position = loc;
-                vectors[v].SetEnabledLabels(false, true, false, false);
+                if (v== 0) vectors[v].SetEnabledLabels(true, true, false, false);
+                else vectors[v].SetEnabledLabels(false, true, false, false);
             }
             else //if the tail is not on the poc, the user can't choose a place, it auto fills to the poc 
             {
                 vectors[v].GetComponent<VectorControl_Original>()._head.position = GetComponent<BeamPlacementM3_Original>().pocPos;
-                vectors[v].SetEnabledLabels(false, true, false, false);
+                if (v == 0) vectors[v].SetEnabledLabels(true, true, false, false);
+                else vectors[v].SetEnabledLabels(true, false, false, false);
                 //  GLOBALS.stage++;
             }
             
