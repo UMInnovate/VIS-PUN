@@ -23,8 +23,9 @@ public class BeamPlacementM3_Original : MonoBehaviour
     public Text inputText;
     #endregion
 
-    public Vector3 pocPos;
+
     #region Private member variables
+    [HideInInspector] public Vector3 pocPos;
     // Content root
     private GameObject _root;
     // Origin of coordinate system
@@ -92,6 +93,7 @@ public class BeamPlacementM3_Original : MonoBehaviour
 
     void Update()
     {
+       // Debug.Log("STAGE: " + GLOBALS.stage);
         aMenuIsActive = (operationsPanel.activeSelf || menuPanel.activeSelf);
         if (GLOBALS.gridOn)
             SnapToGrid();
@@ -216,8 +218,10 @@ public class BeamPlacementM3_Original : MonoBehaviour
                     IncrementStage();
                     break;
                 case Stage.m3keypad:
-                    keypad.SetActive(true);
-                    return;
+                    break;
+                case Stage.m3view:
+                    Debug.Log("trigg in m3view");
+                    break;
                 default:
                     return;
             }
@@ -247,7 +251,8 @@ public class BeamPlacementM3_Original : MonoBehaviour
             // If we're viewing the completed operation, bumper will toggle the labels we are viewing
             if (GLOBALS.stage == Stage.m3view)
             {
-                
+                GLOBALS.displayMode = DispMode.Components; 
+                Debug.Log("in view mode, bumper press rec");
             }
         }
     }
@@ -285,62 +290,6 @@ public class BeamPlacementM3_Original : MonoBehaviour
     }
     #endregion
 
-    // this happens whenever the vector head has been placed
-    private IEnumerator ComponentCalculation(int v)
-    {
-        yield return StartCoroutine(_vectorMath.ComponentCalc(v));
-        _vectorMath.SetVectorLabels(v, false, false, true, false);
-        if (GLOBALS.stage == Stage.v2calc)
-        {
-            // *** POTENTIAL BUG? ***
-            operationsPanel.SetActive(true);
-        }
-        IncrementStage();
-    }
-
-    #region Operation Panel Buttons
-
-    // Button: Add.onClick()
-    public void DoAddition()
-    {
-        operationsPanel.SetActive(false);
-        GLOBALS.opSelected = VecOp.Addition;
-        IncrementStage();
-        StartCoroutine(_vectorMath.DoVectorAddition());
-        _vectorMath.SetVectorLabels(2, false, false, true, false);
-    }
-
-    // Button: Subtract.onClick()
-    public void DoSubtraction()
-    {
-        operationsPanel.SetActive(false);
-        GLOBALS.opSelected = VecOp.Subtraction;
-        IncrementStage();
-        StartCoroutine(_vectorMath.DoVectorSubtraction());
-        _vectorMath.SetVectorLabels(2, false, false, true, false);
-    }
-
-    // Button: Dot.onClick()
-    public void DoDotProduct()
-    {
-        operationsPanel.SetActive(false);
-        GLOBALS.opSelected = VecOp.Dot;
-        IncrementStage();
-        StartCoroutine(_vectorMath.DoVectorDot());
-    }
-
-    // Button: Cross.onClick()
-    public void DoCrossProduct()
-    {
-        operationsPanel.SetActive(false);
-        GLOBALS.opSelected = VecOp.Cross;
-        GLOBALS.didCross = true;
-        IncrementStage();
-        StartCoroutine(_vectorMath.DoVectorCross());
-        _vectorMath.SetVectorLabels(2, false, false, true, false);
-    }
-
-    #endregion
 
     #region Unused Methods
     // prototype for grid snapped functionality - currently unused

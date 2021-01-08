@@ -159,10 +159,6 @@ public class GiveInstructions : MonoBehaviour
             case Stage.m3view:
                 text.text = "View";
                 break;
-            case Stage.m3opSel:
-                break;
-            case Stage.m3opView:
-                break;
             case Stage.opSel:
                 text.text = "";
                 break;

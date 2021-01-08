@@ -10,15 +10,17 @@ public class VectorProperties : MonoBehaviour
 
     [HideInInspector]
     public bool isForceKnown; //has the user selected/inputted a constant force value
-    public int forceValue; //user-inputted force value
+    [HideInInspector] public int forceValue; //user-inputted force value
 
     private bool nameLabelHovered;
     [SerializeField] private MLInputController inputController;
+    public GameObject keypad;
 
     #region Public Methods
     public void SetNameLabelHoverState(bool isHovered)
     { nameLabelHovered = isHovered; }
 
+    [SerializeField] BeamPlacementM3_Original beamPlacement;
 
     #endregion
     
@@ -27,21 +29,25 @@ public class VectorProperties : MonoBehaviour
         inputController = MLInput.GetController(MLInput.Hand.Right);
         if (!MLInput.IsStarted)
             MLInput.Start();
-        MLInput.OnTriggerUp += OnTriggerUp;
+        MLInput.OnTriggerDown += OnTriggerDown;
     }
 
-    private void OnTriggerUp(byte controllerId, float pressure)
+    private void OnTriggerDown(byte controllerId, float pressure)
     {
         if (nameLabelHovered)
         {
             isForceKnown = true;
             //TRIGGER NEW STATE (ENTRY KEYPAD)
             //origin, content root, content
-            switch (GLOBALS.stage)
-            {
-                case (Stage.m3v4p2): //placed vectors, going into force keypad
-                    GLOBALS.stage++;
-                    return;
+            if (GLOBALS.stage == Stage.m3forcesel)
+            {  //placed vectors, going into force keypad
+                Debug.Log("trigger press dec vec prop on vector " + this.gameObject.name);
+                keypad.SetActive(true);
+                keypad.GetComponent<KeypadPanel>().ReceiveVector(this);
+              //  string value = beamPlacement.keypad.GetComponent<KeypadPanel>().IFText.text;
+                //float adjValue = float.Parse(value, System.Globalization.NumberStyles.Float);
+                GLOBALS.stage++; //now in keypad
+            }
                // case (Stage.m): //selecting a vector for components
                //     return;
                     //selecting a vector to give force val
@@ -49,4 +55,4 @@ public class VectorProperties : MonoBehaviour
         }
     }
 
-    }
+    

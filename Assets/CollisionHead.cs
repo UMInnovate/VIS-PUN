@@ -35,7 +35,8 @@ public class CollisionHead : MonoBehaviour
         }
 
         if (this.gameObject.tag == "tail" && other.gameObject.tag == "poc")
-        { this.GetComponent<VectorControl_Original>().isCorrectPlacement = true;
+        {
+            this.GetComponent<VectorControl_Original>().isCorrectPlacement = true;
             Debug.Log("this " + this.GetComponentInParent<GameObject>().gameObject.name + "has valid placement");  }
        // Debug.Log("Collision detected between " + this.gameObject.name + " and " + other.gameObject.name);
         if (other.gameObject.tag == "pointer")
@@ -49,6 +50,10 @@ public class CollisionHead : MonoBehaviour
             
             //Debug.Log("Changing color to valid");
         }
+        else
+        {
+            return;
+        }
     }
 
     private void OnTriggerExit(Collider other)
@@ -60,8 +65,13 @@ public class CollisionHead : MonoBehaviour
             this.gameObject.GetComponent<TextMeshPro>().color = Color.white;
             this.gameObject.GetComponentInParent<VectorProperties>().SetNameLabelHoverState(false);
         }
+        else
+        {
+            return;
+        }
         //    Renderer.material.color = initialColor; //goback to init color
     }
+
 
 
 }

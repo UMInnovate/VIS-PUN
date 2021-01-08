@@ -85,7 +85,7 @@ public class VectorMath_Original : MonoBehaviour
             if (vectors[v].GetComponent<VectorControl_Original>().isCorrectPlacement) //if the tail is on the poc, let the user place wherever
             {
                 vectors[v].GetComponent<VectorControl_Original>()._head.position = loc;
-                vectors[v].SetEnabledLabels(true, false, false, false);
+                vectors[v].SetEnabledLabels(false, false, false, false);
             }
             else //if the tail is not on the poc, the user can't choose a place, it auto fills to the poc 
             {
@@ -102,7 +102,7 @@ public class VectorMath_Original : MonoBehaviour
                 vectors[v].transform.position = GetComponent<BeamPlacementM3_Original>().pocPos;
                 vectors[v].GetComponent<VectorControl_Original>().isCorrectPlacement = true;
                 vectors[v].SetEnabledLabels(false, false, false, false);
-                //  GLOBALS.stage++;
+              //  GLOBALS.stage++;
             }
             else
             {
@@ -111,6 +111,7 @@ public class VectorMath_Original : MonoBehaviour
                 vectors[v].SetEnabledLabels(true, false, false, false);
             }
             vectors[v].gameObject.SetActive(true);
+
         }
 
     }

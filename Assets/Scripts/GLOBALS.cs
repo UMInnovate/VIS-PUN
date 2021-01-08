@@ -37,10 +37,9 @@ public enum Stage
     m3v3p2,     //place a vector head
     m3v4p1,     //place a vector tail
     m3v4p2,     //place a vector head
+    m3forcesel,
     m3keypad,      //validate vector
     m3view,      //popup for user interaction, "is this a correct vector?"
-    m3opSel,    //choose a force vector
-    m3opView   //watch the app animate force 
 };
 
 public enum VecOp
