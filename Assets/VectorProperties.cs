@@ -26,6 +26,7 @@ public class VectorProperties : MonoBehaviour
     
      void Start()
     {
+        keypad.SetActive(false);
         inputController = MLInput.GetController(MLInput.Hand.Right);
         if (!MLInput.IsStarted)
             MLInput.Start();
@@ -43,7 +44,7 @@ public class VectorProperties : MonoBehaviour
             {  //placed vectors, going into force keypad
                 Debug.Log("hover detected");
                 Debug.Log("trigger press dec vec prop on vector " + gameObject.name);
-                keypad.GetComponentInParent<GameObject>().SetActive(true);
+                keypad.SetActive(true);
 
                 keypad.GetComponent<KeypadPanel>().ReceiveVector(gameObject);
               //  string value = beamPlacement.keypad.GetComponent<KeypadPanel>().IFText.text;

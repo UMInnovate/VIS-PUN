@@ -218,7 +218,7 @@ public class BeamPlacementM3_Original : MonoBehaviour
                     IncrementStage();
                     break;
                 case Stage.m3forcesel:
-                    
+                    keypad.SetActive(true);
                     break;
                 case Stage.m3keypad:
                     break;

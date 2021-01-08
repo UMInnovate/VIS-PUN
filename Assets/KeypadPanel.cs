@@ -40,14 +40,11 @@ public class KeypadPanel : MonoBehaviour
     }
     public void CheckClicked()
     {
-        //    panel.SetActive(false);
-        //   Debug.Log("Check clicked");
-        //go back to v selection
-        check = true;
-      //  int de = 0;
         string value = IFText.text;
         vp.forceValue = int.Parse(value); 
         Debug.Log("vp force val: " + vp.forceValue.ToString());
+
+        gameObject.SetActive(false);
         GLOBALS.stage++;
     }
 
@@ -59,13 +56,8 @@ public class KeypadPanel : MonoBehaviour
 
     private void OnTriggerUp(byte controllerId, float pressure)
     {
-        if (check)
-        {
-            Debug.Log("check click");
-            check = false;
-            CheckClicked();
-        }
-        Debug.Log("in keypadpanel: triggerup");
+        if(GLOBALS.stage == Stage.m3keypad)
+           Debug.Log("in keypadpanel: triggerup");
     }
 
     public void NumberButtonClicked(int buttonValue)
