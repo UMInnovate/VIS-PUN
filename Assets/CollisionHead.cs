@@ -14,7 +14,8 @@ public class CollisionHead : MonoBehaviour
     void Start()
     {
         // _collider = GetComponent<SphereCollider>();
-        if (_collider == null) Debug.Log("SphereCollider is null");
+        if (_collider == null)
+            Debug.Log("SphereCollider is null");
         _collider.radius = 1f;
         _collider.center = Vector3.zero;
 

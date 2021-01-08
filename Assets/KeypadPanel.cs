@@ -32,10 +32,11 @@ public class KeypadPanel : MonoBehaviour
         Debug.Log("panel initialized");
     }
 
-    public void ReceiveVector(VectorProperties v)
+    public void ReceiveVector(GameObject v)
     {
-        vp = v;
-        Debug.Log("vp = " + v.name);
+        Debug.Log("before vp");
+        vp = v.GetComponent<VectorProperties>();
+        Debug.Log("after vp");
     }
     public void CheckClicked()
     {

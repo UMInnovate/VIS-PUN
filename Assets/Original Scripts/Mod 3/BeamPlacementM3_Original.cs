@@ -217,6 +217,9 @@ public class BeamPlacementM3_Original : MonoBehaviour
                     vec++;
                     IncrementStage();
                     break;
+                case Stage.m3forcesel:
+                    
+                    break;
                 case Stage.m3keypad:
                     break;
                 case Stage.m3view:

@@ -41,9 +41,11 @@ public class VectorProperties : MonoBehaviour
             //origin, content root, content
             if (GLOBALS.stage == Stage.m3forcesel)
             {  //placed vectors, going into force keypad
-                Debug.Log("trigger press dec vec prop on vector " + this.gameObject.name);
-                keypad.SetActive(true);
-                keypad.GetComponent<KeypadPanel>().ReceiveVector(this);
+                Debug.Log("hover detected");
+                Debug.Log("trigger press dec vec prop on vector " + gameObject.name);
+                keypad.GetComponentInParent<GameObject>().SetActive(true);
+
+                keypad.GetComponent<KeypadPanel>().ReceiveVector(gameObject);
               //  string value = beamPlacement.keypad.GetComponent<KeypadPanel>().IFText.text;
                 //float adjValue = float.Parse(value, System.Globalization.NumberStyles.Float);
                 GLOBALS.stage++; //now in keypad
