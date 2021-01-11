@@ -349,7 +349,6 @@ public class BeamPlacementM2 : MonoBehaviour
     {
         yield return StartCoroutine(_vectorMath.ComponentCalc(v));
         _vectorMath.SetVectorLabels(v, false, false, true, false);
-
         if(GLOBALS.stage == Stage.v2calc)
         {
             // *** POTENTIAL BUG? ***

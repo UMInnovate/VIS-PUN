@@ -3252,7 +3252,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 371563756}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 07994bfe8b0e4adb97d706de5dea48d5, type: 3}
   m_Name: 
@@ -5798,6 +5798,7 @@ GameObject:
   - component: {fileID: 1809301321}
   - component: {fileID: 1809301323}
   - component: {fileID: 1809301325}
+  - component: {fileID: 882783317}
   m_Layer: 0
   m_Name: Placement Mechanism
   m_TagString: Untagged
@@ -5940,6 +5941,23 @@ LineRenderer:
     generateLightingData: 0
   m_UseWorldSpace: 1
   m_Loop: 0
+--- !u!114 &882783317
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 882783312}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e95517aa52e3db4d8bab25eaa816149, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  vectors:
+  - {fileID: 8818501316972189333}
+  - {fileID: 5109831959800916614}
+  - {fileID: 5109831960814342753}
+  - {fileID: 1108902872}
 --- !u!114 &882783319
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6767,8 +6785,9 @@ GameObject:
   - component: {fileID: 1108902870}
   - component: {fileID: 1108902869}
   - component: {fileID: 1108902871}
+  - component: {fileID: 1108902872}
   m_Layer: 0
-  m_Name: SpaceVector 4
+  m_Name: SpaceVector D
   m_TagString: Vector
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6807,7 +6826,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1108902867}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 91faeb8e3729b8a4f87f7fdbc60c77b4, type: 3}
   m_Name: 
@@ -6952,6 +6971,37 @@ MonoBehaviour:
   forceValue: 0
   keypad: {fileID: 2049710762}
   beamPlacement: {fileID: 1809301325}
+--- !u!114 &1108902872
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1108902867}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1bffa66c40dc60d429ad64f4561d291f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _camera: {fileID: 287766257}
+  _head: {fileID: 787668064}
+  _tail: {fileID: 1916391994}
+  _xCompLabel: {fileID: 1922539907}
+  _yCompLabel: {fileID: 1418068375}
+  _zCompLabel: {fileID: 1244903626}
+  vecColor: {r: 0, g: 0, b: 0, a: 0}
+  isCorrectPlacement: 0
+  unitVec: 0
+  comps:
+  - {fileID: 1983408710}
+  - {fileID: 1671093066}
+  - {fileID: 607362554}
+  showingUnits: 0
+  beamMaterial: {fileID: 2100000, guid: b06844f3bfa6c45d8876a150b8b06681, type: 2}
+  _nameLabel: {fileID: 1404766053}
+  _headLabel: {fileID: 75791760}
+  _tailLabel: {fileID: 521796263}
+  _componentLabel: {fileID: 415184822}
 --- !u!1 &1122017297
 GameObject:
   m_ObjectHideFlags: 0
@@ -9815,7 +9865,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1565450924
 Transform:
   m_ObjectHideFlags: 0
@@ -10653,7 +10703,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 882783312}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e9cf090adaaae214bbbcda79dfad4cd1, type: 3}
   m_Name: 
@@ -10705,7 +10755,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1813763190
 RectTransform:
   m_ObjectHideFlags: 0
@@ -16308,8 +16358,9 @@ GameObject:
   - component: {fileID: 5109831959800916608}
   - component: {fileID: 5109831959800916612}
   - component: {fileID: 5109831959800916613}
+  - component: {fileID: 5109831959800916614}
   m_Layer: 0
-  m_Name: SpaceVector 2
+  m_Name: SpaceVector B
   m_TagString: Vector
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -16348,7 +16399,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5109831959800916610}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 91faeb8e3729b8a4f87f7fdbc60c77b4, type: 3}
   m_Name: 
@@ -16388,6 +16439,37 @@ MonoBehaviour:
   forceValue: 0
   keypad: {fileID: 2049710762}
   beamPlacement: {fileID: 1809301325}
+--- !u!114 &5109831959800916614
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5109831959800916610}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1bffa66c40dc60d429ad64f4561d291f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _camera: {fileID: 287766257}
+  _head: {fileID: 8949113769115936804}
+  _tail: {fileID: 5398697246162782355}
+  _xCompLabel: {fileID: 889957809}
+  _yCompLabel: {fileID: 364559678}
+  _zCompLabel: {fileID: 1394735186}
+  vecColor: {r: 0, g: 0, b: 0, a: 0}
+  isCorrectPlacement: 0
+  unitVec: 0
+  comps:
+  - {fileID: 192030545}
+  - {fileID: 239325788}
+  - {fileID: 795354150}
+  showingUnits: 0
+  beamMaterial: {fileID: 2100000, guid: b06844f3bfa6c45d8876a150b8b06681, type: 2}
+  _nameLabel: {fileID: 4361834240219136726}
+  _headLabel: {fileID: 421692710538468116}
+  _tailLabel: {fileID: 421692710230412767}
+  _componentLabel: {fileID: 4361834241628358264}
 --- !u!1 &5109831960814342748
 GameObject:
   m_ObjectHideFlags: 0
@@ -16400,8 +16482,9 @@ GameObject:
   - component: {fileID: 5109831960814342750}
   - component: {fileID: 5109831960814342751}
   - component: {fileID: 5109831960814342752}
+  - component: {fileID: 5109831960814342753}
   m_Layer: 0
-  m_Name: SpaceVector 3
+  m_Name: SpaceVector C
   m_TagString: Vector
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -16545,7 +16628,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5109831960814342748}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 91faeb8e3729b8a4f87f7fdbc60c77b4, type: 3}
   m_Name: 
@@ -16585,6 +16668,37 @@ MonoBehaviour:
   forceValue: 0
   keypad: {fileID: 2049710762}
   beamPlacement: {fileID: 1809301325}
+--- !u!114 &5109831960814342753
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5109831960814342748}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1bffa66c40dc60d429ad64f4561d291f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _camera: {fileID: 287766257}
+  _head: {fileID: 8949113767815254266}
+  _tail: {fileID: 5398697247262142541}
+  _xCompLabel: {fileID: 211196361}
+  _yCompLabel: {fileID: 1419406725}
+  _zCompLabel: {fileID: 1949638129}
+  vecColor: {r: 0, g: 0, b: 0, a: 0}
+  isCorrectPlacement: 0
+  unitVec: 0
+  comps:
+  - {fileID: 1122017299}
+  - {fileID: 1547563851}
+  - {fileID: 138596361}
+  showingUnits: 0
+  beamMaterial: {fileID: 2100000, guid: b06844f3bfa6c45d8876a150b8b06681, type: 2}
+  _nameLabel: {fileID: 4361834241252407816}
+  _headLabel: {fileID: 421692711605478346}
+  _tailLabel: {fileID: 421692711381120257}
+  _componentLabel: {fileID: 4361834240380059302}
 --- !u!224 &5146268167577199532
 RectTransform:
   m_ObjectHideFlags: 0
@@ -18700,8 +18814,9 @@ GameObject:
   - component: {fileID: 8818501316972189331}
   - component: {fileID: 8818501316972189330}
   - component: {fileID: 8818501316972189332}
+  - component: {fileID: 8818501316972189333}
   m_Layer: 0
-  m_Name: SpaceVector 1
+  m_Name: SpaceVector A
   m_TagString: Vector
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -18714,7 +18829,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8818501316972189329}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 91faeb8e3729b8a4f87f7fdbc60c77b4, type: 3}
   m_Name: 
@@ -18859,6 +18974,37 @@ MonoBehaviour:
   forceValue: 0
   keypad: {fileID: 2049710762}
   beamPlacement: {fileID: 1809301325}
+--- !u!114 &8818501316972189333
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8818501316972189329}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1bffa66c40dc60d429ad64f4561d291f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _camera: {fileID: 287766257}
+  _head: {fileID: 4664034520357950519}
+  _tail: {fileID: 8531048782992225408}
+  _xCompLabel: {fileID: 253233020}
+  _yCompLabel: {fileID: 1276872772}
+  _zCompLabel: {fileID: 2021218735}
+  vecColor: {r: 0.92549026, g: 0, b: 1, a: 0}
+  isCorrectPlacement: 0
+  unitVec: 0
+  comps:
+  - {fileID: 486588306}
+  - {fileID: 1276036120}
+  - {fileID: 349214960}
+  showingUnits: 0
+  beamMaterial: {fileID: 2100000, guid: b06844f3bfa6c45d8876a150b8b06681, type: 2}
+  _nameLabel: {fileID: 835452613}
+  _headLabel: {fileID: 4130502796089386759}
+  _tailLabel: {fileID: 4130502796565410252}
+  _componentLabel: {fileID: 1707801195}
 --- !u!23 &8949113767815254264
 MeshRenderer:
   m_ObjectHideFlags: 0

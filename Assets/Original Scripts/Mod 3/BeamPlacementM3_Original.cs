@@ -65,6 +65,7 @@ public class BeamPlacementM3_Original : MonoBehaviour
 
     void Start()
     {
+        GLOBALS.displayMode = DispMode.Vector;
         _root = GameObject.Find("Content Root");
         _origin = _root.transform.Find("Origin").gameObject;
         _poc = _origin.transform.Find("POC").gameObject;
@@ -227,8 +228,16 @@ public class BeamPlacementM3_Original : MonoBehaviour
                     break;
                 case Stage.m3view:
                     Debug.Log("trigg in m3view");
-                    //  calcPanel.SetActive(true);
+                   calcPanel.SetActive(true);
                     calcPanel.GetComponent<CalculationsPanel>().StartCalculationsSequence();
+                    GLOBALS.stage++;
+                    break;
+                case Stage.m3highlight:
+                    Debug.Log("in m3highlight");
+                    if (!GetComponent<VectorMathM3_Original>().vectors[vec].GetComponent<VectorProperties>().isForceKnown)
+                            GetComponent<VectorMathM3_Original>().vectors[vec].GetComponent<VectorControlM3_Original>().vecColor = Color.white;
+                        else
+                            vec++;
                     break;
                 default:
                     return;
@@ -259,8 +268,27 @@ public class BeamPlacementM3_Original : MonoBehaviour
             // If we're viewing the completed operation, bumper will toggle the labels we are viewing
             if (GLOBALS.stage == Stage.m3view)
             {
-                GLOBALS.displayMode = DispMode.Components; 
-                Debug.Log("in view mode, bumper press rec");
+                switch (GLOBALS.displayMode)
+                {
+                    case DispMode.Vector:
+                        GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().SetUnitVec(false);
+                        GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().SetEnabledLabels(false, false, true, true);
+                        Debug.Log("in comp mode for vector " + GLOBALS.SelectedVec.name + " bumper press rec");
+                        GLOBALS.displayMode = DispMode.Components;
+                        break;
+                    case DispMode.Components:
+                        GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().SetUnitVec(true);
+                        GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().SetEnabledLabels(false, false, true, true);
+                        Debug.Log("in unit mode for vector " + GLOBALS.SelectedVec.name + " bumper press rec");
+                        GLOBALS.displayMode = DispMode.Units;
+                        break;
+                    case DispMode.Units:
+                        GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().SetUnitVec(false);
+                        GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().SetEnabledLabels(false, false, false, false);
+                        Debug.Log("in unit mode for vector " + GLOBALS.SelectedVec.name + " bumper press rec");
+                        GLOBALS.displayMode = DispMode.Vector;
+                        break;
+                }
             }
         }
     }

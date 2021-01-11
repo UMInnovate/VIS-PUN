@@ -4,7 +4,7 @@ using UnityEngine;
 using TMPro;
 
 [ExecuteInEditMode]
-public class VectorControl_Original : MonoBehaviour
+public class VectorControlM3_Original : MonoBehaviour
 {
     #region public references
     public Camera _camera;
@@ -30,6 +30,7 @@ public class VectorControl_Original : MonoBehaviour
     private Vector3 vectorComponents;
 
     public bool isCorrectPlacement = false;
+    [HideInInspector] public bool unitVec;
 
     [SerializeField, Tooltip("xComp, yComp, zComp objects")]
     private List<LineRenderer> comps;
@@ -37,7 +38,7 @@ public class VectorControl_Original : MonoBehaviour
     private bool showingUnits;
 
     [SerializeField] private Material beamMaterial;
-    [SerializeField] private TextMeshPro _nameLabel;
+    [SerializeField] public TextMeshPro _nameLabel;
     [SerializeField] private TextMeshPro _headLabel;
     [SerializeField] private TextMeshPro _tailLabel;
     [SerializeField] private TextMeshPro _componentLabel;
@@ -53,6 +54,7 @@ public class VectorControl_Original : MonoBehaviour
         InitLabels();
 
         SetEnabledLabels(false, false, false, false);
+        unitVec = false;
         InitComps();
     }
 
@@ -72,6 +74,11 @@ public class VectorControl_Original : MonoBehaviour
                 RebuildComps();
         }
         RotateLabelsTowardUser();
+    }
+
+    public void SetUnitVec(bool i)
+    {
+        unitVec = i; 
     }
 
     // gets called by VectorMath
@@ -197,6 +204,13 @@ public class VectorControl_Original : MonoBehaviour
         comps[0].SetPosition(1, transform.position + transform.right * vectorComponents.x);
         comps[1].SetPosition(1, transform.position + transform.up * vectorComponents.y);
         comps[2].SetPosition(1, transform.position + transform.forward * vectorComponents.z);
+
+        if(unitVec)
+        {
+            comps[0].SetPosition(1, transform.position + transform.right * (vectorComponents.x/vectorComponents.magnitude));
+            comps[1].SetPosition(1, transform.position + transform.up * (vectorComponents.y/vectorComponents.magnitude));
+            comps[2].SetPosition(1, transform.position + transform.forward * (vectorComponents.z/vectorComponents.magnitude));
+        }
     }
 
     private void RotateLabelsTowardUser()

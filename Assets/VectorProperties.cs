@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.XR.MagicLeap;
 
@@ -26,9 +28,24 @@ public class VectorProperties : MonoBehaviour
     public void SetForceVal(int fval)
     {
         forceValue = fval;
-        gameObject.GetComponent<VectorControl>()._nameLabel.text += (" = " + fval.ToString());
+
+        //REGEX \b([A]|[B]|[C]|[D])
+        //SpaceVector A
+        string subA = gameObject.name.Substring(12);
+        Debug.Log("subA = " + subA);
+        string subB = gameObject.name.Substring(11);
+        Debug.Log("subB = " + subB);
+        if(GLOBALS.inFeet) gameObject.GetComponent<VectorControlM3_Original>().SetName(subA + " = " + fval.ToString() + " lbs");
+        else gameObject.GetComponent<VectorControlM3_Original>().SetName(subA + " = " + fval.ToString() + " N");
     }
 
+    public void ViewMode(DispMode disp)
+    {
+        if(disp == DispMode.Components)
+        {
+            gameObject.GetComponent<VectorControlM3_Original>().GetVectorComponents();
+        }
+    }
     #endregion
     
      void Start()
@@ -47,6 +64,7 @@ public class VectorProperties : MonoBehaviour
             isForceKnown = true;
             //TRIGGER NEW STATE (ENTRY KEYPAD)
             //origin, content root, content
+            GLOBALS.SelectedVec = gameObject;
             if (GLOBALS.stage == Stage.m3forcesel)
             {  //placed vectors, going into force keypad
                 Debug.Log("hover detected");

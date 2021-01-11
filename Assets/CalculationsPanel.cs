@@ -4,12 +4,11 @@ using UnityEngine;
 
 public class CalculationsPanel : MonoBehaviour
 {
-    private GameObject panel;
+    
     // Start is called before the first frame update
     void Start()
     {
-        panel = GetComponent<GameObject>();
-        panel.SetActive(false);
+       gameObject.SetActive(false);
     }
 
     // Update is called once per frame
@@ -20,8 +19,8 @@ public class CalculationsPanel : MonoBehaviour
 
     public void StartCalculationsSequence()
     {
-        panel.transform.position = GLOBALS.pocPos + new Vector3(1f, 0f, 1f);
-
-        panel.SetActive(true);
+        gameObject.SetActive(true);
+        gameObject.transform.position =  new Vector3(1.5f, 0f, 1f);
+        Debug.Log("calc canv init at " + gameObject.transform.position.ToString());
     }
 }

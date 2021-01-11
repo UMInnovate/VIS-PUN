@@ -40,6 +40,7 @@ public enum Stage
     m3forcesel,
     m3keypad,      //validate vector
     m3view,      //popup for user interaction, "is this a correct vector?"
+    m3highlight,
 };
 
 public enum VecOp
@@ -63,7 +64,7 @@ public enum DispMode
 public static class GLOBALS
 {
     // default units are meters
-    public static bool inFeet = true;
+    public static bool inFeet = true; 
     // add audio settings
     public static bool soundOn = true;
     // is the vector correctly placed?
@@ -94,7 +95,7 @@ public static class GLOBALS
     public static bool didCross = false;
     // temporary flag in case need to switch cross product
     public static bool invertCross = false;
-
+    public static GameObject SelectedVec;
     public static bool showingCoords = false;
 
 
