@@ -239,7 +239,9 @@ public class VectorControlM3_Original : MonoBehaviour
         if (_componentLabel.enabled)
         {
             _componentLabel.transform.localPosition = vectorComponents * 0.5f;
-            _componentLabel.text = MakeCompLabel(vectorComponents);
+            if(unitVec)
+                _componentLabel.text = MakeCompLabel(vectorComponents/vectorComponents.magnitude);
+            else _componentLabel.text = MakeCompLabel(vectorComponents);
             Quaternion compRotation = Quaternion.LookRotation(_componentLabel.transform.position - _camera.transform.position);
             _componentLabel.transform.rotation = Quaternion.Slerp(_componentLabel.transform.rotation, compRotation, 1.5f);
             _componentLabel.transform.position -= _componentLabel.transform.forward * viewOffset;
@@ -250,9 +252,9 @@ public class VectorControlM3_Original : MonoBehaviour
             _yCompLabel.transform.position = comps[1].GetPosition(1);
             _zCompLabel.transform.position = comps[2].GetPosition(1);
 
-            _xCompLabel.text = "|" + _nameLabel.text + "x|\n(" + vectorComponents.x.ToString(GLOBALS.format) + ")";
-            _yCompLabel.text = "|" + _nameLabel.text + "y|\n(" + vectorComponents.y.ToString(GLOBALS.format) + ")";
-            _zCompLabel.text = "|" + _nameLabel.text + "z|\n(" + vectorComponents.z.ToString(GLOBALS.format) + ")";
+            _xCompLabel.text = "|" + _nameLabel.text.Substring(0,1) + "x|\n(" + vectorComponents.x.ToString(GLOBALS.format) + ")";
+            _yCompLabel.text = "|" + _nameLabel.text.Substring(0, 1) + "y|\n(" + vectorComponents.y.ToString(GLOBALS.format) + ")";
+            _zCompLabel.text = "|" + _nameLabel.text.Substring(0, 1) + "z|\n(" + vectorComponents.z.ToString(GLOBALS.format) + ")";
 
             Quaternion xRotation = Quaternion.LookRotation(_xCompLabel.transform.position - _camera.transform.position);
             _xCompLabel.transform.rotation = Quaternion.Slerp(_xCompLabel.transform.rotation, xRotation, 1.5f);

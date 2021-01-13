@@ -230,7 +230,7 @@ public class BeamPlacementM3_Original : MonoBehaviour
                     Debug.Log("trigg in m3view");
                    calcPanel.SetActive(true);
                     calcPanel.GetComponent<CalculationsPanel>().StartCalculationsSequence();
-                    GLOBALS.stage++;
+                   // GLOBALS.stage++;
                     break;
                 case Stage.m3highlight:
                     Debug.Log("in m3highlight");

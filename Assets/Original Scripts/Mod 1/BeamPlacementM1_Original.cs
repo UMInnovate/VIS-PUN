@@ -83,7 +83,7 @@ public class BeamPlacementM1_Original : MonoBehaviour
             }
             else if (GLOBALS.displayMode == DispMode.Units)
             {
-                _origin.GetComponent<OriginControlM1_Original>().DisplayUnitVectors();
+                _origin.GetComponent<OriginControlM1_Original>().DisplayUnitVectors(_vector.GetVectorComponents(), _vector.GetMagnitude());
             }
         }
     }
@@ -187,6 +187,7 @@ public class BeamPlacementM1_Original : MonoBehaviour
                     // todo make the origin display unit vectors
                     // ...
                     //
+                    _origin.GetComponent<OriginControlM1_Original>().DisplayUnitVectors(_vector.GetVectorComponents(), _vector.GetMagnitude()); 
                     _angles.SetActive(false);
                     break;
                 case DispMode.Angles:

@@ -72,20 +72,20 @@ public class OriginControlM1_Original : MonoBehaviour
         {
             xAxisText.text = (vectorComps.x * GLOBALS.m2ft).ToString(GLOBALS.format);
             yAxisText.text = (vectorComps.y * GLOBALS.m2ft).ToString(GLOBALS.format);
-            zAxisText.text = (vectorComps.z * GLOBALS.m2ft).ToString(GLOBALS.format);
+            zAxisText.text = ((-1* vectorComps.z) * GLOBALS.m2ft).ToString(GLOBALS.format);
         }
         else
         {
             xAxisText.text = vectorComps.x.ToString(GLOBALS.format);
             yAxisText.text = vectorComps.y.ToString(GLOBALS.format);
-            zAxisText.text = vectorComps.z.ToString(GLOBALS.format);
+            zAxisText.text = (-1 * vectorComps.z).ToString(GLOBALS.format);
         }
     }
 
     /*  Display unit vectors
      *  displays the X, Y, and Z line renderers at 1 ft length
      */
-    public void DisplayUnitVectors()
+    public void DisplayUnitVectors(Vector3 vectorComps, float mag)
     {
         origin_axes[0].endColor = new Color(1, 0, 0, startAlpha); // red component color for positive x
         origin_axes[1].endColor = new Color(0, 1, 0, startAlpha); // green component color for positive y
@@ -95,23 +95,29 @@ public class OriginControlM1_Original : MonoBehaviour
         origin_axes[4].enabled = false;
         origin_axes[5].enabled = false;
 
+        Vector3 adjVec = new Vector3((vectorComps.x / mag) + transform.position.x, (vectorComps.y / mag) + transform.position.y, (vectorComps.z / mag) + transform.position.z);
         if (!GLOBALS.inFeet) // sets position in ft.
         {
-            origin_axes[0].SetPosition(1, transform.position + transform.right);  // set position(1=endpoint position) of origin location of x
-            origin_axes[1].SetPosition(1, transform.position + transform.up); // set position(1=endpoint position) of origin location of y
-            origin_axes[2].SetPosition(1, transform.position + transform.forward); // set position(1=endpoint position) of origin location of z
+            origin_axes[0].SetPosition(1, transform.position + transform.right * vectorComps.x/vectorComps.magnitude);  // set position(1=endpoint position) of origin location of x
+            origin_axes[1].SetPosition(1, transform.position + transform.up * vectorComps.y / vectorComps.magnitude); // set position(1=endpoint position) of origin location of y
+            origin_axes[2].SetPosition(1, transform.position + transform.forward * vectorComps.z / vectorComps.magnitude); // set position(1=endpoint position) of origin location of z
+
+            //and update the text
+            xAxisText.text = (vectorComps.x/vectorComps.magnitude).ToString(GLOBALS.format);
+            yAxisText.text = (vectorComps.y/vectorComps.magnitude).ToString(GLOBALS.format);
+            zAxisText.text = (-1 * vectorComps.z/vectorComps.magnitude).ToString(GLOBALS.format);
         }
         // update text labels for default vector values
         else {
-            origin_axes[0].SetPosition(1, transform.position + transform.right/GLOBALS.m2ft);  // set position(1=endpoint position) of origin location of x
-            origin_axes[1].SetPosition(1, transform.position + transform.up/GLOBALS.m2ft); // set position(1=endpoint position) of origin location of y
-            origin_axes[2].SetPosition(1, transform.position + transform.forward/GLOBALS.m2ft); // set position(1=endpoint position) of origin location of z
+            origin_axes[0].SetPosition(1,( transform.position + transform.right * vectorComps.x / vectorComps.magnitude )/GLOBALS.m2ft);  // set position(1=endpoint position) of origin location of x
+            origin_axes[1].SetPosition(1, (transform.position + transform.up * vectorComps.y / vectorComps.magnitude)/GLOBALS.m2ft); // set position(1=endpoint position) of origin location of y
+            origin_axes[2].SetPosition(1, (transform.position + transform.forward * vectorComps.z / vectorComps.magnitude)/GLOBALS.m2ft); // set position(1=endpoint position) of origin location of z
+            //and update the text axes
+            xAxisText.text = (vectorComps.x/vectorComps.magnitude * GLOBALS.m2ft).ToString(GLOBALS.format);
+            yAxisText.text = (vectorComps.y/vectorComps.magnitude * GLOBALS.m2ft).ToString(GLOBALS.format);
+            zAxisText.text = ((-1 * vectorComps.z/vectorComps.magnitude) * GLOBALS.m2ft).ToString(GLOBALS.format);
         }
 
-        xAxisText.text = (1f).ToString(GLOBALS.format);
-        yAxisText.text = (1f).ToString(GLOBALS.format);
-        zAxisText.text = (1f).ToString(GLOBALS.format);
-        
     }
 
     // rotating labels to camera every frame
