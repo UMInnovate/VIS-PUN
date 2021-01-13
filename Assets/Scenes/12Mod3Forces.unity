@@ -5795,7 +5795,6 @@ GameObject:
   - component: {fileID: 882783314}
   - component: {fileID: 882783319}
   - component: {fileID: 1809301322}
-  - component: {fileID: 1809301321}
   - component: {fileID: 1809301325}
   - component: {fileID: 882783317}
   m_Layer: 0
@@ -9439,7 +9438,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1497456798}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9a955ee40b78a2c489d4859b55f1f5e3, type: 3}
   m_Name: 
@@ -10582,23 +10581,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1809301321
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 882783312}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 295ddeac50a6d4c0bbf859b84fd40242, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  backPanel: {fileID: 1039002115}
-  eqLines:
-  - {fileID: 2032429317}
-  - {fileID: 245432572}
-  - {fileID: 1423173966}
 --- !u!82 &1809301322
 AudioSource:
   m_ObjectHideFlags: 0
@@ -12441,6 +12423,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dafbe656fa6d8b940a9318229dbc0f9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  header: {fileID: 1606819765}
 --- !u!1 &1962220102
 GameObject:
   m_ObjectHideFlags: 0

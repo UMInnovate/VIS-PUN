@@ -39,7 +39,7 @@ public class BeamPlacementM3_Original : MonoBehaviour
     // LineRenderer from controller
     private LineRenderer _beamline = null;
     // VectorMath handles vector positioning
-    private VectorMath_Original _vectorMath = null;
+    private VectorMathM3_Original _vectorMath = null;
     // Position of end of the beam
     private Vector3 beamEnd;
     // Sphere object at end of beam
@@ -73,7 +73,7 @@ public class BeamPlacementM3_Original : MonoBehaviour
         _controller = MLInput.GetController(MLInput.Hand.Left);
         _beamline = GetComponent<LineRenderer>();
         _beamSphere = GameObject.Find("BeamSphere");
-        _vectorMath = GetComponent<VectorMath_Original>();
+        _vectorMath = GetComponent<VectorMathM3_Original>();
         _giveInstructions = GetComponent<GiveInstructions>();
         vec = 0;
         GLOBALS.stage = Stage.m3orig;
@@ -228,7 +228,7 @@ public class BeamPlacementM3_Original : MonoBehaviour
                     break;
                 case Stage.m3view:
                     Debug.Log("trigg in m3view");
-                   calcPanel.SetActive(true);
+                    calcPanel.SetActive(true);
                     calcPanel.GetComponent<CalculationsPanel>().StartCalculationsSequence();
                    // GLOBALS.stage++;
                     break;
