@@ -61,11 +61,12 @@ public class BeamPlacementM2_Original : MonoBehaviour
 
         GLOBALS.stage = Stage.m2orig;
         vec = 0;
-        if(!MLInput.IsStarted)
+        if (!MLInput.IsStarted)
             MLInput.Start();
         MLInput.OnControllerButtonUp += OnButtonUp;
         MLInput.OnTriggerUp += OnTriggerUp;
-        _beamline.startWidth = 0.007f ;
+        _beamline.enabled = true;
+        _beamline.startWidth = 0.007f;
         _beamline.endWidth = 0.01f;
         _origin.SetActive(false);
         menuPanel.SetActive(false);
@@ -76,6 +77,24 @@ public class BeamPlacementM2_Original : MonoBehaviour
 
     void Update()
     {
+        /*if (GLOBALS.isInCoroutine)
+        {
+            MLInput.OnControllerButtonUp -= OnButtonUp;
+            MLInput.Stop();
+            Debug.Log("Handling coroutine");
+        }
+
+        else
+        {
+            MLInput.Start();
+            MLInput.OnControllerButtonUp += OnButtonUp;
+        }*/
+
+        if (GLOBALS.isInCoroutine)
+        {
+            Debug.Log("Handling coroutine");
+        }
+
         aMenuIsActive = (operationsPanel.activeSelf || menuPanel.activeSelf);
         if (GLOBALS.gridOn)
             SnapToGrid();
@@ -87,7 +106,7 @@ public class BeamPlacementM2_Original : MonoBehaviour
             _vectorMath.PlaceVectorPoint(vec, true, beamEnd);
         }
 
-        Debug.Log("Current stage: " + GLOBALS.stage);
+        //Debug.Log("Current stage: " + GLOBALS.stage);
 
     }
 
@@ -122,7 +141,7 @@ public class BeamPlacementM2_Original : MonoBehaviour
     // Note - the trigger click handles what happens upon EXITING the stage given in the switch statement.
     private void OnTriggerUp(byte controllerId, float pressure)
     {
-        if (!aMenuIsActive)
+        if (!aMenuIsActive && !GLOBALS.isInCoroutine)
         {
             switch (GLOBALS.stage)
             {
@@ -147,10 +166,11 @@ public class BeamPlacementM2_Original : MonoBehaviour
                     IncrementStage();
                     break;
                 case Stage.v1calc:
-                        // the user must click to launch the animation of the component calculations
+                    // the user must click to launch the animation of the component calculations
+                    // this Corroutine animates the display of calculations
+                    // it increments the stage AFTER completion
+                    disableControllerInput();
                     StartCoroutine(ComponentCalculation(0));
-                        // this Corroutine animates the display of calculations
-                        // it increments the stage AFTER completion
                     break;
                 case Stage.v2p1:
                     _vectorMath.SetVectorLabels(0, false, false, true, false);
@@ -163,6 +183,7 @@ public class BeamPlacementM2_Original : MonoBehaviour
                     IncrementStage();
                     break;
                 case Stage.v2calc:
+                    disableControllerInput();
                     StartCoroutine(ComponentCalculation(1));
                     // this case it should make the operations panel launch upon completion
                     break;
@@ -175,6 +196,20 @@ public class BeamPlacementM2_Original : MonoBehaviour
                     return;
             }
         }
+        Debug.Log("Current stage: " + GLOBALS.stage);
+    }
+
+    private void disableControllerInput()
+    {
+        GLOBALS.isInCoroutine = true;
+        Debug.Log("MLInput disabled");
+    }
+
+    private void enableControllerInput()
+    {
+        GLOBALS.isInCoroutine = false;
+        _beamline.enabled = true;
+        Debug.Log("MLInput enabled");
     }
 
     // Home or Bumper clicks handled here
@@ -196,12 +231,12 @@ public class BeamPlacementM2_Original : MonoBehaviour
         else if (button == MLInputControllerButton.Bumper)
         {
             // If we're viewing the completed operation, bumper will toggle the labels we are viewing
-            if(GLOBALS.stage == Stage.opView)
+            if (GLOBALS.stage == Stage.opView)
             {
                 GLOBALS.showingCoords = !GLOBALS.showingCoords;
-                if(GLOBALS.showingCoords)
+                if (GLOBALS.showingCoords)
                 {
-                    switch(GLOBALS.opSelected)
+                    switch (GLOBALS.opSelected)
                     {
                         case VecOp.none:
                             break;
@@ -242,7 +277,7 @@ public class BeamPlacementM2_Original : MonoBehaviour
         if (_controller.Touch1Active)
         {
             // Touchpad handles rotating the origin
-            if(GLOBALS.stage == Stage.m2rotate)
+            if (GLOBALS.stage == Stage.m2rotate)
             {
                 switch (_controller.TouchpadGesture.Direction)
                 {
@@ -274,11 +309,12 @@ public class BeamPlacementM2_Original : MonoBehaviour
     {
         yield return StartCoroutine(_vectorMath.ComponentCalc(v));
         _vectorMath.SetVectorLabels(v, false, false, true, false);
-        if(GLOBALS.stage == Stage.v2calc)
+        if (GLOBALS.stage == Stage.v2calc)
         {
             // *** POTENTIAL BUG? ***
             operationsPanel.SetActive(true);
         }
+        enableControllerInput();
         IncrementStage();
     }
 

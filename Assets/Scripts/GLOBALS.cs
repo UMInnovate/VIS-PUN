@@ -98,6 +98,8 @@ public static class GLOBALS
     public static GameObject SelectedVec;
     public static bool showingCoords = false;
 
+    public static bool isInCoroutine = false;
+
 
     /* DEBUG GLOBALS */
     public static Vector3 headPos;
