@@ -27,6 +27,7 @@ public enum Stage
     opView,     // watch the app animate/show the operation
     m3orig,     //MODULE 3 Begins HERE:
     m3rotate,   //rotate origin
+   // m3pin,
     m3poc,      //point of concurrency
     m3v1p1,     //place a vector tail
     m3v1p2,     //place a vector head
@@ -36,10 +37,10 @@ public enum Stage
     m3v3p2,     //place a vector head
     m3v4p1,     //place a vector tail
     m3v4p2,     //place a vector head
-    m3val,      //validate vector
-    m3pop,      //popup for user interaction, "is this a correct vector?"
-    m3opSel,    //choose a force vector
-    m3opView   //watch the app animate force 
+    m3forcesel,
+    m3keypad,      //validate vector
+    m3view,      //popup for user interaction, "is this a correct vector?"
+    m3highlight,
 };
 
 public enum VecOp
@@ -63,7 +64,7 @@ public enum DispMode
 public static class GLOBALS
 {
     // default units are meters
-    public static bool inFeet = true;
+    public static bool inFeet = true; 
     // add audio settings
     public static bool soundOn = true;
     // is the vector correctly placed?
@@ -94,18 +95,23 @@ public static class GLOBALS
     public static bool didCross = false;
     // temporary flag in case need to switch cross product
     public static bool invertCross = false;
-
+    public static GameObject SelectedVec;
     public static bool showingCoords = false;
+
+    public static bool isInCoroutine = false;
 
 
     /* DEBUG GLOBALS */
     public static Vector3 headPos;
     public static Vector3 tailPos;
-    public static Vector3 pocPos; 
+    public static Vector3 pocPos;
     #region premade colors
     public static Color visCyan = new Color(0.4f, 1, 1, 0.5f);
     public static Color visOrange = new Color(1, 0.7f, 0, 0.5f);
     public static Color visMagenta = new Color(1, 0, 1, 0.5f);
     public static Color visLime = new Color(0.4f, 1, 0);
+    public static Color visValid = new Color(207, 255, 212);
+    public static Color visInvalid = new Color(237, 0, 24);
+    public static Color visHovered = new Color(222, 248, 255);
     #endregion
 }

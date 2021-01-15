@@ -32,6 +32,7 @@ public class StorableObjectBin : MonoBehaviour
                 
                 //Destroy(_object.gameObject); // destroy
                 //StorableObjectList.Remove(_object); // remove from list
+
             }
 
             else
