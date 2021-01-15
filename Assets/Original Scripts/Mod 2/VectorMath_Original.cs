@@ -6,7 +6,8 @@ using TMPro;
 public class VectorMath_Original : MonoBehaviour
 {
     [SerializeField, Tooltip("The 3 vectors in the scene")]
-    private List<VectorControl_Original> vectors;
+    public List<VectorControl_Original> vectors;
+    
     // display the equations, stored in other script
     DisplayEquation _displayEquation = null;
     [SerializeField, Tooltip("The angle text label")]
@@ -36,10 +37,13 @@ public class VectorMath_Original : MonoBehaviour
 
         vectors[0].SetName("A");
         vectors[1].SetName("B");
+        vectors[2].SetName("C");
+        vectors[3].SetName("D");
 
         vectors[0].vecColor = GLOBALS.visCyan;
         vectors[1].vecColor = GLOBALS.visOrange;
         vectors[2].vecColor = GLOBALS.visMagenta;
+        vectors[3].vecColor = GLOBALS.visLime;
 
         foreach (VectorControl_Original v in vectors)
         {
@@ -65,66 +69,118 @@ public class VectorMath_Original : MonoBehaviour
     }
 
     #region public methods
+
+
+    /// <summary>
+    /// USE ONLY FOR TRIGGER DOWN
+    /// </summary>
+    /// <param name="v"></param>
+    /// <param name="isHead"></param>
+    /// <param name="loc"></param>
+    /// 
+    public void PlaceVector3(int v, bool isHead, Vector3 loc)
+    {
+        if (isHead)
+        {
+            if (vectors[v].GetComponent<VectorControl_Original>().isCorrectPlacement) //if the tail is on the poc, let the user place wherever
+            {
+                vectors[v].GetComponent<VectorControl_Original>()._head.position = loc;
+                if (v== 0) vectors[v].SetEnabledLabels(true, true, false, false);
+                else vectors[v].SetEnabledLabels(false, true, false, false);
+            }
+            else //if the tail is not on the poc, the user can't choose a place, it auto fills to the poc 
+            {
+                vectors[v].GetComponent<VectorControl_Original>()._head.position = GetComponent<BeamPlacementM3_Original>().pocPos;
+                if (v == 0) vectors[v].SetEnabledLabels(true, true, false, false);
+                else vectors[v].SetEnabledLabels(true, false, false, false);
+                //  GLOBALS.stage++;
+            }
+            
+        }
+        else
+        {
+            if (Vector3.Distance(loc, GetComponent<BeamPlacementM3_Original>().pocPos) < 0.20f)
+            {
+                vectors[v].transform.position = GetComponent<BeamPlacementM3_Original>().pocPos;
+                vectors[v].GetComponent<VectorControl_Original>().isCorrectPlacement = true;
+                vectors[v].SetEnabledLabels(false, false, false, false);
+              //  GLOBALS.stage++;
+            }
+            else
+            {
+                vectors[v].transform.position = loc;
+                vectors[v].GetComponent<VectorControl_Original>().isCorrectPlacement = false;
+                vectors[v].SetEnabledLabels(true, false, false, false);
+            }
+            vectors[v].gameObject.SetActive(true);
+
+        }
+
+    }
+
     public void PlaceVectorPoint(int v, bool isHead, Vector3 loc)  //v is vector index in list, loc is the position
     {
         if (v >= vectors.Count)
         {
-            Debug.LogError("Error: Vector index out of bounds.");
+           // Debug.LogError("Error: Vector index out of bounds.");
             return;
         }
 
-        if (isHead)
-        {
-            vectors[v].GetComponent<VectorControl_Original>()._head.position = loc;
-            vectors[v].SetEnabledLabels(true, true, false, false);
-        }
-        else
-        {
-            vectors[v].transform.position = loc;
+
+
+        /*if (GLOBALS.stage >= Stage.m3v1p1) {
+            if (isHead) //
+            {
+                if (vectors[v].GetComponent<VectorControl_Original>().isCorrectPlacement == true) //if the placed point has already been placed on the poc, everything is gucci u can continue
+                {
+                    Debug.Log("Same as POC POS");
+                    vectors[v].GetComponent<VectorControl_Original>()._head.position = loc;
+                     
+                }
+                else
+                {
+                    vectors[v].GetComponent<VectorControl_Original>()._head.position = GetComponent<BeamPlacementM3_Original>().pocPos; //if not....pain 
+                }
+                vectors[v].SetEnabledLabels(true, true, false, false);
+                vectors[v].GetComponent<VectorControl_Original>().isCorrectPlacement = false; //reset
+            }
+            else //tail 
+            {
+                if (Vector3.Distance(loc, GetComponent<BeamPlacementM3_Original>().pocPos) < 0.15f) //placed at poc
+                {
+                    Debug.Log("already in contact w POC, can place wherever");
+                    vectors[v].transform.position = GetComponent<BeamPlacementM3_Original>().pocPos; //YEET to the poc
+                    vectors[v].GetComponent<VectorControl_Original>().isCorrectPlacement = true;
+                }
+                else //tail placed wherever
+                {
+                    vectors[v].transform.position = loc; 
+                   // Debug.Log("assigning to poc");
+                }
+
+                vectors[v].SetEnabledLabels(true, false, false, false);
+            }
             vectors[v].gameObject.SetActive(true);
-            vectors[v].SetEnabledLabels(true, false, false, false);
-        }
+        }*/
 
-        if (GLOBALS.stage >= Stage.m3v1p1)
-            ValidateVectorPlacement(v, GLOBALS.pocPos);
-    }
-
-    public bool ValidateVectorPlacement(int v, Vector3 pocLoc)
-    {
-        Vector3 headPos = GLOBALS.headPos;
-        Vector3 tailPos = GLOBALS.tailPos;
-
-        if (headPos == null)
-            Debug.Log("headpos not found");
-
-        if (tailPos == null)
-            Debug.Log("tailpos not found");
-        
-        GLOBALS.headPos = headPos;
-        GLOBALS.tailPos = tailPos;
-        GLOBALS.pocPos = pocLoc;
-
-        Debug.Log("HEAD POS: " + headPos.ToString() + "TAIL POS: " + tailPos.ToString());
-        if ((headPos.x + 0.05f >= pocLoc.x || headPos.x - 0.05f <= pocLoc.x)
-            && (headPos.y + 0.05f >= pocLoc.y || headPos.y - 0.05f <= pocLoc.y)
-            && (headPos.z + 0.05f >= pocLoc.z || headPos.z - 0.05f <= pocLoc.z))
-        { GLOBALS.isCorrectVectorPlacement = true;
-            Debug.Log("POC: " + pocLoc.ToString() + " HEAD: " + headPos.ToString() + " MATCH");
-            return true; 
-        }
-        else if ((tailPos.x + 0.05f >= pocLoc.x || tailPos.x - 0.05f <= pocLoc.x)
-            && (tailPos.y + 0.05f >= pocLoc.y || tailPos.y - 0.05f <= pocLoc.y)
-            && (tailPos.z + 0.05f >= pocLoc.z || tailPos.z - 0.05f <= pocLoc.z))
-        { GLOBALS.isCorrectVectorPlacement = true;
-            Debug.Log("POC: " + pocLoc.ToString() + " TAIL: " + tailPos.ToString() + " MATCH ");
-            return true; 
-        }
         else
-        { GLOBALS.isCorrectVectorPlacement = false;
-            Debug.Log("headpos: " + headPos.ToString() + " tailpos: " + tailPos.ToString() + " poc: " + pocLoc.ToString());
-            return false; 
+        {
+            if (isHead) {
+                vectors[v].GetComponent<VectorControl_Original>()._head.position = loc;
+                vectors[v].SetEnabledLabels(true, true, false, false);
+            }
+            else
+            {
+                Debug.Log("outside of m3v1p1");
+                vectors[v].transform.position = loc;
+                vectors[v].gameObject.SetActive(true);
+                vectors[v].SetEnabledLabels(true, false, false, false);
+            }
         }
+            
+        
     }
+    
     // BeamPlacement.cs can set which vector labels are displayed via this function
     public void SetVectorLabels(int v, bool tail, bool head, bool components, bool units)
     {

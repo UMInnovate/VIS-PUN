@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.MagicLeap;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using System;
 
 /*  BeamPlacementM2.cs handles user input and the scene's state for Module 2
  *  This script handles placing the controller beam, opening/closing menus,
@@ -16,8 +18,16 @@ public class BeamPlacementM3_Original : MonoBehaviour
     public GameObject menuPanel;
     // Operations Panel
     public GameObject operationsPanel;
+    //Keypad
+    public GameObject keypad;
+    //Calculations Panel
+    public GameObject calcPanel;
+    public Text inputText;
     #endregion
+
+
     #region Private member variables
+    [HideInInspector] public Vector3 pocPos;
     // Content root
     private GameObject _root;
     // Origin of coordinate system
@@ -50,13 +60,16 @@ public class BeamPlacementM3_Original : MonoBehaviour
     GiveInstructions _giveInstructions = null;
     // Is a menu being displayed?
     private bool aMenuIsActive;
+    private int debugCount;
     #endregion
 
     void Start()
     {
+        GLOBALS.displayMode = DispMode.Vector;
         _root = GameObject.Find("Content Root");
         _origin = _root.transform.Find("Origin").gameObject;
         _poc = _origin.transform.Find("POC").gameObject;
+        pocPos = _poc.transform.position;
         _controller = MLInput.GetController(MLInput.Hand.Left);
         _beamline = GetComponent<LineRenderer>();
         _beamSphere = GameObject.Find("BeamSphere");
@@ -64,7 +77,6 @@ public class BeamPlacementM3_Original : MonoBehaviour
         _giveInstructions = GetComponent<GiveInstructions>();
         vec = 0;
         GLOBALS.stage = Stage.m3orig;
-        vec = 0;
         if (!MLInput.IsStarted)
             MLInput.Start();
         MLInput.OnControllerButtonUp += OnButtonUp;
@@ -72,32 +84,34 @@ public class BeamPlacementM3_Original : MonoBehaviour
         _beamline.startWidth = 0.007f;
         _beamline.endWidth = 0.01f;
         _origin.SetActive(false);
+
         menuPanel.SetActive(false);
+        keypad.SetActive(false);
         operationsPanel.SetActive(false);
+        calcPanel.SetActive(false);
         placingHead = false;
         _giveInstructions.DisplayText();
+        debugCount = 0;
+
     }
 
     void Update()
     {
+       // Debug.Log("STAGE: " + GLOBALS.stage);
         aMenuIsActive = (operationsPanel.activeSelf || menuPanel.activeSelf);
         if (GLOBALS.gridOn)
             SnapToGrid();
         HandleBeamPlacement();
         HandleTouchpadInput();
 
+        pocPos = _poc.transform.position;
+       // Debug.Log("POC POS: " + pocPos);
         // if placingHead, have vector head follow beam
         if (placingHead && !aMenuIsActive)
         {
-            _vectorMath.PlaceVectorPoint(vec, true, beamEnd);
-            GLOBALS.headPos = beamEnd;
+            _vectorMath.PlaceVector3(vec, true, beamEnd);
         }
-
-        GLOBALS.isCorrectVectorPlacement = _vectorMath.ValidateVectorPlacement(vec, _poc.transform.position);
-        //  GLOBALS.isCorrectVectorPlacement = _vectorMath.ValidateVectorPlacement(vec, _poc.transform.position);
-        //  if ((GLOBALS.stage == Stage.m3v1p2 || GLOBALS.stage == Stage.m3v3p2 || GLOBALS.stage == Stage.m3v4p1)  && !GLOBALS.isCorrectVectorPlacement)
-        //     DecrementStage();
-        //Debug.Log("CURRENT STAGE: " + GLOBALS.stage);
+        
         // Debug.Log("Vector is valid: " + GLOBALS.isCorrectVectorPlacement);
     }
 
@@ -114,16 +128,10 @@ public class BeamPlacementM3_Original : MonoBehaviour
 
     public void DecrementStage()
     {
-        //decrement our stage variable to return to previous set
-        if (GLOBALS.stage > Stage.m3v1p1 && GLOBALS.stage < Stage.m3val)
-        {
-            GLOBALS.stage--;
-            GLOBALS.stage--;
-        }
-        else //else, normal decrementation
             GLOBALS.stage--;
 
     }
+
 
     private void HandleBeamPlacement()
     {
@@ -164,12 +172,13 @@ public class BeamPlacementM3_Original : MonoBehaviour
                 case Stage.m3poc:
                     _poc.SetActive(true);
                     _poc.transform.position = beamEnd;
-                    beamEnd = GLOBALS.pocPos;
+                    GLOBALS.pocPos = _poc.transform.position; //save to global for use in calc canv
                     IncrementStage();
                     placingHead = true;
                     break;
                 case Stage.m3v1p1:
-                    _vectorMath.PlaceVectorPoint(vec, false, beamEnd);
+                    GLOBALS.displayMode = DispMode.Vector;
+                    _vectorMath.PlaceVector3(vec, false, beamEnd);
                     GLOBALS.tailPos = beamEnd;
                     placingHead = true;
                     IncrementStage();
@@ -180,7 +189,7 @@ public class BeamPlacementM3_Original : MonoBehaviour
                     IncrementStage();
                     break;
                 case Stage.m3v2p1:
-                    _vectorMath.PlaceVectorPoint(vec, false, beamEnd);
+                    _vectorMath.PlaceVector3(vec, false, beamEnd);
                     GLOBALS.tailPos = beamEnd;
                     placingHead = true;
                     IncrementStage();
@@ -191,7 +200,7 @@ public class BeamPlacementM3_Original : MonoBehaviour
                     IncrementStage();
                     break;
                 case Stage.m3v3p1:
-                    _vectorMath.PlaceVectorPoint(vec, false, beamEnd);
+                    _vectorMath.PlaceVector3(vec, false, beamEnd);
                     GLOBALS.tailPos = beamEnd;
                     placingHead = true;
                     IncrementStage();
@@ -202,7 +211,7 @@ public class BeamPlacementM3_Original : MonoBehaviour
                     IncrementStage();
                     break;
                 case Stage.m3v4p1:
-                    _vectorMath.PlaceVectorPoint(vec, false, beamEnd);
+                    _vectorMath.PlaceVector3(vec, false, beamEnd);
                     GLOBALS.tailPos = beamEnd;
                     placingHead = true;
                     IncrementStage();
@@ -212,11 +221,31 @@ public class BeamPlacementM3_Original : MonoBehaviour
                     vec++;
                     IncrementStage();
                     break;
+                case Stage.m3forcesel:
+                    keypad.SetActive(true);
+                    break;
+                case Stage.m3keypad:
+                    break;
+                case Stage.m3view:
+                    Debug.Log("trigg in m3view");
+                   calcPanel.SetActive(true);
+                    calcPanel.GetComponent<CalculationsPanel>().StartCalculationsSequence();
+                    GLOBALS.stage++;
+                    break;
+                case Stage.m3highlight:
+                    Debug.Log("in m3highlight");
+                    if (!GetComponent<VectorMathM3_Original>().vectors[vec].GetComponent<VectorProperties>().isForceKnown)
+                            GetComponent<VectorMathM3_Original>().vectors[vec].GetComponent<VectorControlM3_Original>().vecColor = Color.white;
+                        else
+                            vec++;
+                    break;
                 default:
                     return;
             }
         }
     }
+
+
 
     // Home or Bumper clicks handled here
     private void OnButtonUp(byte controllerId, MLInputControllerButton button)
@@ -237,41 +266,28 @@ public class BeamPlacementM3_Original : MonoBehaviour
         else if (button == MLInputControllerButton.Bumper)
         {
             // If we're viewing the completed operation, bumper will toggle the labels we are viewing
-            if (GLOBALS.stage == Stage.opView)
+            if (GLOBALS.stage == Stage.m3view)
             {
-                GLOBALS.showingCoords = !GLOBALS.showingCoords;
-                if (GLOBALS.showingCoords)
+                switch (GLOBALS.displayMode)
                 {
-                    switch (GLOBALS.opSelected)
-                    {
-                        case VecOp.none:
-                            break;
-                        case VecOp.Addition:
-                            _vectorMath.SetVectorLabels(0, false, false, false, false);
-                            _vectorMath.SetVectorLabels(1, true, false, false, false);
-                            _vectorMath.SetVectorLabels(2, true, true, false, false);
-                            break;
-                        case VecOp.Subtraction:
-                            _vectorMath.SetVectorLabels(0, false, false, false, false);
-                            _vectorMath.SetVectorLabels(1, true, false, false, false);
-                            _vectorMath.SetVectorLabels(2, true, true, false, false);
-                            break;
-                        case VecOp.Dot:
-                            _vectorMath.SetVectorLabels(0, false, false, false, true);
-                            _vectorMath.SetVectorLabels(1, true, false, false, true);
-                            break;
-                        case VecOp.Cross:
-                            _vectorMath.SetVectorLabels(0, false, true, false, false);
-                            _vectorMath.SetVectorLabels(1, false, true, false, false);
-                            _vectorMath.SetVectorLabels(2, true, true, false, false);
-                            break;
-                    }
-                }
-                else
-                {
-                    _vectorMath.SetVectorLabels(0, false, false, true, false);
-                    _vectorMath.SetVectorLabels(1, false, false, true, false);
-                    _vectorMath.SetVectorLabels(2, false, false, true, false);
+                    case DispMode.Vector:
+                        GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().SetUnitVec(false);
+                        GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().SetEnabledLabels(false, false, true, true);
+                        Debug.Log("in comp mode for vector " + GLOBALS.SelectedVec.name + " bumper press rec");
+                        GLOBALS.displayMode = DispMode.Components;
+                        break;
+                    case DispMode.Components:
+                        GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().SetUnitVec(true);
+                        GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().SetEnabledLabels(false, false, true, true);
+                        Debug.Log("in unit mode for vector " + GLOBALS.SelectedVec.name + " bumper press rec");
+                        GLOBALS.displayMode = DispMode.Units;
+                        break;
+                    case DispMode.Units:
+                        GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().SetUnitVec(false);
+                        GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().SetEnabledLabels(false, false, false, false);
+                        Debug.Log("in unit mode for vector " + GLOBALS.SelectedVec.name + " bumper press rec");
+                        GLOBALS.displayMode = DispMode.Vector;
+                        break;
                 }
             }
         }
@@ -310,62 +326,6 @@ public class BeamPlacementM3_Original : MonoBehaviour
     }
     #endregion
 
-    // this happens whenever the vector head has been placed
-    private IEnumerator ComponentCalculation(int v)
-    {
-        yield return StartCoroutine(_vectorMath.ComponentCalc(v));
-        _vectorMath.SetVectorLabels(v, false, false, true, false);
-        if (GLOBALS.stage == Stage.v2calc)
-        {
-            // *** POTENTIAL BUG? ***
-            operationsPanel.SetActive(true);
-        }
-        IncrementStage();
-    }
-
-    #region Operation Panel Buttons
-
-    // Button: Add.onClick()
-    public void DoAddition()
-    {
-        operationsPanel.SetActive(false);
-        GLOBALS.opSelected = VecOp.Addition;
-        IncrementStage();
-        StartCoroutine(_vectorMath.DoVectorAddition());
-        _vectorMath.SetVectorLabels(2, false, false, true, false);
-    }
-
-    // Button: Subtract.onClick()
-    public void DoSubtraction()
-    {
-        operationsPanel.SetActive(false);
-        GLOBALS.opSelected = VecOp.Subtraction;
-        IncrementStage();
-        StartCoroutine(_vectorMath.DoVectorSubtraction());
-        _vectorMath.SetVectorLabels(2, false, false, true, false);
-    }
-
-    // Button: Dot.onClick()
-    public void DoDotProduct()
-    {
-        operationsPanel.SetActive(false);
-        GLOBALS.opSelected = VecOp.Dot;
-        IncrementStage();
-        StartCoroutine(_vectorMath.DoVectorDot());
-    }
-
-    // Button: Cross.onClick()
-    public void DoCrossProduct()
-    {
-        operationsPanel.SetActive(false);
-        GLOBALS.opSelected = VecOp.Cross;
-        GLOBALS.didCross = true;
-        IncrementStage();
-        StartCoroutine(_vectorMath.DoVectorCross());
-        _vectorMath.SetVectorLabels(2, false, false, true, false);
-    }
-
-    #endregion
 
     #region Unused Methods
     // prototype for grid snapped functionality - currently unused

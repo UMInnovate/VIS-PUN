@@ -29,6 +29,8 @@ public class VectorControl_Original : MonoBehaviour
     private Vector3 relTailPos;
     private Vector3 vectorComponents;
 
+    public bool isCorrectPlacement = false;
+
     [SerializeField, Tooltip("xComp, yComp, zComp objects")]
     private List<LineRenderer> comps;
     [SerializeField, Tooltip("Show/Hide xComp, yComp, zComp")]
@@ -157,6 +159,19 @@ public class VectorControl_Original : MonoBehaviour
         comps[1].endColor = Color.green;
         comps[2].startColor = Color.blue;
         comps[2].endColor = Color.blue;
+    }
+
+    public void DisplayVectorComponent()
+    {
+        InitComps();
+        comps[0].SetPosition(0, _tail.position);
+        comps[1].SetPosition(0, _tail.position);
+        comps[2].SetPosition(0, _tail.position);
+
+        comps[0].SetPosition(1, transform.position + transform.right * vectorComponents.x);
+        comps[1].SetPosition(1, transform.position + transform.up * vectorComponents.y);
+        comps[2].SetPosition(1, transform.position + transform.forward * vectorComponents.z);
+
     }
 
     private void RebuildVector()
