@@ -19,7 +19,7 @@ public class BeamPlacementM1_Original : MonoBehaviour
     // Origin of coordinate system
     private GameObject _origin;
     // Input controller
-    private MLInputController _controller = null;
+    private MLInput.Controller _controller = null;
     // LineRenderer from controller
     private LineRenderer _beamline = null;
     // Position of end of the beam
@@ -150,9 +150,9 @@ public class BeamPlacementM1_Original : MonoBehaviour
     }
 
     // listener for HOME and BUMPER presses
-    private void OnButtonUp(byte controllerId, MLInputControllerButton button)
+    private void OnButtonUp(byte controllerId, MLInput.Controller.Button button)
     {
-        if (button == MLInputControllerButton.HomeTap)
+        if (button == MLInput.Controller.Button.HomeTap)
         {
             // if opening up the menu, make sure there is a beam and no instructions
             if (!menuPanel.activeSelf)
@@ -162,7 +162,7 @@ public class BeamPlacementM1_Original : MonoBehaviour
             // display instructions only when no menu
             _giveInstructions.EnableText(!menuPanel.activeSelf);
         }
-        else if (button == MLInputControllerButton.Bumper)
+        else if (button == MLInput.Controller.Button.Bumper)
         {
             // change the display mode
             if (GLOBALS.stage != Stage.m1view)
@@ -206,12 +206,12 @@ public class BeamPlacementM1_Original : MonoBehaviour
         {
             if (GLOBALS.stage == Stage.m1rotate)
             {
-                switch (_controller.TouchpadGesture.Direction)
+                switch (_controller.CurrentTouchpadGesture.Direction)
                 {
-                    case MLInputControllerTouchpadGestureDirection.Clockwise:
+                    case MLInput.Controller.TouchpadGesture.GestureDirection.Clockwise:
                         _root.transform.RotateAround(_origin.transform.position, Vector3.up, 80f * Time.deltaTime);
                         break;
-                    case MLInputControllerTouchpadGestureDirection.CounterClockwise:
+                    case MLInput.Controller.TouchpadGesture.GestureDirection.CounterClockwise:
                         _root.transform.RotateAround(_origin.transform.position, Vector3.up, -80f * Time.deltaTime);
                         break;
                 }

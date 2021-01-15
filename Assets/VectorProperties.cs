@@ -15,7 +15,7 @@ public class VectorProperties : MonoBehaviour
     [HideInInspector] public int forceValue; //user-inputted force value
 
     private bool nameLabelHovered;
-    [SerializeField] private MLInputController inputController;
+    [SerializeField] private MLInput.Controller inputController;
     public GameObject keypad;
 
     [SerializeField] BeamPlacementM3_Original beamPlacement;

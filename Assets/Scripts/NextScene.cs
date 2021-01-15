@@ -5,7 +5,7 @@ using Photon.Pun;
 
 public class NextScene : MonoBehaviour
 {
-    private MLInputController _controller = null;
+    private MLInput.Controller _controller = null;
 
     void Start()
     {

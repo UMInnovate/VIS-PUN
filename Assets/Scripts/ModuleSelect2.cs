@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 
 public class ModuleSelect2: MonoBehaviour
 {
-    private MLInputController _controller = null;
+    private MLInput.Controller _controller = null;
 
     private void Start()
     {
@@ -20,12 +20,12 @@ public class ModuleSelect2: MonoBehaviour
 
     private void Update()
     {
-        switch (_controller.TouchpadGesture.Direction)
+        switch (_controller.CurrentTouchpadGesture.Direction)
         {
-            case MLInputControllerTouchpadGestureDirection.Left:
+            case MLInput.Controller.TouchpadGesture.GestureDirection.Left:
                 LaunchMod2Single();
                 break;
-            case MLInputControllerTouchpadGestureDirection.Right:
+            case MLInput.Controller.TouchpadGesture.GestureDirection.Right:
                 LaunchMod2Multi();
                 break;
         }
