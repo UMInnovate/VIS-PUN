@@ -45,5 +45,7 @@ EditorBuildSettings:
     path: Assets/Scenes/12Mod3Forces.unity
     guid: 90021555b579ec048938e2f32fc1985c
   m_configObjects:
+    com.unity.xr.magicleap.magic_leap_settings: {fileID: 11400000, guid: cc39af361da53364b8b592bbebb21ebd,
+      type: 2}
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 2ba4dbd235ed941bb8fdb5a40ab00f22,
       type: 2}

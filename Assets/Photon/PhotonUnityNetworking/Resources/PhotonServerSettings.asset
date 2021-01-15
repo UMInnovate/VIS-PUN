@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: PhotonServerSettings
   m_EditorClassIdentifier: 
   AppSettings:
-    AppIdRealtime: 8222e22d-15cb-4e8f-a3df-5747634e8b84
+    AppIdRealtime: 6b4b5b2b-83e9-4015-a360-0265930ca0eb
     AppIdChat: 
     AppIdVoice: 
-    AppVersion: 0
+    AppVersion: 1
     UseNameServer: 1
     FixedRegion: us
     Server: 
@@ -38,27 +38,6 @@ MonoBehaviour:
   - DestroySpaceship
   - Fire
   - RespawnSpaceship
-  - RPC_CreatePlayer
-  - InitLabels_RPC
-  - SpawnOriginLabelsRPC
-  - UpdateOriginLabels_RPC
-  - SpawnOriginSphere_RPC
-  - InstantiateParticles
-  - InitVectorNames
-  - UpdateVectorNames_RPC
-  - UpdateBLabelPos
-  - V2AnimationHappening
-  - DisplayAngle
-  - InitDotProduct
-  - HideLabels
-  - PlaceComponentLabel
-  - PlaceHeadandTailLabels
-  - HideVec2ComponentLabel
-  - RespawnVec2ComponentLabel
-  - SpawnHeadLabel
-  - UpdateHeadLabel
-  - SpawnResultantVec_ComponentLabel
-  - RemoveStorableObject_RPC
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

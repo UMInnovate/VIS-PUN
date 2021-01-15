@@ -1,0 +1,27 @@
+\BOOKMARK [1][-]{section.1}{Introduction to TeX}{}% 1
+\BOOKMARK [1][-]{section.2}{What TEXDraw Offers}{}% 2
+\BOOKMARK [1][-]{section.3}{What TEXDraw Differs}{}% 3
+\BOOKMARK [1][-]{section.4}{Changing the Default Stuff in TEXDraw}{}% 4
+\BOOKMARK [2][-]{subsection.4.1}{Adding or Removing Fonts}{section.4}% 5
+\BOOKMARK [2][-]{subsection.4.2}{Activating SDF Font Rendering}{section.4}% 6
+\BOOKMARK [2][-]{subsection.4.3}{Tweaking Default Configs}{section.4}% 7
+\BOOKMARK [1][-]{section.5}{Extending TEXDraw}{}% 8
+\BOOKMARK [2][-]{subsection.5.1}{Adding Macros}{section.5}% 9
+\BOOKMARK [2][-]{subsection.5.2}{Dealing with Sprites}{section.5}% 10
+\BOOKMARK [2][-]{subsection.5.3}{Dealing with Links}{section.5}% 11
+\BOOKMARK [2][-]{subsection.5.4}{Dealing with Images and other Media}{section.5}% 12
+\BOOKMARK [2][-]{subsection.5.5}{Dealing with Interactive Scrolling}{section.5}% 13
+\BOOKMARK [2][-]{subsection.5.6}{Dealing with Right-to-Left}{section.5}% 14
+\BOOKMARK [2][-]{subsection.5.7}{TeX Input}{section.5}% 15
+\BOOKMARK [1][-]{section.6}{Advanced Topics}{}% 16
+\BOOKMARK [2][-]{subsection.6.1}{How TEXDraw Works}{section.6}% 17
+\BOOKMARK [2][-]{subsection.6.2}{Alignment Behaviour}{section.6}% 18
+\BOOKMARK [2][-]{subsection.6.3}{Dealing Inputs from User}{section.6}% 19
+\BOOKMARK [2][-]{subsection.6.4}{Extending TeX Supplements}{section.6}% 20
+\BOOKMARK [2][-]{subsection.6.5}{Extending Macros at Code-Level}{section.6}% 21
+\BOOKMARK [2][-]{subsection.6.6}{Extending Shaders}{section.6}% 22
+\BOOKMARK [2][-]{subsection.6.7}{Upgrading prior to v5.0}{section.6}% 23
+\BOOKMARK [1][-]{section.7}{About TEXDraw, Credits and Legal}{}% 24
+\BOOKMARK [2][-]{subsection.7.1}{About TEXDraw}{section.7}% 25
+\BOOKMARK [2][-]{subsection.7.2}{BaKoMa Fonts}{section.7}% 26
+\BOOKMARK [2][-]{subsection.7.3}{Credits}{section.7}% 27
