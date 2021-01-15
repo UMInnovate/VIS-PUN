@@ -228,9 +228,22 @@ public class BeamPlacementM3_Original : MonoBehaviour
                     break;
                 case Stage.m3view:
                     Debug.Log("trigg in m3view");
-                   calcPanel.SetActive(true);
+                    calcPanel.SetActive(true);
                     calcPanel.GetComponent<CalculationsPanel>().StartCalculationsSequence();
-                    GLOBALS.stage++;
+                    //GLOBALS.stage++;
+                    //Summary: Checks how many vectors have been given forces. If there is one unknown force left
+                    //increment stage, otherwise repeat force selection by decrementing stage
+                    int temp = 0; //Checks how many vectors have been given forces
+                    for (int i=0; i< GetComponent<VectorMathM3_Original>().vectors.Count; i++)
+                        if (GetComponent<VectorMathM3_Original>().vectors[i].GetComponent<VectorProperties>().isForceKnown)
+                            temp++;
+                    if (temp < 4)
+                    {
+                        DecrementStage();
+                        DecrementStage();
+                    }
+                    else
+                        GLOBALS.stage++;
                     break;
                 case Stage.m3highlight:
                     Debug.Log("in m3highlight");
@@ -239,10 +252,20 @@ public class BeamPlacementM3_Original : MonoBehaviour
                         else
                             vec++;
                     break;
+                /*case Stage.m3forcesel2:
+                    Debug.Log("Current vector: " + vec);
+                    if (!GetComponent<VectorMathM3_Original>().vectors[vec].GetComponent<VectorProperties>().isForceKnown)
+                    {
+                        keypad.SetActive(true);
+                        
+                    }
+                    break;*/
                 default:
                     return;
             }
         }
+
+        Debug.Log("Current stage: " + GLOBALS.stage);
     }
 
 

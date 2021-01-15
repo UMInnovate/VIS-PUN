@@ -46,6 +46,7 @@ public class KeypadPanel : MonoBehaviour
 
         gameObject.SetActive(false);
         vp.SetForceVal(int.Parse(value));
+        ACClicked();
         GLOBALS.stage++;
     }
 
