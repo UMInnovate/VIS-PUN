@@ -114,50 +114,53 @@ public class GiveInstructions : MonoBehaviour
                     "Trigger: place";
                 break;
             case Stage.m3v1p1:
-                text.text = "VECTOR TAIL" + "\n" +
+                text.text = "VECTOR 1 TAIL" + "\n" +
                     "Touchpad: adjust beam length" + "\n" +
                     "Trigger: place tail" + "\n";
                      break;
             case Stage.m3v1p2:
-                text.text = "VECTOR HEAD" + "\n" +
+                text.text = "VECTOR 1 HEAD" + "\n" +
                 "Touchpad: adjust beam length" + "\n" +
                 "Trigger: place head" + "\n";
               break;
             case Stage.m3v2p1:
-                text.text = "VECTOR TAIL" + "\n" +
+                text.text = "VECTOR 2 TAIL" + "\n" +
                     "Touchpad: adjust beam length" + "\n" +
                     "Trigger: place tail" + "\n";
                     break;
             case Stage.m3v2p2:
-                text.text = "VECTOR HEAD" + "\n" +
+                text.text = "VECTOR 2 HEAD" + "\n" +
                 "Touchpad: adjust beam length" + "\n" +
                 "Trigger: place head" + "\n";
                 break;
             case Stage.m3v3p1:
-                text.text = "VECTOR TAIL" + "\n" +
+                text.text = "VECTOR 3 TAIL" + "\n" +
                     "Touchpad: adjust beam length" + "\n" +
                     "Trigger: place tail" + "\n";
                     break;
             case Stage.m3v3p2:
-                text.text = "VECTOR HEAD" + "\n" +
+                text.text = "VECTOR 3 HEAD" + "\n" +
                 "Touchpad: adjust beam length" + "\n" +
                 "Trigger: place head" + "\n";
                 break;
             case Stage.m3v4p1:
-                text.text = "VECTOR TAIL" + "\n" +
+                text.text = "VECTOR 4 TAIL" + "\n" +
                     "Touchpad: adjust beam length" + "\n" +
                     "Trigger: place tail" + "\n";
                     break;
             case Stage.m3v4p2:
-                text.text = "VECTOR HEAD" + "\n" +
+                text.text = "VECTOR 4 HEAD" + "\n" +
                 "Touchpad: adjust beam length" + "\n" +
                 "Trigger: place head" + "\n";
                  break;
+            case Stage.m3forcesel:
+                text.text = "Select a vector and input its force value";
+                break;
             case Stage.m3keypad:
                 text.text = "Keypad stage";
                 break;
             case Stage.m3view:
-                text.text = "View";
+                text.text = "Viewing Vector " + GLOBALS.SelectedVec.name.Substring(12).ToString();
                 break;
             case Stage.opSel:
                 text.text = "";
@@ -221,11 +224,11 @@ public class GiveInstructions : MonoBehaviour
                 
                 break;
             case Stage.v1p1:
-                clip = Resources.Load("place_the_head_of_vector_1") as AudioClip;
+                clip = Resources.Load("place_the_tail_of_vector_1") as AudioClip;
                 audioSource.PlayOneShot(clip);
                 break;
             case Stage.v1p2:
-                clip = Resources.Load("place_the_tail_of_vector_1") as AudioClip;
+                clip = Resources.Load("place_the_head_of_vector_1") as AudioClip;
                 audioSource.PlayOneShot(clip);
                 break;
             case Stage.v1calc:
@@ -234,12 +237,12 @@ public class GiveInstructions : MonoBehaviour
 
                 break;
             case Stage.v2p1:
-                clip = Resources.Load("place_the_head_of_vector_2") as AudioClip;
+                clip = Resources.Load("place_the_tail_of_vector_2") as AudioClip;
                 audioSource.PlayOneShot(clip);
 
                 break;
             case Stage.v2p2:
-                clip = Resources.Load("place_the_tail_of_vector_2") as AudioClip;
+                clip = Resources.Load("place_the_head_of_vector_2") as AudioClip;
                 audioSource.PlayOneShot(clip);
 
                 break;

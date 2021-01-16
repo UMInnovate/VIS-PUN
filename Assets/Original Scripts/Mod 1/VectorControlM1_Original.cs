@@ -95,6 +95,7 @@ public class VectorControlM1_Original : MonoBehaviour
 
         // local positions are needed because Vectors must be childed to Origin
         vectorComponents = _head.transform.localPosition;
+       // vectorComponents = Vector3.Distance(, _origin.transform.position); testing out a dif way of getting rel head, not successful
         mag = _head.transform.localPosition.magnitude;
     }
 

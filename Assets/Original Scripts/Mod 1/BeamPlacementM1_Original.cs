@@ -38,7 +38,7 @@ public class BeamPlacementM1_Original : MonoBehaviour
     GiveInstructions _giveInstructions = null;
 
     [SerializeField, Tooltip("The vector")]
-    private VectorControlM1_Original _vector;
+    public VectorControlM1_Original _vector;
     [SerializeField, Tooltip("The angles")]
     private AngleControl_Original _angles;
 
@@ -46,7 +46,6 @@ public class BeamPlacementM1_Original : MonoBehaviour
     {
         _root = GameObject.Find("Content Root");
         _origin = _root.transform.Find("Origin").gameObject;
-        _controller = MLInput.GetController(MLInput.Hand.Left);
         _beamline = GetComponent<LineRenderer>();
         _beamSphere = GameObject.Find("BeamSphere");
         _giveInstructions = GetComponent<GiveInstructions>();
@@ -56,6 +55,8 @@ public class BeamPlacementM1_Original : MonoBehaviour
             MLInput.Start();
         MLInput.OnControllerButtonUp += OnButtonUp;
         MLInput.OnTriggerUp += OnTriggerUp;
+        _controller = MLInput.GetController(MLInput.Hand.Left);
+
         _beamline.startWidth = 0.007f;
         _beamline.endWidth = 0.01f;
         _origin.SetActive(false);
@@ -152,8 +153,10 @@ public class BeamPlacementM1_Original : MonoBehaviour
     // listener for HOME and BUMPER presses
     private void OnButtonUp(byte controllerId, MLInput.Controller.Button button)
     {
+        Debug.Log("button press");
         if (button == MLInput.Controller.Button.HomeTap)
         {
+            Debug.Log("that button is the home button");
             // if opening up the menu, make sure there is a beam and no instructions
             if (!menuPanel.activeSelf)
                 _beamline.enabled = true;
@@ -162,8 +165,10 @@ public class BeamPlacementM1_Original : MonoBehaviour
             // display instructions only when no menu
             _giveInstructions.EnableText(!menuPanel.activeSelf);
         }
-        else if (button == MLInput.Controller.Button.Bumper)
+
+        if (button == MLInput.Controller.Button.Bumper)
         {
+            Debug.Log("that button is the bumper button");
             // change the display mode
             if (GLOBALS.stage != Stage.m1view)
                 return;

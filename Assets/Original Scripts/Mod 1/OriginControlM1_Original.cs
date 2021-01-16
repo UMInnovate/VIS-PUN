@@ -98,9 +98,9 @@ public class OriginControlM1_Original : MonoBehaviour
         Vector3 adjVec = new Vector3((vectorComps.x / mag) + transform.position.x, (vectorComps.y / mag) + transform.position.y, (vectorComps.z / mag) + transform.position.z);
         if (!GLOBALS.inFeet) // sets position in ft.
         {
-            origin_axes[0].SetPosition(1, transform.position + transform.right * adjVec.x);  // set position(1=endpoint position) of origin location of x
-            origin_axes[1].SetPosition(1, transform.position + transform.up * adjVec.y); // set position(1=endpoint position) of origin location of y
-            origin_axes[2].SetPosition(1, transform.position + transform.forward * adjVec.z); // set position(1=endpoint position) of origin location of z
+            origin_axes[0].SetPosition(1, new Vector3(adjVec.x, transform.position.y, transform.position.z));  // set position(1=endpoint position) of origin location of x
+            origin_axes[1].SetPosition(1, new Vector3(transform.position.x, adjVec.y, transform.position.z)); // set position(1=endpoint position) of origin location of y
+            origin_axes[2].SetPosition(1, new Vector3(transform.position.x, transform.position.y, adjVec.z)); // set position(1=endpoint position) of origin location of z
 
             //and update the text
             xAxisText.text = (adjVec.x).ToString(GLOBALS.format);
@@ -109,9 +109,9 @@ public class OriginControlM1_Original : MonoBehaviour
         }
         // update text labels for default vector values
         else {
-            origin_axes[0].SetPosition(1,( transform.position + transform.right * adjVec.x)/GLOBALS.m2ft);  // set position(1=endpoint position) of origin location of x
-            origin_axes[1].SetPosition(1, (transform.position + transform.up * adjVec.y)/GLOBALS.m2ft); // set position(1=endpoint position) of origin location of y
-            origin_axes[2].SetPosition(1, (transform.position + transform.forward * adjVec.z)/GLOBALS.m2ft); // set position(1=endpoint position) of origin location of z
+            origin_axes[0].SetPosition(1,(new Vector3(adjVec.x, transform.position.y, transform.position.z)) * GLOBALS.m2ft);  // set position(1=endpoint position) of origin location of x
+            origin_axes[1].SetPosition(1, (new Vector3(transform.position.x, adjVec.y, transform.position.z)) * GLOBALS.m2ft); // set position(1=endpoint position) of origin location of y
+            origin_axes[2].SetPosition(1, (new Vector3(transform.position.x, transform.position.y, adjVec.z)) * GLOBALS.m2ft); // set position(1=endpoint position) of origin location of z
             //and update the text axes
             xAxisText.text = (adjVec.x * GLOBALS.m2ft).ToString(GLOBALS.format);
             yAxisText.text = (adjVec.y * GLOBALS.m2ft).ToString(GLOBALS.format);

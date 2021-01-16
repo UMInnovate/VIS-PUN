@@ -25,7 +25,7 @@ public class CalculationsPanel : MonoBehaviour
         Debug.Log("calc canv init at " + gameObject.transform.position.ToString());
 
         header.text = "|" + GLOBALS.SelectedVec.GetComponent<VectorProperties>().gameObject.name.Substring(12) + "| = " + GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().GetMagnitude().ToString(GLOBALS.format);
-        header.text += "\n" + GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().GetVectorComponents().x.ToString(GLOBALS.format) + "i " + GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().GetVectorComponents().y.ToString(GLOBALS.format) + "j " + GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().GetVectorComponents().z.ToString(GLOBALS.format) + "k";//ToString(GLOBALS.format);       
+        header.text += "\n" + GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().GetVectorComponents().x.ToString(GLOBALS.format) + "i + " + GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().GetVectorComponents().y.ToString(GLOBALS.format) + "j + " + GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().GetVectorComponents().z.ToString(GLOBALS.format) + "k";//ToString(GLOBALS.format);       
     }
 
     public void MagCalcs()
