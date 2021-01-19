@@ -32,9 +32,7 @@ public class VectorProperties : MonoBehaviour
         //REGEX \b([A]|[B]|[C]|[D])
         //SpaceVector A
         string subA = gameObject.name.Substring(12);
-        Debug.Log("subA = " + subA);
-        string subB = gameObject.name.Substring(11);
-        Debug.Log("subB = " + subB);
+       // Debug.Log("subA = " + subA);
         if(GLOBALS.inFeet) gameObject.GetComponent<VectorControlM3_Original>().SetName(subA + " = " + fval.ToString() + " lbs");
         else gameObject.GetComponent<VectorControlM3_Original>().SetName(subA + " = " + fval.ToString() + " N");
     }
@@ -55,6 +53,12 @@ public class VectorProperties : MonoBehaviour
         if (!MLInput.IsStarted)
             MLInput.Start();
         MLInput.OnTriggerDown += OnTriggerDown;
+
+
+        Vector3 relVec = GetComponent < VectorControlM3_Original >()._head.position - GetComponent < VectorControlM3_Original >()._tail.position;
+        float floatrelMag = relVec.magnitude;
+        Vector3 uVec = new Vector3(relVec.x / floatrelMag, relVec.y / floatrelMag, relVec.z / floatrelMag);
+        Vector3 forceVec = forceValue * uVec;
     }
 
     private void OnTriggerDown(byte controllerId, float pressure)

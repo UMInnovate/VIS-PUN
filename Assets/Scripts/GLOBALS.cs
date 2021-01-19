@@ -65,7 +65,7 @@ public enum DispMode
 public static class GLOBALS
 {
     // default units are meters
-    public static bool inFeet = true; 
+    public static bool inFeet = false; 
     // add audio settings
     public static bool soundOn = true;
     // is the vector correctly placed?

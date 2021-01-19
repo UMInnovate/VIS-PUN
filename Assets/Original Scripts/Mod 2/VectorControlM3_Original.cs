@@ -48,7 +48,6 @@ public class VectorControlM3_Original : MonoBehaviour
         _body = GetComponent<LineRenderer>();
         _tail = transform.Find("Tail");
         _head = transform.Find("Head");
-
         _body.startWidth = beamWidth;
         _body.endWidth = beamWidth;
         InitLabels();

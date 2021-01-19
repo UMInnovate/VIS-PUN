@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.MagicLeap;
 using UnityEngine.UI;
+using UnityEngine.XR;
 
 /*  BeamPlacementM1.cs handles user input and the scene's state for Module 1
  *  This script handles placing the controller beam, opening/closing menus,
@@ -73,6 +74,11 @@ public class BeamPlacementM1_Original : MonoBehaviour
         HandleBeamPlacement();
         HandleTouchpadInput();
 
+        if (!GLOBALS.soundOn)
+            GetComponent<AudioSource>().mute = true;
+        else GetComponent<AudioSource>().mute = false;
+
+
         // if placingHead, then have vector head follow beam
         if (placingHead && !menuPanel.activeSelf)
         {
@@ -84,7 +90,7 @@ public class BeamPlacementM1_Original : MonoBehaviour
             }
             else if (GLOBALS.displayMode == DispMode.Units)
             {
-                _origin.GetComponent<OriginControlM1_Original>().DisplayUnitVectors(_vector.GetVectorComponents(), _origin.transform.position, _vector.GetMagnitude());
+                _origin.GetComponent<OriginControlM1_Original>().DisplayUnitVectors(_vector.GetVectorComponents(), _origin.transform.position);
             }
         }
     }
@@ -166,6 +172,9 @@ public class BeamPlacementM1_Original : MonoBehaviour
             _giveInstructions.EnableText(!menuPanel.activeSelf);
         }
 
+
+
+
         if (button == MLInput.Controller.Button.Bumper)
         {
             Debug.Log("that button is the bumper button");
@@ -189,7 +198,10 @@ public class BeamPlacementM1_Original : MonoBehaviour
                     _angles.SetActive(false);
                     break;
                 case DispMode.Units:
-                    _origin.GetComponent<OriginControlM1_Original>().DisplayUnitVectors(_vector.GetVectorComponents(), _origin.transform.position, _vector.GetMagnitude()); 
+                    Vector3 relVec = _vector.GetComponent<VectorControlM1_Original>()._head.position - _vector.GetComponent<VectorControlM1_Original>()._origin.transform.position;
+                    float relMag = relVec.magnitude;
+                    Vector3 uVc = new Vector3(relVec.x / relMag, relVec.y / relMag, relVec.z / relMag);
+                    _origin.GetComponent<OriginControlM1_Original>().DisplayUnitVectors(uVc, _vector.GetComponent<VectorControlM1_Original>()._origin.transform.position);
                     _angles.SetActive(false);
                     break;
                 case DispMode.Angles:
@@ -218,7 +230,8 @@ public class BeamPlacementM1_Original : MonoBehaviour
                         break;
                 }
             }
-            else if (GLOBALS.stage == Stage.m1view)
+
+           /* else if (GLOBALS.stage == Stage.m1view)
             {
                 switch (_controller.CurrentTouchpadGesture.Type)
                 {
@@ -242,8 +255,15 @@ public class BeamPlacementM1_Original : MonoBehaviour
                         _angles.SetActive(false);
                         break;
                         case DispMode.Units:
-                        _origin.GetComponent<OriginControlM1_Original>().DisplayUnitVectors(_vector.GetVectorComponents(), _origin.transform.position, _vector.GetMagnitude());
-                        _angles.SetActive(false);
+                                // _origin.GetComponent<OriginControlM1_Original>().DisplayUnitVectors(_vector.GetVectorComponents(), _origin.transform.position, _vector.GetMagnitude());
+                                // _angles.SetActive(false);
+
+                                Vector3 relVec = _vector.GetComponent<VectorControlM1_Original>()._head.position - _vector.GetComponent<VectorControlM1_Original>()._origin.transform.position;
+                                float relMag = relVec.magnitude;
+                                Vector3 uVc = new Vector3(relVec.x / relMag, relVec.y / relMag, relVec.z / relMag);
+
+                                _origin.GetComponent<OriginControlM1_Original>().DisplayUnitVectors(uVc, _vector.GetComponent<VectorControlM1_Original>()._origin.transform.position);
+
                         break;
                     case DispMode.Angles:
                         _origin.GetComponent<OriginControlM1_Original>().Reset();
@@ -253,10 +273,10 @@ public class BeamPlacementM1_Original : MonoBehaviour
                 break;
             
                         /* FOR LATER-- ADD A CASE WHERE THEY CAN GO BACKWARDS 
-                         * */
+                         
                 }
 
-        }
+        }*/
             else
             {
                 //swipe up or down to adjust beam length

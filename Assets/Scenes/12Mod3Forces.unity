@@ -9307,7 +9307,7 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
-  m_AdditionalShaderChannelsFlag: 0
+  m_AdditionalShaderChannelsFlag: 3
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
@@ -9759,8 +9759,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1606819763}
   - component: {fileID: 1606819766}
-  - component: {fileID: 1606819765}
   - component: {fileID: 1606819764}
+  - component: {fileID: 1606819765}
   m_Layer: 5
   m_Name: Header
   m_TagString: Untagged
@@ -9816,7 +9816,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1606819762}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Script: {fileID: 11500000, guid: a11dd23e08e5cb942a6a6b4da8d43711, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
@@ -9827,20 +9827,20 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_FontData:
-    m_Font: {fileID: 12800000, guid: 622a176cd33b04c6394850ca299f5959, type: 3}
-    m_FontSize: 40
-    m_FontStyle: 0
-    m_BestFit: 1
-    m_MinSize: 4
-    m_MaxSize: 50
-    m_Alignment: 4
-    m_AlignByGeometry: 1
-    m_RichText: 1
-    m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
-    m_LineSpacing: 1
-  m_Text: Calculations Canvas
+  m_Alignment: {x: 0, y: 0.5}
+  m_Text: 
+  m_Size: 20
+  m_ScrollArea:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  m_Padding:
+    left: 2
+    right: 2
+    top: 2
+    bottom: 2
 --- !u!222 &1606819766
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -12184,7 +12184,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dafbe656fa6d8b940a9318229dbc0f9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  header: {fileID: 1606819765}
+  TEXDraw3D: {fileID: 1606819765}
 --- !u!1 &1962220102
 GameObject:
   m_ObjectHideFlags: 0
@@ -17341,6 +17341,8 @@ MonoBehaviour:
   handText: {fileID: 6820424790525357588}
   unitsText: {fileID: 6820424789075396689}
   soundText: {fileID: 1192705240}
+  OriginControlM1_Original: {fileID: 0}
+  BeamPlacementM1_Original: {fileID: 0}
 --- !u!114 &6820424789484509399
 MonoBehaviour:
   m_ObjectHideFlags: 0
