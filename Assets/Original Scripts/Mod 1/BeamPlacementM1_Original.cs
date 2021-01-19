@@ -17,7 +17,7 @@ public class BeamPlacementM1_Original : MonoBehaviour
     // Content root
     private GameObject _root;
     // Origin of coordinate system
-    private GameObject _origin;
+    [HideInInspector] public GameObject _origin;
     // Input controller
     private MLInput.Controller _controller = null;
     // LineRenderer from controller
@@ -84,7 +84,7 @@ public class BeamPlacementM1_Original : MonoBehaviour
             }
             else if (GLOBALS.displayMode == DispMode.Units)
             {
-                _origin.GetComponent<OriginControlM1_Original>().DisplayUnitVectors(_vector.GetVectorComponents(), _vector.GetMagnitude());
+                _origin.GetComponent<OriginControlM1_Original>().DisplayUnitVectors(_vector.GetVectorComponents(), _origin.transform.position, _vector.GetMagnitude());
             }
         }
     }
@@ -189,10 +189,7 @@ public class BeamPlacementM1_Original : MonoBehaviour
                     _angles.SetActive(false);
                     break;
                 case DispMode.Units:
-                    // todo make the origin display unit vectors
-                    // ...
-                    //
-                    _origin.GetComponent<OriginControlM1_Original>().DisplayUnitVectors(_vector.GetVectorComponents(), _vector.GetMagnitude()); 
+                    _origin.GetComponent<OriginControlM1_Original>().DisplayUnitVectors(_vector.GetVectorComponents(), _origin.transform.position, _vector.GetMagnitude()); 
                     _angles.SetActive(false);
                     break;
                 case DispMode.Angles:
@@ -221,6 +218,45 @@ public class BeamPlacementM1_Original : MonoBehaviour
                         break;
                 }
             }
+            else if (GLOBALS.stage == Stage.m1view)
+            {
+                switch (_controller.CurrentTouchpadGesture.Type)
+                {
+                   // _controller.CurrentTouchpadGesture.Direction
+                    case MLInput.Controller.TouchpadGesture.GestureType.Swipe: //go to next
+                        
+                        Debug.Log("swipe to the right in the view mode in m1");
+                    if (GLOBALS.displayMode == DispMode.Angles)
+                        GLOBALS.displayMode = DispMode.Vector;
+                    else
+                        GLOBALS.displayMode++;
+
+                    switch (GLOBALS.displayMode)
+                    {
+                        case DispMode.Vector:
+                            _origin.GetComponent<OriginControlM1_Original>().Reset();
+                            _angles.SetActive(false);
+                        break;
+                        case DispMode.Components:
+                        _origin.GetComponent<OriginControlM1_Original>().DisplayVectorComponents(_vector.GetVectorComponents());
+                        _angles.SetActive(false);
+                        break;
+                        case DispMode.Units:
+                        _origin.GetComponent<OriginControlM1_Original>().DisplayUnitVectors(_vector.GetVectorComponents(), _origin.transform.position, _vector.GetMagnitude());
+                        _angles.SetActive(false);
+                        break;
+                    case DispMode.Angles:
+                        _origin.GetComponent<OriginControlM1_Original>().Reset();
+                        _angles.SetActive(true);
+                        break;
+                }
+                break;
+            
+                        /* FOR LATER-- ADD A CASE WHERE THEY CAN GO BACKWARDS 
+                         * */
+                }
+
+        }
             else
             {
                 //swipe up or down to adjust beam length

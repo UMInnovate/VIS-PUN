@@ -888,8 +888,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 416199259}
-  m_LocalRotation: {x: 0.14054184, y: -0.035489194, z: 0.005041025, w: 0.9894257}
-  m_LocalPosition: {x: -0.064, y: -0.259, z: 0.891}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 843302658}
@@ -1561,6 +1561,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c37cc3016ba75f4e833c96517154e80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  BeamPlacementM1_Original: {fileID: 8722895021099890240}
   _camera: {fileID: 1138936098}
   _head: {fileID: 416199260}
   vecColor: {r: 1, g: 0, b: 0.3529412, a: 0.63529414}
@@ -2848,7 +2849,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1231628531
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2864,10 +2865,10 @@ RectTransform:
   m_Father: {fileID: 752238086}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 250, y: -520.0105}
+  m_SizeDelta: {x: 400, y: 59.978947}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1231628532
 MonoBehaviour:
@@ -6198,5 +6199,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   menuPanel: {fileID: 752238085}
+  _origin: {fileID: 0}
   _vector: {fileID: 843302659}
   _angles: {fileID: 441397659}

@@ -85,7 +85,7 @@ public class OriginControlM1_Original : MonoBehaviour
     /*  Display unit vectors
      *  displays the X, Y, and Z line renderers at 1 ft length
      */
-    public void DisplayUnitVectors(Vector3 vectorComps, float mag)
+    public void DisplayUnitVectors(Vector3 vectorComps, Vector3 ori, float mag)
     {
         origin_axes[0].endColor = new Color(1, 0, 0, startAlpha); // red component color for positive x
         origin_axes[1].endColor = new Color(0, 1, 0, startAlpha); // green component color for positive y
@@ -95,27 +95,33 @@ public class OriginControlM1_Original : MonoBehaviour
         origin_axes[4].enabled = false;
         origin_axes[5].enabled = false;
 
-        Vector3 adjVec = new Vector3((vectorComps.x / mag) + transform.position.x, (vectorComps.y / mag) + transform.position.y, (vectorComps.z / mag) + transform.position.z);
+        Debug.Log("vector comps: " + vectorComps.ToString(GLOBALS.format));
+
+        float MAG = Mathf.Sqrt(Mathf.Pow(vectorComps.x, 2) + Mathf.Pow(vectorComps.y, 2) + Mathf.Pow(vectorComps.z, 2));
+        Debug.Log("mag: " + MAG);
+        Vector3 mVec = new Vector3(vectorComps.x / MAG, vectorComps.y / MAG, vectorComps.z / MAG);
+        Debug.Log("u vec raw: " + mVec.ToString(GLOBALS.format));
+       // Vector3 adjVec = new Vector3((vectorComps.x / MAG) + transform.position.x, (vectorComps.y / MAG) + transform.position.y, (vectorComps.z / MAG) + transform.position.z);
         if (!GLOBALS.inFeet) // sets position in ft.
         {
-            origin_axes[0].SetPosition(1, new Vector3(adjVec.x, transform.position.y, transform.position.z));  // set position(1=endpoint position) of origin location of x
-            origin_axes[1].SetPosition(1, new Vector3(transform.position.x, adjVec.y, transform.position.z)); // set position(1=endpoint position) of origin location of y
-            origin_axes[2].SetPosition(1, new Vector3(transform.position.x, transform.position.y, adjVec.z)); // set position(1=endpoint position) of origin location of z
+            origin_axes[0].SetPosition(1, new Vector3(mVec.x + ori.x, ori.y, ori.z));  // set position(1=endpoint position) of origin location of x
+            origin_axes[1].SetPosition(1, new Vector3(ori.x, mVec.y + ori.y, ori.z)); // set position(1=endpoint position) of origin location of y
+            origin_axes[2].SetPosition(1, new Vector3(ori.x, ori.y, -1*mVec.z + ori.z)); // set position(1=endpoint position) of origin location of z
 
             //and update the text
-            xAxisText.text = (adjVec.x).ToString(GLOBALS.format);
-            yAxisText.text = (adjVec.y).ToString(GLOBALS.format);
-            zAxisText.text = (-1 * adjVec.z).ToString(GLOBALS.format);
+            xAxisText.text = mVec.x.ToString(GLOBALS.format);
+            yAxisText.text = (mVec.y).ToString(GLOBALS.format);
+            zAxisText.text = (-1 * mVec.z).ToString(GLOBALS.format);
         }
         // update text labels for default vector values
         else {
-            origin_axes[0].SetPosition(1,(new Vector3(adjVec.x, transform.position.y, transform.position.z)) * GLOBALS.m2ft);  // set position(1=endpoint position) of origin location of x
-            origin_axes[1].SetPosition(1, (new Vector3(transform.position.x, adjVec.y, transform.position.z)) * GLOBALS.m2ft); // set position(1=endpoint position) of origin location of y
-            origin_axes[2].SetPosition(1, (new Vector3(transform.position.x, transform.position.y, adjVec.z)) * GLOBALS.m2ft); // set position(1=endpoint position) of origin location of z
+            origin_axes[0].SetPosition(1,(new Vector3(mVec.x, transform.position.y, transform.position.z)) * GLOBALS.m2ft);  // set position(1=endpoint position) of origin location of x
+            origin_axes[1].SetPosition(1, (new Vector3(transform.position.x, mVec.y, transform.position.z)) * GLOBALS.m2ft); // set position(1=endpoint position) of origin location of y
+            origin_axes[2].SetPosition(1, (new Vector3(transform.position.x, transform.position.y, mVec.z)) * GLOBALS.m2ft); // set position(1=endpoint position) of origin location of z
             //and update the text axes
-            xAxisText.text = (adjVec.x * GLOBALS.m2ft).ToString(GLOBALS.format);
-            yAxisText.text = (adjVec.y * GLOBALS.m2ft).ToString(GLOBALS.format);
-            zAxisText.text = ((-1 * adjVec.z) * GLOBALS.m2ft).ToString(GLOBALS.format);
+            xAxisText.text = (mVec.x * GLOBALS.m2ft).ToString(GLOBALS.format);
+            yAxisText.text = (mVec.y * GLOBALS.m2ft).ToString(GLOBALS.format);
+            zAxisText.text = ((-1 * mVec.z) * GLOBALS.m2ft).ToString(GLOBALS.format);
         }
 
     }

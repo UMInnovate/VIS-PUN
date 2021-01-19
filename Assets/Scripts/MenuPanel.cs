@@ -86,9 +86,9 @@ public class MenuPanel : MonoBehaviour
         Application.Quit();
     }
 
-    //DEBUG
+    /*DEBUG
     public void DisplayUnitVecs()
     {
         OriginControlM1_Original.DisplayUnitVectors(BeamPlacementM1_Original._vector.GetVectorComponents(), BeamPlacementM1_Original._vector.GetMagnitude());
-    }
+    }*/
 }
