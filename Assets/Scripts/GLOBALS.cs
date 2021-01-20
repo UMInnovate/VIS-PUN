@@ -73,6 +73,9 @@ public static class GLOBALS
     // flipZ is used for multiplying on z coordinates
     // and strictly follows handedness (-1 = right, 1 = left)
     public static int flipZ = -1;
+
+    //
+    public static int count; 
     // Grid enable and size are settings
     public static bool gridOn = false;
     public static float gridSize = 0.1f;
@@ -93,7 +96,7 @@ public static class GLOBALS
     // temporary flag in case need to switch cross product
     public static bool invertCross = false;
     public static GameObject SelectedVec;
-   // public static GameObject GivenForceVec; //the given force vec 
+    public static GameObject GivenForceVec; //the given force vec 
     public static bool showingCoords = false;
 
     public static bool isInCoroutine = false;

@@ -95,7 +95,7 @@ public class BeamPlacementM3_Original : MonoBehaviour
         placingHead = false;
         _giveInstructions.DisplayText();
         debugCount = 0;
-        firstTimeInFSel = true;
+        GLOBALS.count = 0; 
     }
 
     void Update()
@@ -231,8 +231,8 @@ public class BeamPlacementM3_Original : MonoBehaviour
                 case Stage.m3keypad:
                     break;
                 case Stage.m3view:
-                    //  Debug.Log("trigg in m3view");
-                    //GLOBALS.firstVec = false;
+                    Debug.Log("global count is at: " + GLOBALS.count);
+                    
                     calcPanel.SetActive(true);
                     calcPanel.GetComponent<CalculationsPanel>().StartCalculationsSequence();
                     //GLOBALS.stage++;
@@ -243,8 +243,8 @@ public class BeamPlacementM3_Original : MonoBehaviour
                         if (GetComponent<VectorMathM3_Original>().vectors[i].GetComponent<VectorProperties>().isForceKnown)
                             temp++;
 
-                    Debug.Log("in m3view- our given force vector is: " + GLOBALS.GivenForceVec.gameObject.name);
-                    if (temp < 4)
+                  //  Debug.Log("in m3view- our given force vector is: " + GLOBALS.GivenForceVec.gameObject.name);
+                    if (temp <= 4)
                     {
                         DecrementStage();
                         DecrementStage();

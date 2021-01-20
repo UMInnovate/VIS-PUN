@@ -87,8 +87,16 @@ public class VectorProperties : MonoBehaviour
                 Debug.Log("hover detected");
                 Debug.Log("trigger press dec vec prop on vector " + gameObject.name);
                 keypad.SetActive(true);
-                if (GLOBALS.firstVec) keypad.GetComponent<KeypadPanel>().given = true;
+              //  if (GLOBALS.firstVec) keypad.GetComponent<KeypadPanel>().given = true;
                 keypad.GetComponent<KeypadPanel>().ReceiveVector(gameObject);
+                if (GLOBALS.count == 0)
+                {
+                    isGivenForceValue = true;
+                    GLOBALS.GivenForceVec = gameObject;
+                }
+                else
+                    isGivenForceValue = false;
+                GLOBALS.count++;
                 GLOBALS.stage++; //now in keypad
             }
 

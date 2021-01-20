@@ -12,8 +12,6 @@ public class KeypadPanel : MonoBehaviour
 {
     [SerializeField] List<Button> ValueButtons;
     [SerializeField] Button CheckButton;
-
-    [HideInInspector] public bool given;
     //[SerializeField] Button ConfirmButton;
     public Text IFText;
 
@@ -41,12 +39,7 @@ public class KeypadPanel : MonoBehaviour
         Debug.Log("before vp");
 
         vp = v.GetComponent<VectorProperties>();
-          //    vp.isGivenForceValue = true;
-          //  GLOBALS.GivenForceVec = vp.gameObject;
-          //  Debug.Log("the given force vector is (in m3forcesel): " + vp.gameObject.name);
-            
-          // Debug.Log("this vector is not a give force vector (in m3forcesel): " + vp.gameObject.name);
-      
+        Debug.Log("the item is: " + vp.gameObject.name);
         Debug.Log("after vp");
     }
     public void CheckClicked()
@@ -57,7 +50,7 @@ public class KeypadPanel : MonoBehaviour
 
         gameObject.SetActive(false);
         vp.SetForceVal(int.Parse(value));
-        vp.BuildForceVector();
+        if(GLOBALS.count == 0) vp.BuildForceVector();
         ACClicked();
         GLOBALS.stage++;
     }
