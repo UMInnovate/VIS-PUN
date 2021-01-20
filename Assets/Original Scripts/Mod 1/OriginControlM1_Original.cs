@@ -8,8 +8,6 @@ using TMPro;
 /*  OriginControlM1 keeps the origin displaying correctly for Module 1 
  */
 
-namespace MathNet
-{
     [ExecuteInEditMode]
     public class OriginControlM1_Original : MonoBehaviour
     {
@@ -33,7 +31,7 @@ namespace MathNet
         private void Start()
         {
             Reset();
-            Matrix<float> m = Matrix<float>.Build.Random(3, 4);
+           // Matrix<float> m = Matrix<float>.Build.Random(3, 4);
         }
 
         private void Update()
@@ -191,4 +189,3 @@ namespace MathNet
             SetAxesPositions();
         }
     }
-}

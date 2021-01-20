@@ -32,21 +32,15 @@ public class CalculationsPanel : MonoBehaviour
 
         Vector3 relVec = GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>()._head.position - GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>()._tail.position;
         //double a = 20.00;
-       // Vector3 rel = new Vector3(a*false )
+        // Vector3 rel = new Vector3(a*false )
         TEXDraw3D.text = "$$" +
             "r_" + GLOBALS.SelectedVec.GetComponent<VectorProperties>().gameObject.name.Substring(12) + " = (" +
             GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>()._head.localPosition.x.ToString(GLOBALS.format) + " - " + GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>()._tail.localPosition.x.ToString(GLOBALS.format) + ")i + (" +
             GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>()._head.localPosition.y.ToString(GLOBALS.format) + " - " + GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>()._tail.localPosition.y.ToString(GLOBALS.format) + ")j + (" +
-            GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>()._head.localPosition.z.ToString(GLOBALS.format) + " - " + GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>()._tail.localPosition.z.ToString(GLOBALS.format) + ")k " + 
-            @"\par" + "|" + GLOBALS.SelectedVec.GetComponent<VectorProperties>().gameObject.name.Substring(12) + "| = " + 
-            "\begin{math}" + @"\sqrt[2]{(" + relVec.x.ToString(GLOBALS.format)+"^2) + (" + relVec.y.ToString(GLOBALS.format) + "^2)" + relVec.z.ToString(GLOBALS.format) + "^2)} " + @"\end{math}" +
+            GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>()._head.localPosition.z.ToString(GLOBALS.format) + " - " + GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>()._tail.localPosition.z.ToString(GLOBALS.format) + ")k ";
+        TEXDraw3D.text +=  @"\par" + "|" + GLOBALS.SelectedVec.GetComponent<VectorProperties>().gameObject.name.Substring(12) + "| = " + 
+            @"\sqrt[2]{(" + relVec.x.ToString(GLOBALS.format)+"^2 ) + (" + relVec.y.ToString(GLOBALS.format) + "^2 )" + relVec.z.ToString(GLOBALS.format) + "^2 )} " + 
             @"\par = " + relVec.magnitude.ToString(GLOBALS.format) + "$$";
-
-
-
-
-        //header.text = "|" + GLOBALS.SelectedVec.GetComponent<VectorProperties>().gameObject.name.Substring(12) + "| = " + GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().GetMagnitude().ToString(GLOBALS.format);
-        //header.text += "\n" + GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().GetVectorComponents().x.ToString(GLOBALS.format) + "i + " + GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().GetVectorComponents().y.ToString(GLOBALS.format) + "j + " + GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().GetVectorComponents().z.ToString(GLOBALS.format) + "k";//ToString(GLOBALS.format);       
     }
 
     public void MagCalcs()

@@ -2,7 +2,7 @@
 using UnityEngine.SceneManagement;
 using UnityEngine.XR.MagicLeap;
 using UnityEngine.UI;
-using MathNet.Numerics.LinearAlgebra;
+//using MathNet.Numerics.LinearAlgebra;
 
 /* MenuPanel.cs handles the main menu buttons for both module 1 and module 2
 * Each button has a field for which function runs upon click - these are listed below

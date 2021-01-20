@@ -61,6 +61,9 @@ public class BeamPlacementM3_Original : MonoBehaviour
     // Is a menu being displayed?
     private bool aMenuIsActive;
     private int debugCount;
+
+
+    private bool firstTimeInFSel;
     #endregion
 
     void Start()
@@ -92,7 +95,7 @@ public class BeamPlacementM3_Original : MonoBehaviour
         placingHead = false;
         _giveInstructions.DisplayText();
         debugCount = 0;
-
+        firstTimeInFSel = true;
     }
 
     void Update()
@@ -222,21 +225,25 @@ public class BeamPlacementM3_Original : MonoBehaviour
                     IncrementStage();
                     break;
                 case Stage.m3forcesel:
-                    keypad.SetActive(true);
+                   keypad.SetActive(true);
+
                     break;
                 case Stage.m3keypad:
                     break;
                 case Stage.m3view:
-                    Debug.Log("trigg in m3view");
+                    //  Debug.Log("trigg in m3view");
+                    //GLOBALS.firstVec = false;
                     calcPanel.SetActive(true);
                     calcPanel.GetComponent<CalculationsPanel>().StartCalculationsSequence();
                     //GLOBALS.stage++;
                     //Summary: Checks how many vectors have been given forces. If there is one unknown force left
                     //increment stage, otherwise repeat force selection by decrementing stage
                     int temp = 0; //Checks how many vectors have been given forces
-                    for (int i=0; i< GetComponent<VectorMathM3_Original>().vectors.Count; i++)
+                    for (int i = 0; i < GetComponent<VectorMathM3_Original>().vectors.Count; i++)
                         if (GetComponent<VectorMathM3_Original>().vectors[i].GetComponent<VectorProperties>().isForceKnown)
                             temp++;
+
+                    Debug.Log("in m3view- our given force vector is: " + GLOBALS.GivenForceVec.gameObject.name);
                     if (temp < 4)
                     {
                         DecrementStage();
@@ -246,7 +253,7 @@ public class BeamPlacementM3_Original : MonoBehaviour
                         GLOBALS.stage++;
                     break;
                 case Stage.m3highlight:
-                    Debug.Log("in m3highlight");
+                  //  Debug.Log("in m3highlight");
                     if (!GetComponent<VectorMathM3_Original>().vectors[vec].GetComponent<VectorProperties>().isForceKnown)
                             GetComponent<VectorMathM3_Original>().vectors[vec].GetComponent<VectorControlM3_Original>().vecColor = Color.white;
                         else

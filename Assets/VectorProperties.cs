@@ -11,7 +11,15 @@ public class VectorProperties : MonoBehaviour
     public bool isValidPlacement; //is the head or tail component colliding?
 
     [HideInInspector]
+    public Vector3 forceVec;
+
+    [HideInInspector]
     public bool isForceKnown; //has the user selected/inputted a constant force value
+
+    [HideInInspector]
+    public bool isGivenForceValue; //is this the known force value
+
+
     [HideInInspector] public int forceValue; //user-inputted force value
 
     private bool nameLabelHovered;
@@ -53,12 +61,17 @@ public class VectorProperties : MonoBehaviour
         if (!MLInput.IsStarted)
             MLInput.Start();
         MLInput.OnTriggerDown += OnTriggerDown;
+    }
 
-
-        Vector3 relVec = GetComponent < VectorControlM3_Original >()._head.position - GetComponent < VectorControlM3_Original >()._tail.position;
+    public void BuildForceVector()
+    {
+        Vector3 relVec = GetComponent<VectorControlM3_Original>()._head.position - GetComponent<VectorControlM3_Original>()._tail.position;
+        Debug.Log(relVec.ToString(GLOBALS.format));
         float floatrelMag = relVec.magnitude;
         Vector3 uVec = new Vector3(relVec.x / floatrelMag, relVec.y / floatrelMag, relVec.z / floatrelMag);
-        Vector3 forceVec = forceValue * uVec;
+        if (isGivenForceValue)
+            forceVec = forceValue * uVec;
+        Debug.Log("our given force vec: " + forceVec.ToString(GLOBALS.format));
     }
 
     private void OnTriggerDown(byte controllerId, float pressure)
@@ -74,7 +87,7 @@ public class VectorProperties : MonoBehaviour
                 Debug.Log("hover detected");
                 Debug.Log("trigger press dec vec prop on vector " + gameObject.name);
                 keypad.SetActive(true);
-
+                if (GLOBALS.firstVec) keypad.GetComponent<KeypadPanel>().given = true;
                 keypad.GetComponent<KeypadPanel>().ReceiveVector(gameObject);
                 GLOBALS.stage++; //now in keypad
             }

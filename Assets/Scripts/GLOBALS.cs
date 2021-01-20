@@ -1,6 +1,4 @@
-﻿
-
-/*  GLOBALS contains the global variables, constants, and enums for VIS2
+﻿/*  GLOBALS contains the global variables, constants, and enums for VIS2
  *  
  *  GLOBALS.cs does not need to be attached to any GameObject
  *  and is automatically accessible in all scenes and all scripts
@@ -27,7 +25,6 @@ public enum Stage
     opView,     // watch the app animate/show the operation
     m3orig,     //MODULE 3 Begins HERE:
     m3rotate,   //rotate origin
-   // m3pin,
     m3poc,      //point of concurrency
     m3v1p1,     //place a vector tail
     m3v1p2,     //place a vector head
@@ -41,7 +38,6 @@ public enum Stage
     m3keypad,      //validate vector
     m3view,      //popup for user interaction, "is this a correct vector?"
     m3highlight,
-    //m3forcesel2,
 };
 
 public enum VecOp
@@ -97,12 +93,14 @@ public static class GLOBALS
     // temporary flag in case need to switch cross product
     public static bool invertCross = false;
     public static GameObject SelectedVec;
+   // public static GameObject GivenForceVec; //the given force vec 
     public static bool showingCoords = false;
 
     public static bool isInCoroutine = false;
 
 
     /* DEBUG GLOBALS */
+    //public static bool firstVec;
     public static Vector3 headPos;
     public static Vector3 tailPos;
     public static Vector3 pocPos;
