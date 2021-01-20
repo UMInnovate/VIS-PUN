@@ -81,4 +81,5 @@ public class MenuPanel : MonoBehaviour
     {
         Application.Quit();
     }
+
 }
