@@ -683,7 +683,7 @@ namespace UnityEngine.XR.MagicLeap
                     }
 
                     // IsBumperDown
-                    if (device.TryGetFeatureValue(CommonUsages.secondaryButton, out bool deviceIsBumperDown))
+                    if (device.TryGetFeatureValue(CommonUsages.gripButton, out bool deviceIsBumperDown))
                     {
                         if (this.IsBumperDown != deviceIsBumperDown)
                         {

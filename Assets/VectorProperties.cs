@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.XR.MagicLeap;
+//using MathNet.Numerics.LinearAlgebra;
+
 
 public class VectorProperties : MonoBehaviour
 {
@@ -12,7 +10,12 @@ public class VectorProperties : MonoBehaviour
 
     [HideInInspector]
     public bool isForceKnown; //has the user selected/inputted a constant force value
-    [HideInInspector] public int forceValue; //user-inputted force value
+
+    [HideInInspector]
+    public int forceValue; //user-inputted force value
+
+    [HideInInspector]
+    public Vector3 forceVec;
 
     private bool nameLabelHovered;
     [SerializeField] private MLInput.Controller inputController;
@@ -20,9 +23,25 @@ public class VectorProperties : MonoBehaviour
 
     [SerializeField] BeamPlacementM3_Original beamPlacement;
 
+    //GetComponent<VectorControlM3_Original()> //get the transform of the vec
+    
     #region Public Methods
     public void SetNameLabelHoverState(bool isHovered)
     { nameLabelHovered = isHovered; }
+
+    public void CalculateForceVector()
+    {
+        Vector3 relVec = GetComponent<VectorControlM3_Original>()._head.position - GetComponent<VectorControlM3_Original>()._tail.position; //r
+        float floatrelMag = relVec.magnitude; //|r|
+        Vector3 uVec = new Vector3(relVec.x / floatrelMag, relVec.y / floatrelMag, relVec.z / floatrelMag); //u
+        forceVec = forceValue * uVec; //FORCE VECTOR, make PUBLIC VAR to access it from where you end up doing the calcs
+        /*var M = Matrix<float>.Build;
+        float[] x =  { forceVec.x, forceVec.y, forceVec.z };
+        var f = M.Dense(1,3,x);
+        //float[,] x =  {{ forceVec.x, forceVec.y, forceVec.z }};
+        //var f = M.DenseOfArray(x);*/
+        Debug.Log("Force Vector " + forceVec.ToString());
+    }
 
     //set force value of vector from keypad panel
     public void SetForceVal(int fval)
@@ -39,13 +58,6 @@ public class VectorProperties : MonoBehaviour
         else gameObject.GetComponent<VectorControlM3_Original>().SetName(subA + " = " + fval.ToString() + " N");
     }
 
-    public void ViewMode(DispMode disp)
-    {
-        if(disp == DispMode.Components)
-        {
-            gameObject.GetComponent<VectorControlM3_Original>().GetVectorComponents();
-        }
-    }
     #endregion
     
      void Start()

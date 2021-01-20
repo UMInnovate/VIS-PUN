@@ -6,6 +6,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System;
 
+
 /*  BeamPlacementM2.cs handles user input and the scene's state for Module 2
  *  This script handles placing the controller beam, opening/closing menus,
  *  and calling VectorMath and GiveInstructions for other functions
@@ -35,7 +36,7 @@ public class BeamPlacementM3_Original : MonoBehaviour
     //Point of concurrency of system
     private GameObject _poc; 
     // Input controller
-    private MLInputController _controller = null;
+    private MLInput.Controller _controller = null;
     // LineRenderer from controller
     private LineRenderer _beamline = null;
     // VectorMath handles vector positioning
@@ -73,7 +74,7 @@ public class BeamPlacementM3_Original : MonoBehaviour
         _controller = MLInput.GetController(MLInput.Hand.Left);
         _beamline = GetComponent<LineRenderer>();
         _beamSphere = GameObject.Find("BeamSphere");
-        _vectorMath = GetComponent<VectorMath_Original>();
+        _vectorMath = GetComponent<VectorMath_Original>();      //Should it be M3?
         _giveInstructions = GetComponent<GiveInstructions>();
         vec = 0;
         GLOBALS.stage = Stage.m3orig;
@@ -228,8 +229,10 @@ public class BeamPlacementM3_Original : MonoBehaviour
                     break;
                 case Stage.m3view:
                     Debug.Log("trigg in m3view");
+                    GLOBALS.SelectedVec.GetComponent<VectorProperties>().CalculateForceVector();
                     calcPanel.SetActive(true);
                     calcPanel.GetComponent<CalculationsPanel>().StartCalculationsSequence();
+                    
                     //GLOBALS.stage++;
                     //Summary: Checks how many vectors have been given forces. If there is one unknown force left
                     //increment stage, otherwise repeat force selection by decrementing stage
@@ -271,9 +274,9 @@ public class BeamPlacementM3_Original : MonoBehaviour
 
 
     // Home or Bumper clicks handled here
-    private void OnButtonUp(byte controllerId, MLInputControllerButton button)
+    private void OnButtonUp(byte controllerId, MLInput.Controller.Button button)
     {
-        if (button == MLInputControllerButton.HomeTap)
+        if (button == MLInput.Controller.Button.HomeTap)
         {
             // if opening up the menu, make sure there is a beam and no instructions
             if (!menuPanel.activeSelf)
@@ -286,7 +289,7 @@ public class BeamPlacementM3_Original : MonoBehaviour
             // display instructions only when no menu
             _giveInstructions.EnableText(!menuPanel.activeSelf);
         }
-        else if (button == MLInputControllerButton.Bumper)
+        /*else if (button == MLInput.Controller.Button.Bumper)
         {
             // If we're viewing the completed operation, bumper will toggle the labels we are viewing
             if (GLOBALS.stage == Stage.m3view)
@@ -309,11 +312,17 @@ public class BeamPlacementM3_Original : MonoBehaviour
                         GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().SetUnitVec(false);
                         GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().SetEnabledLabels(false, false, false, false);
                         Debug.Log("in unit mode for vector " + GLOBALS.SelectedVec.name + " bumper press rec");
+                        GLOBALS.displayMode = DispMode.Forces;
+                        break;
+                    case DispMode.Forces:
+                        GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().SetUnitVec(false);
+                        GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().SetEnabledLabels(false, false, true, true);
+                        Debug.Log("in comp mode for vector " + GLOBALS.SelectedVec.name + " bumper press rec");
                         GLOBALS.displayMode = DispMode.Vector;
                         break;
                 }
             }
-        }
+        }*/
     }
 
     // The touch pad handles either origin rotation or changing the beam length
@@ -324,15 +333,8 @@ public class BeamPlacementM3_Original : MonoBehaviour
             // Touchpad handles rotating the origin
             if (GLOBALS.stage == Stage.m3rotate)
             {
-                switch (_controller.TouchpadGesture.Direction)
-                {
-                    case MLInputControllerTouchpadGestureDirection.Clockwise:
-                        _root.transform.RotateAround(_origin.transform.position, Vector3.up, 80f * Time.deltaTime);
-                        break;
-                    case MLInputControllerTouchpadGestureDirection.CounterClockwise:
-                        _root.transform.RotateAround(_origin.transform.position, Vector3.up, -80f * Time.deltaTime);
-                        break;
-                }
+                switch (_controller.CurrentTouchpadGesture.Direction)                {                    case MLInput.Controller.TouchpadGesture.GestureDirection.Clockwise:                        _root.transform.RotateAround(_origin.transform.position, Vector3.up, 80f * Time.deltaTime);                        break;                    case MLInput.Controller.TouchpadGesture.GestureDirection.CounterClockwise:                        _root.transform.RotateAround(_origin.transform.position, Vector3.up, -80f * Time.deltaTime);                        break;                }
+
             }
             else
             {

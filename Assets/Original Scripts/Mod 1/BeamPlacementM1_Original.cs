@@ -152,8 +152,10 @@ public class BeamPlacementM1_Original : MonoBehaviour
     // listener for HOME and BUMPER presses
     private void OnButtonUp(byte controllerId, MLInput.Controller.Button button)
     {
+        Debug.Log("Button press recognized");
         if (button == MLInput.Controller.Button.HomeTap)
         {
+            Debug.Log("Home Tap");
             // if opening up the menu, make sure there is a beam and no instructions
             if (!menuPanel.activeSelf)
                 _beamline.enabled = true;
@@ -164,6 +166,7 @@ public class BeamPlacementM1_Original : MonoBehaviour
         }
         else if (button == MLInput.Controller.Button.Bumper)
         {
+            Debug.Log("Bumper press");
             // change the display mode
             if (GLOBALS.stage != Stage.m1view)
                 return;

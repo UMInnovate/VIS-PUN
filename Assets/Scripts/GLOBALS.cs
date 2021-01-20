@@ -59,7 +59,8 @@ public enum DispMode
     Vector,
     Components,
     Units,
-    Angles
+    Angles,
+    Forces
 }
 
 public static class GLOBALS
