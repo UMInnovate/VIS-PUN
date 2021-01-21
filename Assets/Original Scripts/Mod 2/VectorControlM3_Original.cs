@@ -25,8 +25,8 @@ public class VectorControlM3_Original : MonoBehaviour
     private const float textSize = 0.005f;
     private const float textOffset = 0.05f;
     private const float viewOffset = 0.07f;
-    private Vector3 relHeadPos;
-    private Vector3 relTailPos;
+    [HideInInspector] public Vector3 relHeadPos;
+    [HideInInspector] public Vector3 relTailPos;
     private Vector3 vectorComponents;
 
     public bool isCorrectPlacement = false;
@@ -48,7 +48,6 @@ public class VectorControlM3_Original : MonoBehaviour
         _body = GetComponent<LineRenderer>();
         _tail = transform.Find("Tail");
         _head = transform.Find("Head");
-
         _body.startWidth = beamWidth;
         _body.endWidth = beamWidth;
         InitLabels();

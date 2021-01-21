@@ -36,15 +36,15 @@ MonoBehaviour:
   - ClickRpc
   - DestroyRpc
   - DestroySpaceship
-  - Fire
-  - RespawnSpaceship
   - DisplayAngle
+  - Fire
   - HideLabels
   - InitDotProduct
   - InitVectorNames
   - InstantiateParticles
   - PlaceComponentLabel
   - PlaceHeadandTailLabels
+  - RespawnSpaceship
   - RPC_CreatePlayer
   - SpawnOriginLabelsRPC
   - SpawnOriginSphere_RPC
