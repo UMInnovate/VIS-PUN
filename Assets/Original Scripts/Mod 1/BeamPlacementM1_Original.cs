@@ -159,10 +159,10 @@ public class BeamPlacementM1_Original : MonoBehaviour
     // listener for HOME and BUMPER presses
     private void OnButtonUp(byte controllerId, MLInput.Controller.Button button)
     {
-        Debug.Log("button press");
+        Debug.Log("Button press recognized");
         if (button == MLInput.Controller.Button.HomeTap)
         {
-            Debug.Log("that button is the home button");
+            Debug.Log("Home Tap");
             // if opening up the menu, make sure there is a beam and no instructions
             if (!menuPanel.activeSelf)
                 _beamline.enabled = true;

@@ -14,6 +14,12 @@ public class VectorProperties : MonoBehaviour
     public Vector3 forceVec;
 
     [HideInInspector]
+    public Vector3 stuForceVec; //force vec result from student-inputted force value
+
+    [HideInInspector]
+    public Vector3 uVec;
+
+    [HideInInspector]
     public bool isForceKnown; //has the user selected/inputted a constant force value
 
     [HideInInspector]
@@ -40,21 +46,21 @@ public class VectorProperties : MonoBehaviour
         //REGEX \b([A]|[B]|[C]|[D])
         //SpaceVector A
         string subA = gameObject.name.Substring(12);
-       // Debug.Log("subA = " + subA);
-        if(GLOBALS.inFeet) gameObject.GetComponent<VectorControlM3_Original>().SetName(subA + " = " + fval.ToString() + " lbs");
+        // Debug.Log("subA = " + subA);
+        if (GLOBALS.inFeet) gameObject.GetComponent<VectorControlM3_Original>().SetName(subA + " = " + fval.ToString() + " lbs");
         else gameObject.GetComponent<VectorControlM3_Original>().SetName(subA + " = " + fval.ToString() + " N");
     }
 
     public void ViewMode(DispMode disp)
     {
-        if(disp == DispMode.Components)
+        if (disp == DispMode.Components)
         {
             gameObject.GetComponent<VectorControlM3_Original>().GetVectorComponents();
         }
     }
     #endregion
-    
-     void Start()
+
+    void Start()
     {
         keypad.SetActive(false);
         inputController = MLInput.GetController(MLInput.Hand.Right);
@@ -68,10 +74,21 @@ public class VectorProperties : MonoBehaviour
         Vector3 relVec = GetComponent<VectorControlM3_Original>()._head.position - GetComponent<VectorControlM3_Original>()._tail.position;
         Debug.Log(relVec.ToString(GLOBALS.format));
         float floatrelMag = relVec.magnitude;
-        Vector3 uVec = new Vector3(relVec.x / floatrelMag, relVec.y / floatrelMag, relVec.z / floatrelMag);
+        uVec = new Vector3(relVec.x / floatrelMag, relVec.y / floatrelMag, relVec.z / floatrelMag);
         if (isGivenForceValue)
+        {
             forceVec = forceValue * uVec;
-        Debug.Log("our given force vec: " + forceVec.ToString(GLOBALS.format));
+            GLOBALS.forceVector = forceVec;
+            Debug.Log("our given force vec: " + forceVec.ToString(GLOBALS.format));
+        }
+        else
+        {
+            GLOBALS.unknownUVecs.Add(uVec); //unknownUVecs holds a list of unit vectors that dont have given force vals
+            GLOBALS.unknownVecs.Add(gameObject);
+        }
+
+        //
+        
     }
 
     private void OnTriggerDown(byte controllerId, float pressure)
@@ -87,7 +104,7 @@ public class VectorProperties : MonoBehaviour
                 Debug.Log("hover detected");
                 Debug.Log("trigger press dec vec prop on vector " + gameObject.name);
                 keypad.SetActive(true);
-              //  if (GLOBALS.firstVec) keypad.GetComponent<KeypadPanel>().given = true;
+                //if (GLOBALS.firstVec) keypad.GetComponent<KeypadPanel>().given = true;
                 keypad.GetComponent<KeypadPanel>().ReceiveVector(gameObject);
                 if (GLOBALS.count == 0)
                 {
@@ -100,9 +117,7 @@ public class VectorProperties : MonoBehaviour
                 GLOBALS.stage++; //now in keypad
             }
 
-            }
         }
-
     }
 
-    
+}

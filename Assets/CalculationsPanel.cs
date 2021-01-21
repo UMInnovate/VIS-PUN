@@ -33,6 +33,7 @@ public class CalculationsPanel : MonoBehaviour
         Vector3 relVec = GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>()._head.position - GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>()._tail.position;
         //double a = 20.00;
         // Vector3 rel = new Vector3(a*false )
+        // Vector3 rel = new Vector3(a*false )
         TEXDraw3D.text = "$$" +
             "r_" + GLOBALS.SelectedVec.GetComponent<VectorProperties>().gameObject.name.Substring(12) + " = (" +
             GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>()._head.localPosition.x.ToString(GLOBALS.format) + " - " + GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>()._tail.localPosition.x.ToString(GLOBALS.format) + ")i + (" +

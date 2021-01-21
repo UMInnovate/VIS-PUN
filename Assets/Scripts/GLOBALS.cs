@@ -5,6 +5,7 @@
  */
 
 using UnityEngine;
+using System.Collections.Generic;
 
 // for module 2: incremented by helper function in BeamPlacement.cs
 public enum Stage
@@ -61,11 +62,11 @@ public enum DispMode
 public static class GLOBALS
 {
     // default units are meters
-    public static bool inFeet = false; 
+    public static bool inFeet = false;
     // add audio settings
     public static bool soundOn = true;
     // is the vector correctly placed?
-    public static bool isCorrectVectorPlacement; 
+    public static bool isCorrectVectorPlacement;
     // conversion value
     public const float m2ft = 3.28084f;
     // Unity is lefthanded, typical math is righthanded
@@ -73,9 +74,6 @@ public static class GLOBALS
     // flipZ is used for multiplying on z coordinates
     // and strictly follows handedness (-1 = right, 1 = left)
     public static int flipZ = -1;
-
-    //
-    public static int count; 
     // Grid enable and size are settings
     public static bool gridOn = false;
     public static float gridSize = 0.1f;
@@ -96,7 +94,7 @@ public static class GLOBALS
     // temporary flag in case need to switch cross product
     public static bool invertCross = false;
     public static GameObject SelectedVec;
-    public static GameObject GivenForceVec; //the given force vec 
+    //public static GameObject GivenForceVec; //the given force vec 
     public static bool showingCoords = false;
 
     public static bool isInCoroutine = false;
@@ -107,6 +105,14 @@ public static class GLOBALS
     public static Vector3 headPos;
     public static Vector3 tailPos;
     public static Vector3 pocPos;
+
+    //Module 3 force calc stuff
+    public static Vector3 forceVector;
+    public static List<Vector3> unknownUVecs = new List<Vector3>();
+    public static List<GameObject> unknownVecs = new List<GameObject>();
+    public static int count; //to det which vec is given
+    public static GameObject GivenForceVec; //gameobject of first-selected vector
+
     #region premade colors
     public static Color visCyan = new Color(0.4f, 1, 1, 0.5f);
     public static Color visOrange = new Color(1, 0.7f, 0, 0.5f);

@@ -11,6 +11,8 @@ public class VectorMathM3_Original : MonoBehaviour
     [SerializeField, Tooltip("The 3 vectors in the scene")]
     public List<VectorControlM3_Original> vectors;
 
+    private static float [,] Fsystem;
+
     private static Vector3 v1, v2, v3 = Vector3.one; // ASSUME UNIT VEC V1, V2, V3
     void Start()
     {
@@ -182,6 +184,165 @@ public class VectorMathM3_Original : MonoBehaviour
         vectors[v].SetEnabledLabels(tail, head, components, units);
     }
 
+    // Function to print the matrix 
+    static void PrintMatrix(float[,] a, int n)
+    {
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j <= n; j++)
+                Debug.Log("item " + a[i, j] + " ");
+            Debug.Log("");
+        }
+    }
+
+    // function to reduce matrix to reduced row echelon form. 
+    static int GaussianElimination(float [,] a, int n)
+    {
+        int i, j, k = 0, c, flag = 0;
+
+        // Performing elementary operations 
+        for (i = 0; i < n; i++)
+        {
+            if (a[i, i] == 0)
+            {
+                c = 1;
+                while ((i + c) < n && a[i + c, i] == 0)
+                    c++;
+                if ((i + c) == n)
+                {
+                    flag = 1;
+                    break;
+                }
+                for (j = i, k = 0; k <= n; k++)
+                {
+                    float temp = a[j, k];
+                    a[j, k] = a[j + c, k];
+                    a[j + c, k] = temp;
+                }
+            }
+
+            for (j = 0; j < n; j++)
+            {
+
+                // Excluding all i == j 
+                if (i != j)
+                {
+
+                    // Converting Matrix to reduced row 
+                    // echelon form(diagonal matrix) 
+                    float p = a[j, i] / a[i, i];
+
+                    for (k = 0; k <= n; k++)
+                        a[j, k] = a[j, k] - (a[i, k]) * p;
+                }
+            }
+        }
+        return flag;
+    }
+
+    // To check whether infinite solutions  
+    // exists or no solution exists 
+    static int CheckConsistency(float[,] a,
+                                int n, int flag)
+    {
+        int i, j;
+        float sum;
+
+        // flag == 2 for infinite solution 
+        // flag == 3 for No solution 
+        flag = 3;
+        for (i = 0; i < n; i++)
+        {
+            sum = 0;
+            for (j = 0; j < n; j++)
+                sum = sum + a[i, j];
+            if (sum == a[i, j])
+                flag = 2;
+        }
+        return flag;
+    }
+
+
+    static List<float> PrintResult(float[,] a,
+                        int n, int flag)
+    {
+        Debug.Log("Result is : ");
+        List<float> res = new List<float>();
+
+        if (flag == 2)
+        {
+            Debug.Log("Infinite Solutions Exists");
+            return null;
+        }
+        else if (flag == 3)
+        {
+            Debug.Log("No Solution Exists");
+            return null;
+        }
+
+        // Printing the solution by dividing  
+        // constants by their respective 
+        // diagonal elements 
+        else
+        {
+            for (int i = 0; i < n; i++)
+            {
+                Debug.Log("result item " + a[i, n] / a[i, i] + " ");
+                res.Add(a[i, n] / a[i, i]);
+            }
+            return res;
+        }
+    }
+
+    static float[,] BuildMatrix()
+    {
+        float [,] Fsystem = {
+            { GLOBALS.unknownUVecs[0].x, GLOBALS.unknownUVecs[1].x, GLOBALS.unknownUVecs[2].x, GLOBALS.forceVector.x },
+            { GLOBALS.unknownUVecs[0].y, GLOBALS.unknownUVecs[1].y, GLOBALS.unknownUVecs[2].y, GLOBALS.forceVector.y },
+            { GLOBALS.unknownUVecs[0].z, GLOBALS.unknownUVecs[1].z, GLOBALS.unknownUVecs[2].z, GLOBALS.forceVector.z },
+        };
+
+        return Fsystem;
+    }
+
+    public void SolveSystemOfEquations()
+    {
+        int n = 3, flag = 0;
+
+        Fsystem = BuildMatrix();
+        PrintMatrix(Fsystem, n);
+
+        // Performing Matrix transformation 
+        flag = GaussianElimination(Fsystem, n);
+
+        if (flag == 1)
+            flag = CheckConsistency(Fsystem, n, flag);
+
+        List<float> solution = PrintResult(Fsystem, n, flag);
+        if(solution == null)
+        {
+            Debug.Log("solution is 0 or inf");
+        }
+        else
+        {
+            //go through each unknown vector and multiply the calculated (x,y,z) components to its unit vec
+            //this is saved as the correct force vector in vectorproperties, which is then compared with the student's force vector, 
+            //.. calculated with their inputted forceVal.
+            for (int i = 0; i< n; i++) 
+            {
+                GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().forceVec =
+                new Vector3(GLOBALS.unknownUVecs[i].x * solution[0],
+                GLOBALS.unknownUVecs[i].y * solution[1],
+                GLOBALS.unknownUVecs[i].z * solution[2]);
+
+                Debug.Log("force vec for " + GLOBALS.unknownVecs[i].name + " is "
+                    + GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().forceVec);
+            }
+            
+        }
+    }
+}
+
 
     #endregion
-}
+

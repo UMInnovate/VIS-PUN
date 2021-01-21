@@ -2,7 +2,6 @@
 using UnityEngine.SceneManagement;
 using UnityEngine.XR.MagicLeap;
 using UnityEngine.UI;
-//using MathNet.Numerics.LinearAlgebra;
 
 /* MenuPanel.cs handles the main menu buttons for both module 1 and module 2
 * Each button has a field for which function runs upon click - these are listed below
@@ -22,10 +21,6 @@ public class MenuPanel : MonoBehaviour
 
     [SerializeField, Tooltip("Text field of button for Sound selection")]
     Text soundText = null;
-
-    public OriginControlM1_Original OriginControlM1_Original;
-
-    public BeamPlacementM1_Original BeamPlacementM1_Original;
 
     //Button:Hand.OnClick()
     public void ToggleHandedness()
@@ -87,9 +82,4 @@ public class MenuPanel : MonoBehaviour
         Application.Quit();
     }
 
-    /*DEBUG
-    public void DisplayUnitVecs()
-    {
-        OriginControlM1_Original.DisplayUnitVectors(BeamPlacementM1_Original._vector.GetVectorComponents(), BeamPlacementM1_Original._vector.GetMagnitude());
-    }*/
 }

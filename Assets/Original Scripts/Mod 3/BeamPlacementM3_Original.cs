@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.MagicLeap;
@@ -33,7 +33,7 @@ public class BeamPlacementM3_Original : MonoBehaviour
     // Origin of coordinate system
     private GameObject _origin;
     //Point of concurrency of system
-    private GameObject _poc; 
+    private GameObject _poc;
     // Input controller
     private MLInput.Controller _controller = null;
     // LineRenderer from controller
@@ -95,12 +95,12 @@ public class BeamPlacementM3_Original : MonoBehaviour
         placingHead = false;
         _giveInstructions.DisplayText();
         debugCount = 0;
-        GLOBALS.count = 0; 
+        GLOBALS.count = 0;
     }
 
     void Update()
     {
-       // Debug.Log("STAGE: " + GLOBALS.stage);
+        // Debug.Log("STAGE: " + GLOBALS.stage);
         aMenuIsActive = (operationsPanel.activeSelf || menuPanel.activeSelf);
         if (GLOBALS.gridOn)
             SnapToGrid();
@@ -108,13 +108,13 @@ public class BeamPlacementM3_Original : MonoBehaviour
         HandleTouchpadInput();
 
         pocPos = _poc.transform.position;
-       // Debug.Log("POC POS: " + pocPos);
+        // Debug.Log("POC POS: " + pocPos);
         // if placingHead, have vector head follow beam
         if (placingHead && !aMenuIsActive)
         {
             _vectorMath.PlaceVector3(vec, true, beamEnd);
         }
-        
+
         // Debug.Log("Vector is valid: " + GLOBALS.isCorrectVectorPlacement);
     }
 
@@ -131,7 +131,7 @@ public class BeamPlacementM3_Original : MonoBehaviour
 
     public void DecrementStage()
     {
-            GLOBALS.stage--;
+        GLOBALS.stage--;
 
     }
 
@@ -159,7 +159,7 @@ public class BeamPlacementM3_Original : MonoBehaviour
     {
         if (!aMenuIsActive)
         {
-           
+
             switch (GLOBALS.stage)
             {
                 case Stage.m3orig:
@@ -225,14 +225,14 @@ public class BeamPlacementM3_Original : MonoBehaviour
                     IncrementStage();
                     break;
                 case Stage.m3forcesel:
-                   keypad.SetActive(true);
+                    keypad.SetActive(true);
 
                     break;
                 case Stage.m3keypad:
                     break;
                 case Stage.m3view:
-                    Debug.Log("global count is at: " + GLOBALS.count);
-                    
+                    //  Debug.Log("trigg in m3view");
+                    //GLOBALS.firstVec = false;
                     calcPanel.SetActive(true);
                     calcPanel.GetComponent<CalculationsPanel>().StartCalculationsSequence();
                     //GLOBALS.stage++;
@@ -243,30 +243,19 @@ public class BeamPlacementM3_Original : MonoBehaviour
                         if (GetComponent<VectorMathM3_Original>().vectors[i].GetComponent<VectorProperties>().isForceKnown)
                             temp++;
 
-                  //  Debug.Log("in m3view- our given force vector is: " + GLOBALS.GivenForceVec.gameObject.name);
-                    if (temp <= 4)
+                    //Debug.Log("in m3view- our given force vector is: " + GLOBALS.GivenForceVec.gameObject.name);
+                    if (temp < 4)
                     {
                         DecrementStage();
                         DecrementStage();
                     }
                     else
-                        GLOBALS.stage++;
-                    break;
-                case Stage.m3highlight:
-                  //  Debug.Log("in m3highlight");
-                    if (!GetComponent<VectorMathM3_Original>().vectors[vec].GetComponent<VectorProperties>().isForceKnown)
-                            GetComponent<VectorMathM3_Original>().vectors[vec].GetComponent<VectorControlM3_Original>().vecColor = Color.white;
-                        else
-                            vec++;
-                    break;
-                /*case Stage.m3forcesel2:
-                    Debug.Log("Current vector: " + vec);
-                    if (!GetComponent<VectorMathM3_Original>().vectors[vec].GetComponent<VectorProperties>().isForceKnown)
                     {
-                        keypad.SetActive(true);
-                        
+                        GLOBALS.stage++;
+                        GetComponent<VectorMathM3_Original>().SolveSystemOfEquations();
                     }
-                    break;*/
+                    break;
+               
                 default:
                     return;
             }

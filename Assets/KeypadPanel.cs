@@ -12,6 +12,8 @@ public class KeypadPanel : MonoBehaviour
 {
     [SerializeField] List<Button> ValueButtons;
     [SerializeField] Button CheckButton;
+
+    [HideInInspector] public bool given;
     //[SerializeField] Button ConfirmButton;
     public Text IFText;
 
@@ -21,13 +23,13 @@ public class KeypadPanel : MonoBehaviour
     bool check;
     //PhotonView PV;
 
-   // private int count;
+    // private int count;
     // Start is called before the first frame update
     void Start()
     {
-        
+
         check = false;
-        if(!MLInput.IsStarted) MLInput.Start();
+        if (!MLInput.IsStarted) MLInput.Start();
         MLInput.OnTriggerUp += OnTriggerUp;
         panel = GetComponent<GameObject>();
         IFText.text = "";
@@ -39,18 +41,23 @@ public class KeypadPanel : MonoBehaviour
         Debug.Log("before vp");
 
         vp = v.GetComponent<VectorProperties>();
-        Debug.Log("the item is: " + vp.gameObject.name);
+        //    vp.isGivenForceValue = true;
+        //  GLOBALS.GivenForceVec = vp.gameObject;
+        //  Debug.Log("the given force vector is (in m3forcesel): " + vp.gameObject.name);
+
+        // Debug.Log("this vector is not a give force vector (in m3forcesel): " + vp.gameObject.name);
+
         Debug.Log("after vp");
     }
     public void CheckClicked()
     {
         string value = IFText.text;
-        vp.forceValue = int.Parse(value); 
+        vp.forceValue = int.Parse(value);
         Debug.Log("vp force val: " + vp.forceValue.ToString());
 
         gameObject.SetActive(false);
         vp.SetForceVal(int.Parse(value));
-        if(GLOBALS.count == 0) vp.BuildForceVector();
+        vp.BuildForceVector();
         ACClicked();
         GLOBALS.stage++;
     }
@@ -63,8 +70,8 @@ public class KeypadPanel : MonoBehaviour
 
     private void OnTriggerUp(byte controllerId, float pressure)
     {
-        if(GLOBALS.stage == Stage.m3keypad)
-           Debug.Log("in keypadpanel: triggerup");
+        if (GLOBALS.stage == Stage.m3keypad)
+            Debug.Log("in keypadpanel: triggerup");
     }
 
     public void NumberButtonClicked(int buttonValue)
