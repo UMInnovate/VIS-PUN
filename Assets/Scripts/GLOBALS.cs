@@ -38,7 +38,7 @@ public enum Stage
     m3forcesel,
     m3keypad,      //validate vector
     m3view,      //popup for user interaction, "is this a correct vector?"
-    m3highlight,
+    m3forceview,
 };
 
 public enum VecOp

@@ -226,15 +226,18 @@ public class BeamPlacementM3_Original : MonoBehaviour
                     break;
                 case Stage.m3forcesel:
                     keypad.SetActive(true);
-
+                    calcPanel.GetComponent<CalculationsPanel>().StartCalculationsSequence();
+                    calcPanel.SetActive(true);
                     break;
                 case Stage.m3keypad:
+                    calcPanel.GetComponent<CalculationsPanel>().ComponentCalcs();
+                    calcPanel.GetComponent<CalculationsPanel>().MagCalcs();
                     break;
                 case Stage.m3view:
                     //  Debug.Log("trigg in m3view");
                     //GLOBALS.firstVec = false;
-                    calcPanel.SetActive(true);
-                    calcPanel.GetComponent<CalculationsPanel>().StartCalculationsSequence();
+                    calcPanel.GetComponent<CalculationsPanel>().ComponentCalcs();
+                    calcPanel.GetComponent<CalculationsPanel>().MagCalcs();
                     //GLOBALS.stage++;
                     //Summary: Checks how many vectors have been given forces. If there is one unknown force left
                     //increment stage, otherwise repeat force selection by decrementing stage
@@ -254,6 +257,12 @@ public class BeamPlacementM3_Original : MonoBehaviour
                         GLOBALS.stage++;
                         GetComponent<VectorMathM3_Original>().SolveSystemOfEquations();
                     }
+                    break;
+                case Stage.m3forceview:
+                    calcPanel.GetComponent<CalculationsPanel>().SystemOfEqs();
+                    GetComponent<VectorMathM3_Original>().ValidateForceSystem();
+                    //  calcPanel.GetComponent<CalculationsPanel>().SystemOfEqs();
+                    //calcPanel.GetComponent<CalculationsPanel>().ShowCorrectFVecs();
                     break;
                
                 default:

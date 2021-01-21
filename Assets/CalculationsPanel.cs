@@ -5,17 +5,16 @@ using UnityEngine.UI;
 
 public class CalculationsPanel : MonoBehaviour
 {
-   // private const string V = @"\par";
+    // private const string V = @"\par";
 
     // public Text header;
-    [SerializeField]  private TEXDraw TEXDraw3D;
+    public List<TEXDraw> textLine; 
     
 
     // Start is called before the first frame update
     void Start()
     {
        gameObject.SetActive(true);
-       //TEXDraw3D = GetComponentInChildren<TEXDraw3D>(); 
     }
 
     // Update is called once per frame
@@ -28,29 +27,64 @@ public class CalculationsPanel : MonoBehaviour
     {
         gameObject.SetActive(true);
         gameObject.transform.position = GLOBALS.pocPos + new Vector3(0.5f, 0, 0.5f);
-        Debug.Log("calc canv init at " + gameObject.transform.position.ToString());
-
-        Vector3 relVec = GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>()._head.position - GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>()._tail.position;
-        //double a = 20.00;
-        // Vector3 rel = new Vector3(a*false )
-        // Vector3 rel = new Vector3(a*false )
-        TEXDraw3D.text = "$$" +
-            "r_" + GLOBALS.SelectedVec.GetComponent<VectorProperties>().gameObject.name.Substring(12) + " = (" +
-            GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>()._head.localPosition.x.ToString(GLOBALS.format) + " - " + GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>()._tail.localPosition.x.ToString(GLOBALS.format) + ")i + (" +
-            GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>()._head.localPosition.y.ToString(GLOBALS.format) + " - " + GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>()._tail.localPosition.y.ToString(GLOBALS.format) + ")j + (" +
-            GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>()._head.localPosition.z.ToString(GLOBALS.format) + " - " + GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>()._tail.localPosition.z.ToString(GLOBALS.format) + ")k ";
-        TEXDraw3D.text +=  @"\par" + "|" + GLOBALS.SelectedVec.GetComponent<VectorProperties>().gameObject.name.Substring(12) + "| = " + 
-            @"\sqrt[2]{(" + relVec.x.ToString(GLOBALS.format)+"^2 ) + (" + relVec.y.ToString(GLOBALS.format) + "^2 )" + relVec.z.ToString(GLOBALS.format) + "^2 )} " + 
-            @"\par = " + relVec.magnitude.ToString(GLOBALS.format) + "$$";
     }
+
+    public void CleanCanvas()
+    {
+        textLine[0].text = "Calc";
+        textLine[1].text = "Panel";
+    }
+
+    //make smaller font
+    public void ComponentCalcs()
+    {
+        textLine[0].text = "$$" +
+           "r_" + GLOBALS.SelectedVec.GetComponent<VectorProperties>().gameObject.name.Substring(12) + " = (" +
+           GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().relHeadPos.x.ToString(GLOBALS.format) + " - " + GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().relTailPos.x.ToString(GLOBALS.format) + @")i + \par(" +
+           GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().relHeadPos.y.ToString(GLOBALS.format) + " - " + GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().relTailPos.y.ToString(GLOBALS.format) + @")j + \par(" +
+           GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().relHeadPos.z.ToString(GLOBALS.format) + " - " + GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().relTailPos.z.ToString(GLOBALS.format) + @")k $$";
+    }
+
+
 
     public void MagCalcs()
     {
-        //need ref to vectormath, GLOBALS
-        //r components
-        //"r = " + "(pocPos.x) + (selectVec.x) "+ "i" + "(pocPos.y) + (selectVec.y) "+ "j" + "(pocPos.z) + (selectVec.z) "+ "k"
-        //"r = " + "(pocPos.x) + (selectVec.x) "+ "i" + "(pocPos.y) + (selectVec.y) "+ "j" + "(pocPos.z) + (selectVec.z) "+ "k"
-        // |r| = \sqrt vectorComps.x^2 +  vectorComps.y^2 + vectorComps.z^2
-        // |r| = vectorComps.magnitude
+        Vector3 relVec = GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>()._head.position - GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>()._tail.position;
+        textLine[1].text = @"$$\par \par|" + GLOBALS.SelectedVec.GetComponent<VectorProperties>().gameObject.name.Substring(12) + "| = " +
+           @"\sqrt[2]{(" + relVec.x.ToString(GLOBALS.format) + ")^2 + (" + relVec.y.ToString(GLOBALS.format) + ")^2 + (" + relVec.z.ToString(GLOBALS.format) + ")^2 } " +
+           @"\par = " + relVec.magnitude.ToString(GLOBALS.format) + "$$";
     }
+
+    public void SystemOfEqs()
+    {
+        textLine[0].gameObject.SetActive(false);
+        textLine[1].gameObject.SetActive(false);
+        textLine[2].gameObject.SetActive(true);
+        Debug.Log("in soe, tl 0 is " + textLine[0].isActiveAndEnabled + " and t2 is " + textLine[1].isActiveAndEnabled);
+        textLine[2].text = " ";
+        textLine[2].text = "$$ F_" + GLOBALS.GivenForceVec.GetComponent<VectorProperties>().gameObject.name.Substring(12) + "= "
+        + GLOBALS.GivenForceVec.GetComponent<VectorProperties>().forceValue.ToString(GLOBALS.format) + " * ("
+        + GLOBALS.GivenForceVec.GetComponent<VectorProperties>().uVec.x.ToString(GLOBALS.format) + "i + "
+        + GLOBALS.GivenForceVec.GetComponent<VectorProperties>().uVec.y.ToString(GLOBALS.format) + "j + "
+        + GLOBALS.GivenForceVec.GetComponent<VectorProperties>().uVec.z.ToString(GLOBALS.format) + "k"
+        + ") ";
+
+
+       // float a = (float)GLOBALS.GivenForceVec.GetComponent<VectorProperties>().forceValue;
+        Debug.Log("just printed the known fvec: " + textLine[1].text);
+
+        for (int i = 0; i<= 2; i++)
+        {
+            textLine[2].text += @"\par \bf F_" + GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().gameObject.name.Substring(12) + "= "
+            + "|\bf F_" + GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().gameObject.name.Substring(12) + "| * ("
+            + GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().uVec.x.ToString(GLOBALS.format) + "i + "
+            + GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().uVec.y.ToString(GLOBALS.format) + "j + "
+            + GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().uVec.z.ToString(GLOBALS.format) + "k"
+            + ")";
+
+            Debug.Log("printed unknownvec " + i);
+        }
+    }
+
+
 }
