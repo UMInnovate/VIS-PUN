@@ -341,6 +341,50 @@ public class VectorMathM3_Original : MonoBehaviour
             
         }
     }
+
+        public void ValidateForceSystem()
+        {
+            Debug.Log("In VFS");
+            
+            //Summary: Check if input force values equal that of the calculated force values
+            //Calcuate tolerance allowed of every calculated values
+            //Check if Input1 is > lower tolerance and < high tolerance
+            //If yes mark input force value as correct
+            //If no mark input force value as incorrect
+            float tol = 0.02f;
+            List<float[]> force_tol = new List<float[]>();          
+            float[] force_tolInit = { 0, 0 };
+            force_tol.Add(force_tolInit);
+            force_tol.Add(force_tolInit);
+            force_tol.Add(force_tolInit);
+            force_tol.Add(force_tolInit);
+
+            for (int i=0; i<force_tol.Count; i++)
+            {
+                Tolerance(GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().forceValue, force_tol[i], tol);
+            }
+
+            for(int i=0; i<force_tol.Count; i++)
+            {
+                if((float)GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().forceValue > force_tol[i][0] || 
+                   (float)GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().forceValue < force_tol[i][1])
+                {
+                    Debug.Log("Correct force value");
+                }
+                else
+                {
+                    Debug.Log("Incorrect force value");
+                }
+            }
+
+
+    }
+
+    public void Tolerance(float val, float [] val_tol, float tol)
+    {
+        val_tol[0] = val * (1 - tol) ;
+        val_tol[1] = val * (1 + tol);
+    }
 }
 
 
