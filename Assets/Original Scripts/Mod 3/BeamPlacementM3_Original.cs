@@ -259,7 +259,7 @@ public class BeamPlacementM3_Original : MonoBehaviour
                     }
                     break;
                 case Stage.m3forceview:
-                    calcPanel.GetComponent<CalculationsPanel>().SystemOfEqs();
+                    //calcPanel.GetComponent<CalculationsPanel>().SystemOfEqs();
                     GetComponent<VectorMathM3_Original>().ValidateForceSystem();
                     //  calcPanel.GetComponent<CalculationsPanel>().SystemOfEqs();
                     //calcPanel.GetComponent<CalculationsPanel>().ShowCorrectFVecs();

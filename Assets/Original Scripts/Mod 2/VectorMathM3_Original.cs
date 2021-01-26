@@ -283,12 +283,14 @@ public class VectorMathM3_Original : MonoBehaviour
         // Printing the solution by dividing  
         // constants by their respective 
         // diagonal elements 
+        //Grab globas UnVec index at n get vector properties and at correct force magnitude to public variable
         else
         {
             for (int i = 0; i < n; i++)
             {
                 Debug.Log("result item " + a[i, n] / a[i, i] + " ");
                 res.Add(a[i, n] / a[i, i]);
+                GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().correctForceValue = a[i, n] / a[i, i];
             }
             return res;
         }
@@ -353,7 +355,41 @@ public class VectorMathM3_Original : MonoBehaviour
         //Check if Input1 is > lower tolerance and < high tolerance
         //If yes mark input force value as correct
         //If no mark input force value as incorrect
-        float tol = 0.99f;
+
+        float tol = 0.1f;
+        float[,] forceTol =
+        {
+                { 0, 0 },
+                { 0, 0 },
+                { 0, 0 }
+            };
+
+
+        for (int i = 0; i < 3; i++)
+        {
+
+            forceTol[i, 0] = GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().correctForceValue * (1 - tol);
+            forceTol[i, 1] = GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().correctForceValue * (1 + tol);
+
+            Debug.Log("low force tol at " + i + " is " + forceTol[i, 0] + " high force tol at " + i + " is " + forceTol[i, 1]);
+        }
+
+        for (int i = 0; i < 3; i++)
+        {
+            if ((float)GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().forceValue > forceTol[i, 0] 
+                && (float)GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().forceValue < forceTol[i, 1])
+            {
+                Debug.Log("Input force " + (float)GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().forceValue 
+                    + " is greater than " + forceTol[i, 0] + " and less than " + forceTol[i, 1]);
+            }
+            else
+            {
+                Debug.Log("Input force " + (float)GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().forceValue 
+                    + " is not greater than " + forceTol[i, 0] + " and less than " + forceTol[i, 1]);
+            }
+        }
+
+        /*float tol = 0.01f;
         List<float[]> force_tol = new List<float[]>();
         float[] force_tolInit = { 0, 0 };
         force_tol.Add(force_tolInit);
@@ -378,14 +414,14 @@ public class VectorMathM3_Original : MonoBehaviour
             {
                 Debug.Log("Incorrect force value");
             }
-        }
+        }*/
     }
 
-    public void Tolerance(float val, float[] val_tol, float tol)
+    /*public void Tolerance(float val, float[] val_tol, float tol)
     {
         val_tol[0] = val * (1 - tol);
         val_tol[1] = val * (1 + tol);
-    }
+    }*/
 }
 
 
