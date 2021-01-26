@@ -263,6 +263,10 @@ public class BeamPlacementM3_Original : MonoBehaviour
                     GetComponent<VectorMathM3_Original>().ValidateForceSystem();
                     //  calcPanel.GetComponent<CalculationsPanel>().SystemOfEqs();
                     //calcPanel.GetComponent<CalculationsPanel>().ShowCorrectFVecs();
+                    GLOBALS.stage++;
+                    break;
+                case Stage.m3forcesys:
+                    calcPanel.GetComponent<CalculationsPanel>().LinearCalc();
                     break;
                
                 default:
@@ -275,7 +279,7 @@ public class BeamPlacementM3_Original : MonoBehaviour
 
 
 
-    // Home or Bumper clicks handled here
+    // Home or Bumper click handled here
     private void OnButtonUp(byte controllerId, MLInput.Controller.Button button)
     {
         if (button == MLInput.Controller.Button.HomeTap)

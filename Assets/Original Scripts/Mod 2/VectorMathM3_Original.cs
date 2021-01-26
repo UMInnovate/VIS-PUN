@@ -363,7 +363,7 @@ public class VectorMathM3_Original : MonoBehaviour
         for (int i = 0; i < 3; i++)
         {
             Tolerance(GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().forceValue, force_tol[i], tol);
-            Debug.Log("force tol at " + i + " is " + force_tol[i].ToString());
+            Debug.Log("force tol at " + i + " is " + force_tol[i][0].ToString() +"," + force_tol[i][1].ToString());
         }
 
         for (int i = 0; i < 3; i++)

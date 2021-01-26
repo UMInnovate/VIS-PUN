@@ -12333,6 +12333,7 @@ MonoBehaviour:
   - {fileID: 179125968}
   - {fileID: 1547377134}
   - {fileID: 975919971}
+  cam: {fileID: 287766257}
 --- !u!1 &1962220102
 GameObject:
   m_ObjectHideFlags: 0
