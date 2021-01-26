@@ -14,7 +14,7 @@ public class VectorProperties : MonoBehaviour
     public Vector3 forceVec;
 
     [HideInInspector]
-    public Vector3 stuForceVec; //force vec result from student-inputted force value
+    public float correctForceValue;
 
     [HideInInspector]
     public Vector3 uVec;
