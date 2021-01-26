@@ -30,7 +30,7 @@ public class VectorControlM1 : MonoBehaviour
     [SerializeField] private Material beamMaterial;
     [SerializeField] public TextMeshPro _headLabel; //***PUN made public
     [SerializeField, Tooltip("The origin sphere at the tail of the vector")]
-    private GameObject _origin;
+    public GameObject _origin;
 
     //***PUN
     public GameObject _headGameObjectPrefab;

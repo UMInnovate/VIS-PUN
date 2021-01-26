@@ -142,6 +142,38 @@ public class OriginControlM1 : MonoBehaviour
         
     }
 
+    /*  Display unit vectors
+         *  displays the X, Y, and Z line renderers at 1 ft length
+         */
+    public void DisplayUnitVectors(Vector3 vectorComps, Vector3 ori)
+    {
+       
+        origin_axes[3].enabled = false;  // only use 3 line renderers to display code
+        origin_axes[4].enabled = false;
+        origin_axes[5].enabled = false;
+
+        origin_axes[0].SetPosition(1, new Vector3(transform.position.x + transform.right.x * vectorComps.x, transform.position.y, transform.position.z));  // set position(1=endpoint position) of origin location of x
+        origin_axes[1].SetPosition(1, new Vector3(transform.position.x, transform.position.y + transform.up.y * vectorComps.y, transform.position.z)); // set position(1=endpoint position) of origin location of y
+        origin_axes[2].SetPosition(1, new Vector3(transform.position.x, transform.position.y, transform.position.z + transform.forward.z * vectorComps.z)); // set position(1=endpoint position) of origin location of z
+
+        if (!GLOBALS.inFeet) // sets position in m.
+        {
+            //and update the text
+            xAxisText.text = vectorComps.x.ToString(GLOBALS.format);
+            yAxisText.text = (vectorComps.y).ToString(GLOBALS.format);
+            zAxisText.text = (-1 * vectorComps.z).ToString(GLOBALS.format);
+        }
+        // update text labels for default vector values
+        else
+        { //ft
+          //and update the text axes
+            xAxisText.text = (vectorComps.x * GLOBALS.m2ft).ToString(GLOBALS.format);
+            yAxisText.text = (vectorComps.y * GLOBALS.m2ft).ToString(GLOBALS.format);
+            zAxisText.text = ((-1 * vectorComps.z) * GLOBALS.m2ft).ToString(GLOBALS.format);
+        }
+
+    }
+
     // rotating labels to camera every frame
     private void RotateLabelsTowardUser()
     {

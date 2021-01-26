@@ -108,9 +108,9 @@ public class CalculationsPanel : MonoBehaviour
             textLine[1].text += GLOBALS.unknownUVecs[i].y.ToString(GLOBALS.format) + "F_" + GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().gameObject.name.Substring(12) + " + ";
             textLine[2].text += GLOBALS.unknownUVecs[i].z.ToString(GLOBALS.format) + "F_" + GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().gameObject.name.Substring(12) + " + ";
         }
-        textLine[0].text += GLOBALS.unknownUVecs[2].x.ToString(GLOBALS.format) + " = 0$$";
-        textLine[1].text += GLOBALS.unknownUVecs[2].y.ToString(GLOBALS.format) + " = 0$$";
-        textLine[2].text += GLOBALS.unknownUVecs[2].z.ToString(GLOBALS.format) + " = 0$$";
+        textLine[0].text += GLOBALS.unknownUVecs[2].x.ToString(GLOBALS.format) + GLOBALS.unknownVecs[2].GetComponent<VectorProperties>().gameObject.name.Substring(12) + " = 0$$";
+        textLine[1].text += GLOBALS.unknownUVecs[2].y.ToString(GLOBALS.format) + GLOBALS.unknownVecs[2].GetComponent<VectorProperties>().gameObject.name.Substring(12) + " = 0$$";
+        textLine[2].text += GLOBALS.unknownUVecs[2].z.ToString(GLOBALS.format) + GLOBALS.unknownVecs[2].GetComponent<VectorProperties>().gameObject.name.Substring(12) + " = 0$$";
 
 
     }
