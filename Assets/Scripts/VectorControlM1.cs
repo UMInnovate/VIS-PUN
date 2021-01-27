@@ -89,8 +89,8 @@ public class VectorControlM1 : MonoBehaviour
 
     private void RecolorVector()
     {
-        //_body.startColor = vecColor; //***PUN
-        //_body.endColor = vecColor;//***PUN
+      //  _body.startColor = vecColor; //***PUN
+       // _body.endColor = vecColor;//***PUN
         _head.gameObject.GetComponent<MeshRenderer>().sharedMaterial.color = vecColor;
         lastColor = vecColor;
     }
@@ -101,7 +101,7 @@ public class VectorControlM1 : MonoBehaviour
         _headLabel.transform.localScale = scale;
         _headLabel.text = "X.X, Y.Y, Z.Z";
 
-        //bCanInitHeadLabel = true; //***PUN  
+     //   bCanInitHeadLabel = true; //***PUN  
     }
 
     private void RebuildVector()

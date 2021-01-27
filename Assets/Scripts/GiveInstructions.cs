@@ -97,6 +97,17 @@ public class GiveInstructions : MonoBehaviour
                 text.text = "VECTOR 2 COMPONENTS" + "\n" +
                     "Trigger: continue";
                 break;
+             case Stage.opView:
+                text.text = "Viewing " + GLOBALS.opSelected.ToString();
+                if ((int)GLOBALS.opSelected > 2)
+                    text.text += " Product";
+                if (GLOBALS.opSelected != VecOp.Dot)
+                {
+                    text.text += "\n" +
+                    "Bumper: toggle labels";
+                }
+                text.text += "\n" + "Home: Main Menu";
+                break;
             case Stage.m3orig:
                 text.text = "PLACE YOUR ORIGIN" + "\n" +
                     "Touchpad: adjust beam length" + "\n" +
@@ -114,67 +125,72 @@ public class GiveInstructions : MonoBehaviour
                     "Trigger: place";
                 break;
             case Stage.m3v1p1:
-                text.text = "VECTOR 1 TAIL" + "\n" +
+                text.text = "PLACE VECTOR 1 TAIL" + "\n" +
                     "Touchpad: adjust beam length" + "\n" +
                     "Trigger: place tail" + "\n";
-                     break;
+                break;
             case Stage.m3v1p2:
-                text.text = "VECTOR 1 HEAD" + "\n" +
+                text.text = "PLACE VECTOR 1 HEAD" + "\n" +
                 "Touchpad: adjust beam length" + "\n" +
                 "Trigger: place head" + "\n";
-              break;
+                break;
             case Stage.m3v2p1:
-                text.text = "VECTOR 2 TAIL" + "\n" +
+                text.text = "PLACE VECTOR 2 TAIL" + "\n" +
                     "Touchpad: adjust beam length" + "\n" +
                     "Trigger: place tail" + "\n";
-                    break;
+                break;
             case Stage.m3v2p2:
-                text.text = "VECTOR 2 HEAD" + "\n" +
+                text.text = "PLACE VECTOR 2 HEAD" + "\n" +
                 "Touchpad: adjust beam length" + "\n" +
                 "Trigger: place head" + "\n";
                 break;
             case Stage.m3v3p1:
-                text.text = "VECTOR 3 TAIL" + "\n" +
+                text.text = "PLACE VECTOR 3 TAIL" + "\n" +
                     "Touchpad: adjust beam length" + "\n" +
                     "Trigger: place tail" + "\n";
-                    break;
+                break;
             case Stage.m3v3p2:
-                text.text = "VECTOR 3 HEAD" + "\n" +
+                text.text = "PLACE VECTOR 3 HEAD" + "\n" +
                 "Touchpad: adjust beam length" + "\n" +
                 "Trigger: place head" + "\n";
                 break;
             case Stage.m3v4p1:
-                text.text = "VECTOR 4 TAIL" + "\n" +
+                text.text = "PLACE VECTOR 4 TAIL" + "\n" +
                     "Touchpad: adjust beam length" + "\n" +
                     "Trigger: place tail" + "\n";
-                    break;
+                break;
             case Stage.m3v4p2:
-                text.text = "VECTOR 4 HEAD" + "\n" +
+                text.text = "PLACE VECTOR 4 HEAD" + "\n" +
                 "Touchpad: adjust beam length" + "\n" +
                 "Trigger: place head" + "\n";
-                 break;
+                break;
             case Stage.m3forcesel:
-                text.text = "Select a vector and input its force value";
+                if(GLOBALS.count == 0 )
+                    text.text = "SELECT THE VECTOR WITH A KNOWN FORCE VALUE BY HOVERING OVER IS NAME LABEL" + "\n" 
+                    + "Touchpad: adjust beam length" + "\n" 
+                    + "Trigger: select name label" + "\n";
+                else
+                    text.text = "SELECT A VECTOR TO INPUT ITS CALCULATED FORCE VALUE BY HOVERING OVER ITS NAME LABEL" + "\n"
+                    + "Touchpad: adjust beam length" + "\n"
+                    + "Trigger: select name label" + "\n";
                 break;
             case Stage.m3keypad:
-                text.text = "Keypad stage";
+                text.text = "INPUT FORCE VALUE" + "\n"
+                    + "Trigger: select number" + "\n"; ;
                 break;
             case Stage.m3view:
                 text.text = "Viewing Vector " + GLOBALS.SelectedVec.name.Substring(12).ToString();
                 break;
+            case Stage.m3forceview:
+                text.text = "SEE CALCULATIONS CANVAS FOR FORCE SYSTEM DEFINITION" + "\n"
+                   + "Trigger: see system of equations" + "\n"; ;
+                break;
+            case Stage.m3forcesys:
+                text.text = "SEE CALCULATIONS CANVAS FOR FORCE SYSTEM LINEAR EQUATIONS" + "\n"
+                   + "Trigger: see correct values" + "\n"; ;
+                break;
             case Stage.opSel:
                 text.text = "";
-                break;
-            case Stage.opView:
-                text.text = "Viewing " + GLOBALS.opSelected.ToString();
-                if ((int)GLOBALS.opSelected > 2)
-                    text.text += " Product";
-                if (GLOBALS.opSelected != VecOp.Dot)
-                {
-                    text.text += "\n" +
-                    "Bumper: toggle labels";
-                }
-                text.text += "\n" + "Home: Main Menu";
                 break;
 
             default:

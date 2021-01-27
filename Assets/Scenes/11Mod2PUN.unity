@@ -6407,6 +6407,11 @@ PrefabInstance:
       objectReference: {fileID: 716467020}
     - target: {fileID: 2758039440975243742, guid: 573457b88d822d940a5caeac336d645b,
         type: 3}
+      propertyPath: currentScene
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 2758039440975243742, guid: 573457b88d822d940a5caeac336d645b,
+        type: 3}
       propertyPath: storableObjectRef
       value: 
       objectReference: {fileID: 716467021}
@@ -9178,7 +9183,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &2110583904
 RectTransform:
   m_ObjectHideFlags: 0
@@ -9194,10 +9199,10 @@ RectTransform:
   m_Father: {fileID: 6820424789484509402}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 250, y: -450.03156}
-  m_SizeDelta: {x: 400, y: 59.978947}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2110583905
 MonoBehaviour:
