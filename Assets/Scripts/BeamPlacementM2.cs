@@ -194,7 +194,8 @@ public class BeamPlacementM2 : MonoBehaviour
                     break;
 
                 case Stage.v1calc:
-                        // the user must click to launch the animation of the component calculations
+                    disableControllerInput();
+                    // the user must click to launch the animation of the component calculations
                     StartCoroutine(ComponentCalculation(0));
                     // this Corroutine animates the display of calculations
                     // it increments the stage AFTER completion            
@@ -234,6 +235,7 @@ public class BeamPlacementM2 : MonoBehaviour
                     IncrementStage();
                     break;
                 case Stage.v2calc:
+                    disableControllerInput();
                     StartCoroutine(ComponentCalculation(1));
                     // this case it should make the operations panel launch upon completion
                     break;
@@ -344,6 +346,19 @@ public class BeamPlacementM2 : MonoBehaviour
     }
     #endregion
 
+    private void disableControllerInput()
+    {
+        GLOBALS.isInCoroutine = true;
+        Debug.Log("MLInput disabled");
+    }
+
+    private void enableControllerInput()
+    {
+        GLOBALS.isInCoroutine = false;
+        _beamline.enabled = true;
+        Debug.Log("MLInput enabled");
+    }
+
     // this happens whenever the vector head has been placed
     private IEnumerator ComponentCalculation(int v)
     {
@@ -354,7 +369,7 @@ public class BeamPlacementM2 : MonoBehaviour
             // *** POTENTIAL BUG? ***
             operationsPanel.SetActive(true);           
         }
-
+        enableControllerInput();
         IncrementStage();
     }
 
