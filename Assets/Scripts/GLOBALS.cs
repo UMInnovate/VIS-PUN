@@ -37,8 +37,9 @@ public enum Stage
     m3v4p2,     //place a vector head
     m3forcesel,
     m3keypad,      //validate vector
-    m3view,      //popup for user interaction, "is this a correct vector?"
+    m3view,      
     m3forceview,
+    m3forcesys, //TO DO -- ADD CHECK STAGE COMPARING REAL VALS TO USER INPUT VALUES
 };
 
 public enum VecOp

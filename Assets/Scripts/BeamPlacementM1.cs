@@ -99,7 +99,10 @@ public class BeamPlacementM1 : MonoBehaviour
             }
             else if (GLOBALS.displayMode == DispMode.Units)
             {
-                _origin.GetComponent<OriginControlM1>().DisplayUnitVectors();
+                Vector3 relVec = _vector.GetComponent<VectorControlM1>()._head.position - _vector.GetComponent<VectorControlM1>()._origin.transform.position;
+                float relMag = relVec.magnitude;
+                Vector3 uVc = new Vector3(relVec.x / relMag, relVec.y / relMag, relVec.z / relMag);
+                _origin.GetComponent<OriginControlM1>().DisplayUnitVectors(uVc, _vector.GetComponent<VectorControlM1>()._origin.transform.position);
             }
         }
     }
@@ -205,9 +208,11 @@ public class BeamPlacementM1 : MonoBehaviour
                     _angles.SetActive(false);
                     break;
                 case DispMode.Units:
-                    // todo make the origin display unit vectors
-                    // ...
-                    //
+                    Vector3 relVec = _vector.GetComponent<VectorControlM1>()._head.position - _vector.GetComponent<VectorControlM1>()._origin.transform.position;
+                    float relMag = relVec.magnitude;
+                    Vector3 uVc = new Vector3(relVec.x / relMag, relVec.y / relMag, relVec.z / relMag);
+                    _origin.GetComponent<OriginControlM1>().DisplayUnitVectors(uVc, _vector.GetComponent<VectorControlM1>()._origin.transform.position);
+                   // _angles.SetActive(false);
                     _angles.SetActive(false);
                     break;
                 case DispMode.Angles:

@@ -20,7 +20,7 @@ public class MainMenuSelect : MonoBehaviour
     //module 3
     public void Module3Selec()
     {
-        SceneManager.LoadScene(12, LoadSceneMode.Single);
+        SceneManager.LoadScene(13, LoadSceneMode.Single);
     }
 
     // quit app

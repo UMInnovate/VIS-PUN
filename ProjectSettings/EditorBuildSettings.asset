@@ -44,6 +44,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/12Mod3Forces.unity
     guid: 90021555b579ec048938e2f32fc1985c
+  - enabled: 1
+    path: Assets/Scenes/13Mod3Select.unity
+    guid: dcd49a00433b12e49b9ab9e0f9234cda
+  - enabled: 1
+    path: Assets/Scenes/14Mod3PUN.unity
+    guid: 7bbb13887c0f06d40bf66ca3204ee3cf
   m_configObjects:
     com.unity.xr.magicleap.magic_leap_settings: {fileID: 11400000, guid: cc39af361da53364b8b592bbebb21ebd,
       type: 2}

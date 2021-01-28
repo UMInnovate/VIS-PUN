@@ -8,7 +8,8 @@ public class CalculationsPanel : MonoBehaviour
     // private const string V = @"\par";
 
     // public Text header;
-    public List<TEXDraw> textLine; 
+    public List<TEXDraw> textLine;
+    public Camera cam; 
     
 
     // Start is called before the first frame update
@@ -20,7 +21,8 @@ public class CalculationsPanel : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if(gameObject.activeSelf)
+            gameObject.transform.rotation = Quaternion.LookRotation(gameObject.transform.position - cam.transform.position);
     }
 
     public void StartCalculationsSequence()
@@ -73,17 +75,44 @@ public class CalculationsPanel : MonoBehaviour
        // float a = (float)GLOBALS.GivenForceVec.GetComponent<VectorProperties>().forceValue;
         Debug.Log("just printed the known fvec: " + textLine[1].text);
 
+        
+
         for (int i = 0; i<= 2; i++)
         {
-            textLine[2].text += @"\par \bf F_" + GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().gameObject.name.Substring(12) + "= "
-            + "|\bf F_" + GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().gameObject.name.Substring(12) + "| * ("
+            textLine[2].text += @"\par \bf F_" + GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().gameObject.name.Substring(12)  + " = | "
+            + "F_" + GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().gameObject.name.Substring(12) + " | * ( " //GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().forceValue + " * ("
             + GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().uVec.x.ToString(GLOBALS.format) + "i + "
             + GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().uVec.y.ToString(GLOBALS.format) + "j + "
             + GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().uVec.z.ToString(GLOBALS.format) + "k"
             + ")";
 
-            Debug.Log("printed unknownvec " + i);
+           // Debug.Log("printed unknownvec " + i + " " + GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().uVec.x);
         }
+        textLine[2].text += "$$";
+    }
+
+    public void LinearCalc()
+    {
+        textLine[0].gameObject.SetActive(true);
+        textLine[1].gameObject.SetActive(true);
+        textLine[2].gameObject.SetActive(true);
+
+        textLine[0].text = @"$$\Sigma F_x = ";
+        textLine[1].text = @"$$\Sigma F_y = ";
+        textLine[2].text = @"$$\Sigma F_z = ";
+
+        for (int i = 0; i < 2; i++)
+        {
+            textLine[0].text += GLOBALS.unknownUVecs[i].x.ToString(GLOBALS.format) + "F_" + GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().gameObject.name.Substring(12) + " + ";
+           
+            textLine[1].text += GLOBALS.unknownUVecs[i].y.ToString(GLOBALS.format) + "F_" + GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().gameObject.name.Substring(12) + " + ";
+            textLine[2].text += GLOBALS.unknownUVecs[i].z.ToString(GLOBALS.format) + "F_" + GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().gameObject.name.Substring(12) + " + ";
+        }
+        textLine[0].text += GLOBALS.unknownUVecs[2].x.ToString(GLOBALS.format) + GLOBALS.unknownVecs[2].GetComponent<VectorProperties>().gameObject.name.Substring(12) + " = 0$$";
+        textLine[1].text += GLOBALS.unknownUVecs[2].y.ToString(GLOBALS.format) + GLOBALS.unknownVecs[2].GetComponent<VectorProperties>().gameObject.name.Substring(12) + " = 0$$";
+        textLine[2].text += GLOBALS.unknownUVecs[2].z.ToString(GLOBALS.format) + GLOBALS.unknownVecs[2].GetComponent<VectorProperties>().gameObject.name.Substring(12) + " = 0$$";
+
+
     }
 
 

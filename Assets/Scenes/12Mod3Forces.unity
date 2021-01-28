@@ -7006,7 +7006,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isValidPlacement: 0
   forceVec: {x: 0, y: 0, z: 0}
-  stuForceVec: {x: 0, y: 0, z: 0}
+  correctForceValue: 0
   uVec: {x: 0, y: 0, z: 0}
   isForceKnown: 0
   isGivenForceValue: 0
@@ -12333,6 +12333,7 @@ MonoBehaviour:
   - {fileID: 179125968}
   - {fileID: 1547377134}
   - {fileID: 975919971}
+  cam: {fileID: 287766257}
 --- !u!1 &1962220102
 GameObject:
   m_ObjectHideFlags: 0
@@ -16166,7 +16167,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isValidPlacement: 0
   forceVec: {x: 0, y: 0, z: 0}
-  stuForceVec: {x: 0, y: 0, z: 0}
+  correctForceValue: 0
   uVec: {x: 0, y: 0, z: 0}
   isForceKnown: 0
   isGivenForceValue: 0
@@ -16403,7 +16404,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isValidPlacement: 0
   forceVec: {x: 0, y: 0, z: 0}
-  stuForceVec: {x: 0, y: 0, z: 0}
+  correctForceValue: 0
   uVec: {x: 0, y: 0, z: 0}
   isForceKnown: 0
   isGivenForceValue: 0
@@ -17499,6 +17500,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4063a5ffc8be54af594101731ea3d9ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  room: {fileID: 0}
   handText: {fileID: 6820424790525357588}
   unitsText: {fileID: 6820424789075396689}
   soundText: {fileID: 1192705240}
@@ -18650,7 +18652,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isValidPlacement: 0
   forceVec: {x: 0, y: 0, z: 0}
-  stuForceVec: {x: 0, y: 0, z: 0}
+  correctForceValue: 0
   uVec: {x: 0, y: 0, z: 0}
   isForceKnown: 0
   isGivenForceValue: 0
