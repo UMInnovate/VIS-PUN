@@ -11,7 +11,7 @@ public class StorableObjectBin : MonoBehaviour
     private PhotonRoom photonRoomRef;
 
     [SerializeField]
-    private myPlayer myPlayerRef;
+    public myPlayer myPlayerRef;
 
     public void AddStorableObject(StorableObject _object)
     {

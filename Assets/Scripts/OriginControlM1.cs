@@ -106,41 +106,10 @@ public class OriginControlM1 : MonoBehaviour
         {
             xAxisText.text = vectorComps.x.ToString(GLOBALS.format);
             yAxisText.text = vectorComps.y.ToString(GLOBALS.format);
-            zAxisText.text = vectorComps.z.ToString(GLOBALS.format);
+            zAxisText.text = (-1 * vectorComps.z).ToString(GLOBALS.format);
         }
     }
-
-    /*  Display unit vectors
-     *  displays the X, Y, and Z line renderers at 1 ft length
-     */
-    public void DisplayUnitVectors()
-    {
-        //origin_axes[0].endColor = new Color(1, 0, 0, startAlpha); // red component color for positive x
-        //origin_axes[1].endColor = new Color(0, 1, 0, startAlpha); // green component color for positive y
-        //origin_axes[2].endColor = new Color(0, 0, 1, startAlpha); // blue component color for positive z
-
-        origin_axes[3].enabled = false;  // only use 3 line renderers to display code
-        origin_axes[4].enabled = false;
-        origin_axes[5].enabled = false;
-
-        if (!GLOBALS.inFeet) // sets position in ft.
-        {
-            origin_axes[0].SetPosition(1, transform.position + transform.right);  // set position(1=endpoint position) of origin location of x
-            origin_axes[1].SetPosition(1, transform.position + transform.up); // set position(1=endpoint position) of origin location of y
-            origin_axes[2].SetPosition(1, transform.position + transform.forward); // set position(1=endpoint position) of origin location of z
-        }
-        // update text labels for default vector values
-        else {
-            origin_axes[0].SetPosition(1, transform.position + transform.right/GLOBALS.m2ft);  // set position(1=endpoint position) of origin location of x
-            origin_axes[1].SetPosition(1, transform.position + transform.up/GLOBALS.m2ft); // set position(1=endpoint position) of origin location of y
-            origin_axes[2].SetPosition(1, transform.position + transform.forward/GLOBALS.m2ft); // set position(1=endpoint position) of origin location of z
-        }
-
-        xAxisText.text = (1f).ToString(GLOBALS.format);
-        yAxisText.text = (1f).ToString(GLOBALS.format);
-        zAxisText.text = (1f).ToString(GLOBALS.format);
-        
-    }
+    
 
     /*  Display unit vectors
          *  displays the X, Y, and Z line renderers at 1 ft length

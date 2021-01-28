@@ -106,9 +106,6 @@ public class PhotonRoom : MonoBehaviourPunCallbacks, IInRoomCallbacks
 
         storableObjectRef.RemoveStorableObject_RPC(_uniqueID); //@@@ sends the ID of the player who left & clears their stuff
 
-        
-
-
     }
 
     void StartGame()

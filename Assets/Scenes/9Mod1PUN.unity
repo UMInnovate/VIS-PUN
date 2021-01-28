@@ -1588,6 +1588,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4063a5ffc8be54af594101731ea3d9ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  room: {fileID: 1533807904}
   handText: {fileID: 0}
   unitsText: {fileID: 108569915}
   soundText: {fileID: 466845119}
@@ -2294,7 +2295,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1110130073
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2310,10 +2311,10 @@ RectTransform:
   m_Father: {fileID: 752238086}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 250, y: -429.7236}
-  m_SizeDelta: {x: 400, y: 73.517586}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1110130074
 MonoBehaviour:
@@ -4853,10 +4854,10 @@ MonoBehaviour:
   beamPlacementM2_Ref: {fileID: 0}
   vectorMath_Ref: {fileID: 0}
   vectors: []
-  nameLabelPrefab: {fileID: 0}
+  nameLabelPrefab: {fileID: 1115890112}
   dotProjectionBody: {fileID: 0}
   vector2: {fileID: 0}
-  angle: {fileID: 0}
+  angle: {fileID: 1871112533}
   myPlayerRef: {fileID: 135194024}
   storableObjectBin_Ref: {fileID: 135194025}
   xLabel: {fileID: 1400686214}
@@ -5064,8 +5065,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 250, y: -346.20602}
-  m_SizeDelta: {x: 400, y: 73.517586}
+  m_AnchoredPosition: {x: 250, y: -399.6729}
+  m_SizeDelta: {x: 400, y: 93.55141}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1817701911
 MonoBehaviour:
