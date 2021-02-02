@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.XR.MagicLeap;
 using UnityEngine.SceneManagement;
+using Photon.Pun;
+using Photon.Realtime;
 
 /*  ModuleSelect is on the Canvas in Scene 1ModSelection
  *  Buttons launch the instruction scene for selected module
@@ -9,6 +11,8 @@ using UnityEngine.SceneManagement;
 public class ModuleSelect2: MonoBehaviour
 {
     private MLInput.Controller _controller = null;
+    public PhotonLobby PhotonLobby;
+
 
     private void Start()
     {
@@ -26,6 +30,7 @@ public class ModuleSelect2: MonoBehaviour
                 LaunchMod2Single();
                 break;
             case MLInput.Controller.TouchpadGesture.GestureDirection.Right:
+                PhotonLobby.RoomHandler();
                 LaunchMod2Multi();
                 break;
         }
