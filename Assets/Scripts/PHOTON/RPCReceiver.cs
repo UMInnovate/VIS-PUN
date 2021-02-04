@@ -4,11 +4,12 @@ using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class RPCReceiver : MonoBehaviour
 {
     private PhotonView PV;
-
+    
     //VECTOR LABELS 
     public TextMeshPro label;   
     private TextMeshPro headLabelV1, tailLabelV1, headLabelV2, tailLabelV2;
@@ -55,8 +56,10 @@ public class RPCReceiver : MonoBehaviour
   
     void Update()
     {
-        CheckForNames(); // in the future, create a bool for checking if names need to be checked for (to save some power)
-
+        if (SceneManager.GetActiveScene().buildIndex == 11)
+        {
+            CheckForNames(); // in the future, create a bool for checking if names need to be checked for (to save some power)
+        }
         CheckForLabels();
 
         CheckIfCanHideLabels();
