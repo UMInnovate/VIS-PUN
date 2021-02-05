@@ -50,17 +50,22 @@ public class PhotonLobby : MonoBehaviourPunCallbacks
             Debug.Log("Is player in a room already: " + PhotonNetwork.InRoom);
             Debug.Log("Build index was " + SceneManager.GetActiveScene().buildIndex);
             PhotonNetwork.JoinOrCreateRoom("Mod1Room", _roomOptions, TypedLobby.Default);
+            //JoinRandomRoom();
         }
 
         else if (SceneManager.GetActiveScene().buildIndex == 3 || SceneManager.GetActiveScene().buildIndex == 10)
         {
             Debug.Log("In if statement for Mod 2");
+            Debug.Log("Is player in a room already: " + PhotonNetwork.InRoom);
+            Debug.Log("Build index was " + SceneManager.GetActiveScene().buildIndex);
             PhotonNetwork.JoinOrCreateRoom("Mod2Room", _roomOptions, TypedLobby.Default);
         }
 
         else if (SceneManager.GetActiveScene().buildIndex == 13 || SceneManager.GetActiveScene().buildIndex == 14)
         {
             Debug.Log("In if statement for Mod 3");
+            Debug.Log("Is player in a room already: " + PhotonNetwork.InRoom);
+            Debug.Log("Build index was " + SceneManager.GetActiveScene().buildIndex);
             PhotonNetwork.JoinOrCreateRoom("Mod3Room", _roomOptions, TypedLobby.Default);
         }
         else
@@ -69,7 +74,8 @@ public class PhotonLobby : MonoBehaviourPunCallbacks
     }
 
     public void JoinRandomRoom()
-    {       
+    {
+        Debug.Log("Join random room");
         PhotonNetwork.JoinRandomRoom();
     }
 
