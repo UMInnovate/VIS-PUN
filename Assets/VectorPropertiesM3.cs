@@ -32,7 +32,7 @@ public class VectorPropertiesM3 : MonoBehaviour
     [SerializeField] private MLInput.Controller inputController;
     public GameObject keypad;
 
-    [SerializeField] BeamPlacementM3_Original beamPlacement;
+    [SerializeField] BeamPlacementM3 beamPlacement;
 
     #region Public Methods
     public void SetNameLabelHoverState(bool isHovered)
@@ -47,15 +47,15 @@ public class VectorPropertiesM3 : MonoBehaviour
         //SpaceVector A
         string subA = gameObject.name.Substring(12);
         // Debug.Log("subA = " + subA);
-        if (GLOBALS.inFeet) gameObject.GetComponent<VectorControlM3_Original>().SetName(subA + " = " + fval.ToString() + " lbs");
-        else gameObject.GetComponent<VectorControlM3_Original>().SetName(subA + " = " + fval.ToString() + " N");
+        if (GLOBALS.inFeet) gameObject.GetComponent<VectorControlM3>().SetName(subA + " = " + fval.ToString() + " lbs");
+        else gameObject.GetComponent<VectorControlM3>().SetName(subA + " = " + fval.ToString() + " N");
     }
 
     public void ViewMode(DispMode disp)
     {
         if (disp == DispMode.Components)
         {
-            gameObject.GetComponent<VectorControlM3_Original>().GetVectorComponents();
+            gameObject.GetComponent<VectorControlM3>().GetVectorComponents();
         }
     }
     #endregion
@@ -71,7 +71,7 @@ public class VectorPropertiesM3 : MonoBehaviour
 
     public void BuildForceVector()
     {
-        Vector3 relVec = GetComponent<VectorControlM3_Original>()._head.position - GetComponent<VectorControlM3_Original>()._tail.position;
+        Vector3 relVec = GetComponent<VectorControlM3>()._head.position - GetComponent<VectorControlM3>()._tail.position;
         Debug.Log(relVec.ToString(GLOBALS.format));
         float floatrelMag = relVec.magnitude;
         uVec = new Vector3(relVec.x / floatrelMag, relVec.y / floatrelMag, relVec.z / floatrelMag);

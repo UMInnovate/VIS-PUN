@@ -166,7 +166,7 @@ public class GiveInstructions : MonoBehaviour
                 break;
             case Stage.m3forcesel:
                 if(GLOBALS.count == 0 )
-                    text.text = "SELECT THE VECTOR WITH A KNOWN FORCE VALUE BY HOVERING OVER IS NAME LABEL" + "\n" 
+                    text.text = "SELECT THE VECTOR WITH A KNOWN FORCE VALUE BY HOVERING OVER ITS NAME LABEL" + "\n" 
                     + "Touchpad: adjust beam length" + "\n" 
                     + "Trigger: select name label" + "\n";
                 else

@@ -51,6 +51,8 @@ MonoBehaviour:
   - SpawnResultantVec_ComponentLabel
   - UpdateOriginLabels_RPC
   - V2AnimationHappening
+  - InitLabels
+  - RotateLabelsTowardUser
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0
