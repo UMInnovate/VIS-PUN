@@ -95,6 +95,7 @@ public class BeamPlacementM2_Original : MonoBehaviour
             Debug.Log("Handling coroutine");
         }
 
+
         aMenuIsActive = (operationsPanel.activeSelf || menuPanel.activeSelf);
         if (GLOBALS.gridOn)
             SnapToGrid();

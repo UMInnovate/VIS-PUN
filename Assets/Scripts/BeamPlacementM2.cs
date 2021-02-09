@@ -143,7 +143,7 @@ public class BeamPlacementM2 : MonoBehaviour
     // Note - the trigger click handles what happens upon EXITING the stage given in the switch statement.
     private void OnTriggerUp(byte controllerId, float pressure)
     {
-        if (!aMenuIsActive)
+        if (!aMenuIsActive && !GLOBALS.isInCoroutine)
         {
             switch (GLOBALS.stage)
             {

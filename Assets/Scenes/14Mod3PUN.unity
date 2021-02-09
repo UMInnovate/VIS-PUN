@@ -5515,7 +5515,7 @@ MonoBehaviour:
   isGivenForceValue: 0
   forceValue: 0
   keypad: {fileID: 1349472205}
-  beamPlacement: {fileID: 1941305929}
+  beamPlacement: {fileID: 0}
 --- !u!4 &658342037
 Transform:
   m_ObjectHideFlags: 0
@@ -10773,7 +10773,7 @@ MonoBehaviour:
   isGivenForceValue: 0
   forceValue: 0
   keypad: {fileID: 1349472205}
-  beamPlacement: {fileID: 1941305929}
+  beamPlacement: {fileID: 0}
 --- !u!4 &1300835806
 Transform:
   m_ObjectHideFlags: 0
@@ -15399,7 +15399,7 @@ MonoBehaviour:
   isGivenForceValue: 0
   forceValue: 0
   keypad: {fileID: 1349472205}
-  beamPlacement: {fileID: 1941305929}
+  beamPlacement: {fileID: 0}
 --- !u!114 &1807785117
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15630,7 +15630,7 @@ MonoBehaviour:
   isGivenForceValue: 0
   forceValue: 0
   keypad: {fileID: 1349472205}
-  beamPlacement: {fileID: 1941305929}
+  beamPlacement: {fileID: 0}
 --- !u!4 &1831409262
 Transform:
   m_ObjectHideFlags: 0
@@ -18548,6 +18548,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 5570250648162348903, guid: 6de0b0e9715351e45b9e88dfb87c8dd6,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5570250648162348920, guid: 6de0b0e9715351e45b9e88dfb87c8dd6,
         type: 3}
       propertyPath: viewIdField
