@@ -7,6 +7,7 @@ using Photon;
 using Photon.Realtime;
 using Photon.Pun;
 using System;
+using UnityEngine.SceneManagement;
 
 public class KeypadPanel : MonoBehaviour
 {
@@ -20,6 +21,7 @@ public class KeypadPanel : MonoBehaviour
     private GameObject panel;
 
     private VectorProperties vp;
+    private VectorPropertiesM3 vp3;
     bool check;
     //PhotonView PV;
 
@@ -41,6 +43,7 @@ public class KeypadPanel : MonoBehaviour
         Debug.Log("before vp");
 
         vp = v.GetComponent<VectorProperties>();
+        vp3 = v.GetComponent<VectorPropertiesM3>();
         //    vp.isGivenForceValue = true;
         //  GLOBALS.GivenForceVec = vp.gameObject;
         //  Debug.Log("the given force vector is (in m3forcesel): " + vp.gameObject.name);
@@ -51,15 +54,30 @@ public class KeypadPanel : MonoBehaviour
     }
     public void CheckClicked()
     {
-        string value = IFText.text;
-        vp.forceValue = int.Parse(value);
-        Debug.Log("vp force val: " + vp.forceValue.ToString());
+        if (SceneManager.GetActiveScene().buildIndex == 12)
+        {
+            string value = IFText.text;
+            vp.forceValue = int.Parse(value);
+            Debug.Log("vp force val: " + vp.forceValue.ToString());
 
-        gameObject.SetActive(false);
-        vp.SetForceVal(int.Parse(value));
-        vp.BuildForceVector();
-        ACClicked();
-        GLOBALS.stage++;
+            gameObject.SetActive(false);
+            vp.SetForceVal(int.Parse(value));
+            vp.BuildForceVector();
+            ACClicked();
+            GLOBALS.stage++;
+        }
+        else
+        {
+            string value = IFText.text;
+            vp3.forceValue = int.Parse(value);
+            Debug.Log("vp3 force val: " + vp3.forceValue.ToString());
+
+            gameObject.SetActive(false);
+            vp3.SetForceVal(int.Parse(value));
+            vp3.BuildForceVector();
+            ACClicked();
+            GLOBALS.stage++;
+        }
     }
 
     public void ACClicked()

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-
+using Photon.Pun;
 
 [ExecuteInEditMode]
 public class VectorControlM3 : MonoBehaviour
@@ -30,7 +30,7 @@ public class VectorControlM3 : MonoBehaviour
     [HideInInspector] public Vector3 relTailPos;
     private Vector3 vectorComponents;
 
-    public bool isCorrectPlacement = false;
+    [HideInInspector] public bool isCorrectPlacement = false;
     [HideInInspector] public bool unitVec;
 
     [SerializeField, Tooltip("xComp, yComp, zComp objects")]
@@ -44,18 +44,28 @@ public class VectorControlM3 : MonoBehaviour
     [SerializeField] private TextMeshPro _tailLabel;
     [SerializeField] private TextMeshPro _componentLabel;
 
+    //***PUN
+    public GameObject _headGameObjectPrefab;
+    public GameObject _tailGameObjectPrefab;
+    public GameObject _headGameObject;
+    public GameObject _tailGameObject;
+    private PhotonView photonView;
+
     private void Start()
     {
         _body = GetComponent<PhotonLineRenderer>();
         _tail = transform.Find("Tail");
         _head = transform.Find("Head");
-       ///PUN _body.startWidth = beamWidth;
-       ///PUN _body.endWidth = beamWidth;
+        ///PUN _body.startWidth = beamWidth;
+        ///PUN _body.endWidth = beamWidth;
+        ///
+        photonView = GetComponent<PhotonView>();
+        SpawnHeadAndTail(); //PUN
         InitLabels();
-
+        if(photonView) photonView.RPC("InitLabels", RpcTarget.AllBuffered);
         SetEnabledLabels(false, false, false, false);
         unitVec = false;
-        InitComps();
+      //  InitComps();
     }
 
     private void Update()
@@ -74,6 +84,7 @@ public class VectorControlM3 : MonoBehaviour
                 RebuildComps();
         }
         RotateLabelsTowardUser();
+        if (photonView) photonView.RPC("RotateLabelsTowardUser", RpcTarget.AllBuffered);
     }
 
     public void SetUnitVec(bool i)
@@ -132,6 +143,7 @@ public class VectorControlM3 : MonoBehaviour
         lastColor = vecColor;
     }
 
+    [PunRPC]
     private void InitLabels()
     {
         Vector3 scale = new Vector3(textSize, textSize, textSize);
@@ -187,6 +199,13 @@ public class VectorControlM3 : MonoBehaviour
         _body.SetPosition(1, _head.transform.position);
         _head.transform.rotation = Quaternion.LookRotation(_head.transform.position - transform.position);
 
+
+        //***PUN
+        _headGameObject.transform.rotation = _head.rotation;
+        _headGameObject.transform.position = _head.position;
+        _tailGameObject.transform.position = _tail.position;
+
+
         // local positions are needed because Vectors must be childed to Origin
         relTailPos = transform.localPosition;
         relHeadPos = relTailPos + _head.localPosition;
@@ -213,6 +232,7 @@ public class VectorControlM3 : MonoBehaviour
         }
     }
 
+    [PunRPC]
     private void RotateLabelsTowardUser()
     {
         // ex. for nameLabel, we choose to put it at half the length of the vector relative to the origin 
@@ -375,6 +395,21 @@ public class VectorControlM3 : MonoBehaviour
                 curve[i] = 1f - (2f * (1f - val) * (1f - val));
         }
         return curve;
+    }
+
+    //*** PUN
+    public void SpawnHeadAndTail()
+    {
+        Debug.Log("spawning Head and tail");
+        Vector3 headPos = _head.position;
+        Vector3 tailPos = _tail.position;
+        Quaternion headRot = _head.rotation;
+        Quaternion tailRot = _tail.rotation;
+
+        string _headGameObjectName = _headGameObjectPrefab.name;
+        string _tailGameObjectName = _tailGameObjectPrefab.name;
+        _headGameObject = PhotonNetwork.Instantiate(_headGameObjectName, headPos, headRot);
+        _tailGameObject = PhotonNetwork.Instantiate(_tailGameObjectName, tailPos, tailRot);
     }
 
 }

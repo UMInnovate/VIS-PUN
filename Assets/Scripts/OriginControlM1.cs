@@ -91,9 +91,9 @@ public class OriginControlM1 : MonoBehaviour
         origin_axes[4].Disable();
         origin_axes[5].Disable();
 
-        origin_axes[0].SetPosition(1, transform.position + transform.right * vectorComps.x);  // set position(1=endpoint position) of origin location of x
-        origin_axes[1].SetPosition(1, transform.position + transform.up * vectorComps.y); // set position(1=endpoint position) of origin location of y
-        origin_axes[2].SetPosition(1, transform.position + transform.forward * vectorComps.z); // set position(1=endpoint position) of origin location of z
+        origin_axes[0].SetPosition(1, new Vector3(transform.position.x + transform.right.x * vectorComps.x, transform.position.y, transform.position.z));  // set position(1=endpoint position) of origin location of x
+        origin_axes[1].SetPosition(1, new Vector3(transform.position.x, transform.position.y + transform.up.y * vectorComps.y, transform.position.z)); // set position(1=endpoint position) of origin location of y
+        origin_axes[2].SetPosition(1, new Vector3(transform.position.x, transform.position.y, transform.position.z + transform.forward.z * vectorComps.z));
 
         // update text labels for default vector values
         if (GLOBALS.inFeet)
