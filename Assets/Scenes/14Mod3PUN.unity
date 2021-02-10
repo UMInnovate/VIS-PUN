@@ -17808,6 +17808,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 5570250648162348903, guid: 6de0b0e9715351e45b9e88dfb87c8dd6,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5570250648162348920, guid: 6de0b0e9715351e45b9e88dfb87c8dd6,
         type: 3}
       propertyPath: viewIdField
@@ -17888,6 +17893,11 @@ PrefabInstance:
       propertyPath: myPlayerRef
       value: 
       objectReference: {fileID: 1990669933}
+    - target: {fileID: 7713266696766274959, guid: 6de0b0e9715351e45b9e88dfb87c8dd6,
+        type: 3}
+      propertyPath: currentScene
+      value: 14
+      objectReference: {fileID: 0}
     - target: {fileID: 7713266696766274959, guid: 6de0b0e9715351e45b9e88dfb87c8dd6,
         type: 3}
       propertyPath: storableObjectRef

@@ -197,7 +197,7 @@ LineRenderer:
   m_SortingOrder: 0
   m_Positions:
   - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
+  - {x: 0.8660253, y: 0, z: -0.5000001}
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 1
@@ -414,7 +414,7 @@ LineRenderer:
   m_SortingOrder: 0
   m_Positions:
   - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
+  - {x: -0.8660253, y: 0, z: 0.5000001}
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 1
@@ -798,7 +798,7 @@ LineRenderer:
   m_SortingOrder: 0
   m_Positions:
   - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
+  - {x: 0.5000001, y: 0, z: 0.8660253}
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 1
@@ -1211,7 +1211,7 @@ LineRenderer:
   m_SortingOrder: 0
   m_Positions:
   - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 1, z: 0}
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 1
@@ -1414,11 +1414,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4063a5ffc8be54af594101731ea3d9ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  room: {fileID: 0}
   handText: {fileID: 0}
   unitsText: {fileID: 108569915}
   soundText: {fileID: 466845119}
-  OriginControlM1_Original: {fileID: 1009808639}
-  BeamPlacementM1_Original: {fileID: 8722895021099890240}
 --- !u!114 &752238088
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4341,7 +4340,7 @@ LineRenderer:
   m_SortingOrder: 0
   m_Positions:
   - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
+  - {x: -0.5000001, y: 0, z: -0.8660253}
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 1
@@ -4579,7 +4578,7 @@ LineRenderer:
   m_SortingOrder: 0
   m_Positions:
   - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: -1, z: 0}
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 1

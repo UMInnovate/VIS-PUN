@@ -39,6 +39,7 @@ public class CalculationsPanel : MonoBehaviour
         {
             GameObject calcPanelObject = PhotonNetwork.Instantiate("CalcPanel", gameObject.transform.position, Quaternion.identity);
             calcPanel = calcPanelObject.GetComponent<CalculationsPanel>();
+            Debug.Log("is calcPanelObj active: " + calcPanelObject.gameObject.activeSelf + " and is calcPanel active: " + calcPanel.name  );
            // cam = GameObject.Find("Main Camera").GetComponent<Camera>();
         }
     }
@@ -76,21 +77,20 @@ public class CalculationsPanel : MonoBehaviour
 
     public void MagCalcs()
     {
-        
-        {
-            if (SceneManager.GetActiveScene().buildIndex == 12) {
-                Vector3 relVec = GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>()._head.position - GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>()._tail.position;
-                textLine[1].text = @"$$\par \par|" + GLOBALS.SelectedVec.GetComponent<VectorProperties>().gameObject.name.Substring(12) + "| = " +
-                   @"\sqrt[2]{(" + relVec.x.ToString(GLOBALS.format) + ")^2 + (" + relVec.y.ToString(GLOBALS.format) + ")^2 + (" + relVec.z.ToString(GLOBALS.format) + ")^2 } " +
-                   @"\par = " + relVec.magnitude.ToString(GLOBALS.format) + "$$";
-            }
-            else
-            {
-            Vector3 relVec = GLOBALS.SelectedVec.GetComponent<VectorControlM3>()._head.position - GLOBALS.SelectedVec.GetComponent<VectorControlM3>()._tail.position;
-            calcPanel.textLine[1].text = @"$$\par \par|" + GLOBALS.SelectedVec.GetComponent<VectorPropertiesM3>().gameObject.name.Substring(12) + "| = " +
-               @"\sqrt[2]{(" + relVec.x.ToString(GLOBALS.format) + ")^2 + (" + relVec.y.ToString(GLOBALS.format) + ")^2 + (" + relVec.z.ToString(GLOBALS.format) + ")^2 } " +
-               @"\par = " + relVec.magnitude.ToString(GLOBALS.format) + "$$";
-        }
+           if (SceneManager.GetActiveScene().buildIndex == 12)
+           {
+               Vector3 relVec = GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>()._head.position - GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>()._tail.position;
+               textLine[1].text = @"$$\par \par|" + GLOBALS.SelectedVec.GetComponent<VectorProperties>().gameObject.name.Substring(12) + "| = " +
+                  @"\sqrt[2]{(" + relVec.x.ToString(GLOBALS.format) + ")^2 + (" + relVec.y.ToString(GLOBALS.format) + ")^2 + (" + relVec.z.ToString(GLOBALS.format) + ")^2 } " +
+                  @"\par = " + relVec.magnitude.ToString(GLOBALS.format) + "$$";
+           }
+           else
+           {
+               Vector3 relVec = GLOBALS.SelectedVec.GetComponent<VectorControlM3>()._head.position - GLOBALS.SelectedVec.GetComponent<VectorControlM3>()._tail.position;
+               calcPanel.textLine[1].text = @"$$\par \par|" + GLOBALS.SelectedVec.GetComponent<VectorPropertiesM3>().gameObject.name.Substring(12) + "| = " +
+                  @"\sqrt[2]{(" + relVec.x.ToString(GLOBALS.format) + ")^2 + (" + relVec.y.ToString(GLOBALS.format) + ")^2 + (" + relVec.z.ToString(GLOBALS.format) + ")^2 } " +
+                  @"\par = " + relVec.magnitude.ToString(GLOBALS.format) + "$$";
+           }
     }
 
     public void SystemOfEqs()
