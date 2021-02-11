@@ -16,9 +16,9 @@ MonoBehaviour:
     AppIdRealtime: 81745385-a9ba-4970-92bf-738dd40e1e2c
     AppIdChat: 
     AppIdVoice: 
-    AppVersion: 1
+    AppVersion: 
     UseNameServer: 1
-    FixedRegion: us
+    FixedRegion: 
     Server: 
     Port: 0
     ProxyServer: 
@@ -40,19 +40,20 @@ MonoBehaviour:
   - Fire
   - HideLabels
   - InitDotProduct
+  - InitLabels
   - InitVectorNames
   - InstantiateParticles
   - PlaceComponentLabel
   - PlaceHeadandTailLabels
   - RespawnSpaceship
+  - RotateLabelsTowardUser
   - RPC_CreatePlayer
   - SpawnOriginLabelsRPC
   - SpawnOriginSphere_RPC
   - SpawnResultantVec_ComponentLabel
   - UpdateOriginLabels_RPC
   - V2AnimationHappening
-  - InitLabels
-  - RotateLabelsTowardUser
+  - InitVectorName
   DisableAutoOpenWizard: 1
-  ShowSettings: 1
+  ShowSettings: 0
   DevRegionSetOnce: 0

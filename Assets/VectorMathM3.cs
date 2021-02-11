@@ -241,7 +241,7 @@ public class VectorMathM3 : MonoBehaviour
             {
                 Debug.Log("result item " + a[i, n] / a[i, i] + " ");
                 res.Add(a[i, n] / a[i, i]);
-                GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().correctForceValue = a[i, n] / a[i, i];
+                GLOBALS.unknownVecs[i].GetComponent<VectorPropertiesM3>().correctForceValue = a[i, n] / a[i, i];
             }
             return res;
         }
@@ -283,13 +283,13 @@ public class VectorMathM3 : MonoBehaviour
             //.. calculated with their inputted forceVal.
             for (int i = 0; i < n; i++)
             {
-                GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().forceVec =
+                GLOBALS.unknownVecs[i].GetComponent<VectorPropertiesM3>().forceVec =
                 new Vector3(GLOBALS.unknownUVecs[i].x * solution[0],
                 GLOBALS.unknownUVecs[i].y * solution[1],
                 GLOBALS.unknownUVecs[i].z * solution[2]);
 
                 Debug.Log("force vec for " + GLOBALS.unknownVecs[i].name + " is "
-                    + GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().forceVec);
+                    + GLOBALS.unknownVecs[i].GetComponent<VectorPropertiesM3>().forceVec);
 
 
             }
@@ -319,23 +319,23 @@ public class VectorMathM3 : MonoBehaviour
         for (int i = 0; i < 3; i++)
         {
 
-            forceTol[i, 0] = GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().correctForceValue * (1 - tol);
-            forceTol[i, 1] = GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().correctForceValue * (1 + tol);
+            forceTol[i, 0] = GLOBALS.unknownVecs[i].GetComponent<VectorPropertiesM3>().correctForceValue * (1 - tol);
+            forceTol[i, 1] = GLOBALS.unknownVecs[i].GetComponent<VectorPropertiesM3>().correctForceValue * (1 + tol);
 
             Debug.Log("low force tol at " + i + " is " + forceTol[i, 0] + " high force tol at " + i + " is " + forceTol[i, 1]);
         }
 
         for (int i = 0; i < 3; i++)
         {
-            if ((float)GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().forceValue > forceTol[i, 0]
-                && (float)GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().forceValue < forceTol[i, 1])
+            if ((float)GLOBALS.unknownVecs[i].GetComponent<VectorPropertiesM3>().forceValue > forceTol[i, 0]
+                && (float)GLOBALS.unknownVecs[i].GetComponent<VectorPropertiesM3>().forceValue < forceTol[i, 1])
             {
-                Debug.Log("Input force " + (float)GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().forceValue
+                Debug.Log("Input force " + (float)GLOBALS.unknownVecs[i].GetComponent<VectorPropertiesM3>().forceValue
                     + " is greater than " + forceTol[i, 0] + " and less than " + forceTol[i, 1]);
             }
             else
             {
-                Debug.Log("Input force " + (float)GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().forceValue
+                Debug.Log("Input force " + (float)GLOBALS.unknownVecs[i].GetComponent<VectorPropertiesM3>().forceValue
                     + " is not greater than " + forceTol[i, 0] + " and less than " + forceTol[i, 1]);
             }
         }

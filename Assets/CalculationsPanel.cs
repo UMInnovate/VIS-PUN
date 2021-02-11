@@ -14,7 +14,10 @@ public class CalculationsPanel : MonoBehaviour
     public Camera cam;
 
     private CalculationsPanel calcPanel; //private variable for the PUN instance of the CalcPanel script
-
+    [SerializeField]
+    private myPlayer myPlayerRef;
+    [SerializeField]
+    private StorableObjectBin storableObjectBin_Ref;
 
     // Start is called before the first frame update
     void Start()
@@ -25,10 +28,13 @@ public class CalculationsPanel : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(gameObject.activeSelf)
+        if (gameObject.activeSelf)
             gameObject.transform.rotation = Quaternion.LookRotation(gameObject.transform.position - cam.transform.position);
-        if(PhotonNetwork.InRoom && gameObject.activeSelf)
+        if (PhotonNetwork.InRoom && gameObject.activeSelf)
+        {
+            Debug.Log("if in room and act");
             calcPanel.GetComponentInParent<GameObject>().gameObject.transform.rotation = Quaternion.LookRotation(gameObject.transform.position - cam.transform.position);
+        }
     }
 
     public void StartCalculationsSequence()
@@ -40,7 +46,8 @@ public class CalculationsPanel : MonoBehaviour
             GameObject calcPanelObject = PhotonNetwork.Instantiate("CalcPanel", gameObject.transform.position, Quaternion.identity);
             calcPanel = calcPanelObject.GetComponent<CalculationsPanel>();
             Debug.Log("is calcPanelObj active: " + calcPanelObject.gameObject.activeSelf + " and is calcPanel active: " + calcPanel.name  );
-           // cam = GameObject.Find("Main Camera").GetComponent<Camera>();
+            // cam = GameObject.Find("Main Camera").GetComponent<Camera>();
+          //  AddToBin(myPlayerRef.myPlayerActorNumber, calcPanel);
         }
     }
 

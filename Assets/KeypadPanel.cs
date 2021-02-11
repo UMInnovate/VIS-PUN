@@ -52,6 +52,8 @@ public class KeypadPanel : MonoBehaviour
 
         Debug.Log("after vp");
     }
+
+
     public void CheckClicked()
     {
         if (SceneManager.GetActiveScene().buildIndex == 12)

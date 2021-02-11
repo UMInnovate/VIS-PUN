@@ -64,6 +64,9 @@ public class BeamPlacementM3 : MonoBehaviour
     private bool aMenuIsActive;
     private int debugCount;
 
+    [HideInInspector]
+    public bool bCanPlaceVec1Labels, bCanPlaceVec2Labels, bCanPlaceVec3Labels, bCanPlaceVec4Labels = false;
+
 
     private bool firstTimeInFSel;
     #endregion
@@ -192,6 +195,7 @@ public class BeamPlacementM3 : MonoBehaviour
                     break;
                 case Stage.m3v1p2:
                     placingHead = false;
+                    bCanPlaceVec1Labels = true; //***PUN
                     vec++;
                     IncrementStage();
                     break;
@@ -203,6 +207,7 @@ public class BeamPlacementM3 : MonoBehaviour
                     break;
                 case Stage.m3v2p2:
                     placingHead = false;
+                    bCanPlaceVec2Labels = true; //***PUN
                     vec++;
                     IncrementStage();
                     break;
@@ -214,6 +219,7 @@ public class BeamPlacementM3 : MonoBehaviour
                     break;
                 case Stage.m3v3p2:
                     placingHead = false;
+                    bCanPlaceVec3Labels = true; //***PUN
                     vec++;
                     IncrementStage();
                     break;
@@ -225,11 +231,11 @@ public class BeamPlacementM3 : MonoBehaviour
                     break;
                 case Stage.m3v4p2:
                     placingHead = false;
+                    bCanPlaceVec4Labels = true; //***PUN
                     vec++;
                     IncrementStage();
                     break;
                 case Stage.m3forcesel:
-                    keypad.SetActive(true);
                     calcPanel.GetComponent<CalculationsPanel>().StartCalculationsSequence();
                     calcPanel.SetActive(true);
                     break;
@@ -272,7 +278,6 @@ public class BeamPlacementM3 : MonoBehaviour
                 case Stage.m3forcesys:
                     calcPanel.GetComponent<CalculationsPanel>().LinearCalc();
                     break;
-
                 default:
                     return;
             }

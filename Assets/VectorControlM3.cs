@@ -40,8 +40,8 @@ public class VectorControlM3 : MonoBehaviour
 
     [SerializeField] private Material beamMaterial;
     [SerializeField] public TextMeshPro _nameLabel;
-    [SerializeField] private TextMeshPro _headLabel;
-    [SerializeField] private TextMeshPro _tailLabel;
+    [SerializeField] public TextMeshPro _headLabel;
+    [SerializeField] public TextMeshPro _tailLabel;
     [SerializeField] private TextMeshPro _componentLabel;
 
     //***PUN
@@ -49,6 +49,8 @@ public class VectorControlM3 : MonoBehaviour
     public GameObject _tailGameObjectPrefab;
     public GameObject _headGameObject;
     public GameObject _tailGameObject;
+    public RPCReceiverM3 rpcReceiverReference;
+
     private PhotonView photonView;
 
     private void Start()
@@ -62,7 +64,7 @@ public class VectorControlM3 : MonoBehaviour
         photonView = GetComponent<PhotonView>();
         SpawnHeadAndTail(); //PUN
         InitLabels();
-        if(photonView) photonView.RPC("InitLabels", RpcTarget.AllBuffered);
+       // if(photonView) photonView.RPC("InitLabels", RpcTarget.AllBuffered);
         SetEnabledLabels(false, false, false, false);
         unitVec = false;
       //  InitComps();
@@ -84,7 +86,7 @@ public class VectorControlM3 : MonoBehaviour
                 RebuildComps();
         }
         RotateLabelsTowardUser();
-        if (photonView) photonView.RPC("RotateLabelsTowardUser", RpcTarget.AllBuffered);
+        
     }
 
     public void SetUnitVec(bool i)
@@ -403,8 +405,9 @@ public class VectorControlM3 : MonoBehaviour
         Debug.Log("spawning Head and tail");
         Vector3 headPos = _head.position;
         Vector3 tailPos = _tail.position;
-        Quaternion headRot = _head.rotation;
-        Quaternion tailRot = _tail.rotation;
+        Quaternion headRot = _head.localRotation; //change from rot to localrot
+        Quaternion tailRot = _tail.localRotation;
+
 
         string _headGameObjectName = _headGameObjectPrefab.name;
         string _tailGameObjectName = _tailGameObjectPrefab.name;
