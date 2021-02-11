@@ -53,25 +53,25 @@ public class RPCReceiverM3 : MonoBehaviour
         {
 
             PV.RPC("PlaceHeadandTailLabels", RpcTarget.OthersBuffered, 0, vectors[0]._headLabel.transform.position, vectors[0]._tailLabel.transform.position, vectors[0]._headLabel.text, vectors[0]._tailLabel.text, myPlayerRef.myPlayerActorNumber);
-           // beamPlacement.bCanPlaceVec1Labels = false; // reset
+            beamPlacement.bCanPlaceVec1Labels = false; // reset
         }
 
         else if (beamPlacement.bCanPlaceVec2Labels) // V2 head & tail
         {
             PV.RPC("PlaceHeadandTailLabels", RpcTarget.OthersBuffered, 1, vectors[1]._headLabel.transform.position, vectors[1]._tailLabel.transform.position, vectors[1]._headLabel.text, vectors[1]._tailLabel.text, myPlayerRef.myPlayerActorNumber);
-           // beamPlacement.bCanPlaceVec2Labels = false; // reset
+            beamPlacement.bCanPlaceVec2Labels = false; // reset
         }
 
         else if (beamPlacement.bCanPlaceVec3Labels) // V2 head & tail
         {
             PV.RPC("PlaceHeadandTailLabels", RpcTarget.OthersBuffered, 1, vectors[1]._headLabel.transform.position, vectors[1]._tailLabel.transform.position, vectors[1]._headLabel.text, vectors[1]._tailLabel.text, myPlayerRef.myPlayerActorNumber);
-           // beamPlacement.bCanPlaceVec3Labels = false; // reset
+            beamPlacement.bCanPlaceVec3Labels = false; // reset
         }
 
         else if (beamPlacement.bCanPlaceVec4Labels) // V2 head & tail
         {
             PV.RPC("PlaceHeadandTailLabels", RpcTarget.OthersBuffered, 1, vectors[1]._headLabel.transform.position, vectors[1]._tailLabel.transform.position, vectors[1]._headLabel.text, vectors[1]._tailLabel.text, myPlayerRef.myPlayerActorNumber);
-           // beamPlacement.bCanPlaceVec4Labels = false; // reset
+            beamPlacement.bCanPlaceVec4Labels = false; // reset
         }
 
         else
@@ -85,22 +85,22 @@ public class RPCReceiverM3 : MonoBehaviour
         if(beamPlacement.bCanPlaceVec1Labels)
         {
             PV.RPC("InitVectorName", RpcTarget.OthersBuffered, 0, vectors[0]._nameLabel.transform.position, myPlayerRef.myPlayerActorNumber);
-            beamPlacement.bCanPlaceVec1Labels = false;
+          //  beamPlacement.bCanPlaceVec1Labels = false;
         }
         if (beamPlacement.bCanPlaceVec2Labels)
         {
             PV.RPC("InitVectorName", RpcTarget.OthersBuffered, 1, vectors[1]._nameLabel.transform.position, myPlayerRef.myPlayerActorNumber);
-            beamPlacement.bCanPlaceVec2Labels = false;
+           // beamPlacement.bCanPlaceVec2Labels = false;
         }
         if (beamPlacement.bCanPlaceVec3Labels)
         {
             PV.RPC("InitVectorName", RpcTarget.OthersBuffered, 2, vectors[2]._nameLabel.transform.position, myPlayerRef.myPlayerActorNumber);
-            beamPlacement.bCanPlaceVec3Labels = false;
+           // beamPlacement.bCanPlaceVec3Labels = false;
         }
         if (beamPlacement.bCanPlaceVec4Labels)
         {
             PV.RPC("InitVectorName", RpcTarget.OthersBuffered, 3, vectors[3]._nameLabel.transform.position, myPlayerRef.myPlayerActorNumber);
-            beamPlacement.bCanPlaceVec4Labels = false;
+           // beamPlacement.bCanPlaceVec4Labels = false;
         }
     }
 
