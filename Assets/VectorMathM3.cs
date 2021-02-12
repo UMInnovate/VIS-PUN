@@ -14,6 +14,10 @@ public class VectorMathM3 : MonoBehaviour
     private static float[,] Fsystem;
 
     private static Vector3 v1, v2, v3 = Vector3.one; // ASSUME UNIT VEC V1, V2, V3
+
+    [HideInInspector]
+    public bool bCanPlaceVec1Head, bCanPlaceVec1Tail, bCanPlaceVec2Head, bCanPlaceVec2Tail,
+    bCanPlaceVec3Head, bCanPlaceVec3Tail, bCanPlaceVec4Head, bCanPlaceVec4Tail = false; ///* PUN STUFF 
     void Start()
     {
 
@@ -66,14 +70,30 @@ public class VectorMathM3 : MonoBehaviour
             if (vectors[v].GetComponent<VectorControlM3>().isCorrectPlacement) //if the tail is on the poc, let the user place wherever
             {
                 vectors[v].GetComponent<VectorControlM3>()._head.position = loc;
-                if (v == 0) vectors[v].SetEnabledLabels(true, true, false, false);
-                else vectors[v].SetEnabledLabels(false, true, false, false);
+                if (v == 0)
+                {
+                    vectors[v].SetEnabledLabels(true, true, false, false);
+                   // RaiseFlagsForHeadTailLabels(v, true, true);
+                }
+                else
+                {
+                    vectors[v].SetEnabledLabels(false, true, false, false);
+                  // RaiseFlagsForHeadTailLabels(v, false, true);
+                }
             }
             else //if the tail is not on the poc, the user can't choose a place, it auto fills to the poc 
             {
                 vectors[v].GetComponent<VectorControlM3>()._head.position = GetComponent<BeamPlacementM3>().pocPos;
-                if (v == 0) vectors[v].SetEnabledLabels(true, true, false, false);
-                else vectors[v].SetEnabledLabels(true, false, false, false);
+                if (v == 0)
+                {
+                    vectors[v].SetEnabledLabels(true, true, false, false);
+                   // RaiseFlagsForHeadTailLabels(v, true, true);
+                }
+                else
+                {
+                    vectors[v].SetEnabledLabels(true, false, false, false);
+                   // RaiseFlagsForHeadTailLabels(v, true, false);
+                }
                 //  GLOBALS.stage++;
             }
 
@@ -85,6 +105,7 @@ public class VectorMathM3 : MonoBehaviour
                 vectors[v].transform.position = GetComponent<BeamPlacementM3>().pocPos;
                 vectors[v].GetComponent<VectorControlM3>().isCorrectPlacement = true;
                 vectors[v].SetEnabledLabels(false, false, false, false);
+                RaiseFlagsForHeadTailLabels(v, false, true); //it's snapped to poc, so just show head
                 //  GLOBALS.stage++;
             }
             else
@@ -92,11 +113,45 @@ public class VectorMathM3 : MonoBehaviour
                 vectors[v].transform.position = loc;
                 vectors[v].GetComponent<VectorControlM3>().isCorrectPlacement = false;
                 vectors[v].SetEnabledLabels(true, false, false, false);
+                RaiseFlagsForHeadTailLabels(v, true, true);
             }
             vectors[v].gameObject.SetActive(true);
 
         }
 
+    }
+
+    /// <summary>
+    /// Raise Flags for RPCRECEIVERM3 Class to send RPCs accoridngly
+    /// </summary>
+    /// <param name="v">Vector Number in reference to vectorcontorl arr</param>
+    /// <param name="tail">is the tail going to be sent out</param>
+    /// <param name="head">is the head going to be sent out</param>
+    private void RaiseFlagsForHeadTailLabels(int v, bool tail, bool head)
+    {
+        switch(v)
+        {
+            case 0:
+                if (tail) bCanPlaceVec1Tail = true;
+                if (head) bCanPlaceVec1Head = true;
+                break;
+            case 1:
+                if (tail) bCanPlaceVec2Tail = true;
+                if (head) bCanPlaceVec2Head = true;
+                break;
+            case 2:
+                if (tail) bCanPlaceVec3Tail = true;
+                if (head) bCanPlaceVec3Head = true;
+                break;
+            case 3:
+                if (tail) bCanPlaceVec4Tail = true;
+                if (head) bCanPlaceVec4Head = true;
+                break;
+
+            default:
+                Debug.Log("inaccessible index requested in vectormathm3: raiseflagsheadtail.");
+                break;
+        }
     }
 
     public void PlaceVectorPoint(int v, bool isHead, Vector3 loc)  //v is vector index in list, loc is the position

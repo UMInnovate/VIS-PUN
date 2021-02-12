@@ -68,6 +68,7 @@ public class BeamPlacementM3 : MonoBehaviour
     public bool bCanPlaceVec1Labels, bCanPlaceVec2Labels, bCanPlaceVec3Labels, bCanPlaceVec4Labels = false;
 
 
+
     private bool firstTimeInFSel;
     #endregion
 
@@ -105,6 +106,7 @@ public class BeamPlacementM3 : MonoBehaviour
 
     void Update()
     {
+        _giveInstructions.DisplayText();
         // Debug.Log("STAGE: " + GLOBALS.stage);
         aMenuIsActive = (operationsPanel.activeSelf || menuPanel.activeSelf);
         if (GLOBALS.gridOn)
@@ -255,7 +257,10 @@ public class BeamPlacementM3 : MonoBehaviour
                     for (int i = 0; i < GetComponent<VectorMathM3>().vectors.Count; i++)
                         if (GetComponent<VectorMathM3>().vectors[i].GetComponent<VectorProperties>().isForceKnown)
                             temp++;
-
+                    bCanPlaceVec1Labels = true; //***PUN
+                    bCanPlaceVec2Labels = true; //***PUN
+                    bCanPlaceVec3Labels = true; //***PUN
+                    bCanPlaceVec4Labels = true; //***PUN
                     //Debug.Log("in m3view- our given force vector is: " + GLOBALS.GivenForceVec.gameObject.name);
                     if (temp < 4)
                     {

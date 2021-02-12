@@ -17,6 +17,9 @@ public class RPCReceiverM3 : MonoBehaviour
         headLabelV3, tailLabelV3, headLabelV4, tailLabelV4;
 
     [SerializeField] TextMeshPro nameLabelPrefab;
+    [SerializeField] TextMeshPro headLabelPrefab;
+    [SerializeField] TextMeshPro tailLabelPrefab;
+
 
     //VECTOR NAMES
     public BeamPlacementM3 beamPlacement;
@@ -48,30 +51,30 @@ public class RPCReceiverM3 : MonoBehaviour
 
     public void CheckForLabels()
     {
-        // if(beamPlacementM1_Ref.bCa)
-        if (beamPlacement.bCanPlaceVec1Labels) // V1 head & tail 
+
+        if (vectorMath.bCanPlaceVec1Head || vectorMath.bCanPlaceVec1Tail) // V1 head & tail 
         {
 
-            PV.RPC("PlaceHeadandTailLabels", RpcTarget.OthersBuffered, 0, vectors[0]._headLabel.transform.position, vectors[0]._tailLabel.transform.position, vectors[0]._headLabel.text, vectors[0]._tailLabel.text, myPlayerRef.myPlayerActorNumber);
-            beamPlacement.bCanPlaceVec1Labels = false; // reset
+            PV.RPC("PlaceHeadandTailLabels", RpcTarget.OthersBuffered, 0, vectorMath.bCanPlaceVec1Tail, vectorMath.bCanPlaceVec1Head, vectors[0]._headLabel.transform.position, vectors[0]._tailLabel.transform.position, vectors[0]._headLabel.text, vectors[0]._tailLabel.text, myPlayerRef.myPlayerActorNumber);
+            vectorMath.bCanPlaceVec1Head = false; vectorMath.bCanPlaceVec1Tail = false; // reset
         }
-
-        else if (beamPlacement.bCanPlaceVec2Labels) // V2 head & tail
+        else if (vectorMath.bCanPlaceVec2Head || vectorMath.bCanPlaceVec2Tail) // V2 head & tail 
         {
-            PV.RPC("PlaceHeadandTailLabels", RpcTarget.OthersBuffered, 1, vectors[1]._headLabel.transform.position, vectors[1]._tailLabel.transform.position, vectors[1]._headLabel.text, vectors[1]._tailLabel.text, myPlayerRef.myPlayerActorNumber);
-            beamPlacement.bCanPlaceVec2Labels = false; // reset
+
+            PV.RPC("PlaceHeadandTailLabels", RpcTarget.OthersBuffered, 1, vectorMath.bCanPlaceVec2Tail, vectorMath.bCanPlaceVec2Head, vectors[1]._headLabel.transform.position, vectors[1]._tailLabel.transform.position, vectors[1]._headLabel.text, vectors[1]._tailLabel.text, myPlayerRef.myPlayerActorNumber);
+            vectorMath.bCanPlaceVec2Head = false; vectorMath.bCanPlaceVec2Tail = false; // reset
         }
-
-        else if (beamPlacement.bCanPlaceVec3Labels) // V2 head & tail
+        else if (vectorMath.bCanPlaceVec3Head || vectorMath.bCanPlaceVec3Tail) // V3 head & tail 
         {
-            PV.RPC("PlaceHeadandTailLabels", RpcTarget.OthersBuffered, 1, vectors[1]._headLabel.transform.position, vectors[1]._tailLabel.transform.position, vectors[1]._headLabel.text, vectors[1]._tailLabel.text, myPlayerRef.myPlayerActorNumber);
-            beamPlacement.bCanPlaceVec3Labels = false; // reset
+
+            PV.RPC("PlaceHeadandTailLabels", RpcTarget.OthersBuffered, 2, vectorMath.bCanPlaceVec3Tail, vectorMath.bCanPlaceVec3Head, vectors[2]._headLabel.transform.position, vectors[2]._tailLabel.transform.position, vectors[2]._headLabel.text, vectors[2]._tailLabel.text, myPlayerRef.myPlayerActorNumber);
+            vectorMath.bCanPlaceVec3Head = false; vectorMath.bCanPlaceVec3Tail = false; // reset
         }
-
-        else if (beamPlacement.bCanPlaceVec4Labels) // V2 head & tail
+        else if (vectorMath.bCanPlaceVec4Head || vectorMath.bCanPlaceVec4Tail) // V4 head & tail 
         {
-            PV.RPC("PlaceHeadandTailLabels", RpcTarget.OthersBuffered, 1, vectors[1]._headLabel.transform.position, vectors[1]._tailLabel.transform.position, vectors[1]._headLabel.text, vectors[1]._tailLabel.text, myPlayerRef.myPlayerActorNumber);
-            beamPlacement.bCanPlaceVec4Labels = false; // reset
+
+            PV.RPC("PlaceHeadandTailLabels", RpcTarget.OthersBuffered, 3, vectorMath.bCanPlaceVec4Tail, vectorMath.bCanPlaceVec4Head, vectors[3]._headLabel.transform.position, vectors[3]._tailLabel.transform.position, vectors[3]._headLabel.text, vectors[3]._tailLabel.text, myPlayerRef.myPlayerActorNumber);
+            vectorMath.bCanPlaceVec4Head = false; vectorMath.bCanPlaceVec4Tail = false; // reset
         }
 
         else
@@ -85,75 +88,100 @@ public class RPCReceiverM3 : MonoBehaviour
         if(beamPlacement.bCanPlaceVec1Labels)
         {
             PV.RPC("InitVectorName", RpcTarget.OthersBuffered, 0, vectors[0]._nameLabel.transform.position, myPlayerRef.myPlayerActorNumber);
-          //  beamPlacement.bCanPlaceVec1Labels = false;
+           beamPlacement.bCanPlaceVec1Labels = false;
         }
         if (beamPlacement.bCanPlaceVec2Labels)
         {
             PV.RPC("InitVectorName", RpcTarget.OthersBuffered, 1, vectors[1]._nameLabel.transform.position, myPlayerRef.myPlayerActorNumber);
-           // beamPlacement.bCanPlaceVec2Labels = false;
+            beamPlacement.bCanPlaceVec2Labels = false;
         }
         if (beamPlacement.bCanPlaceVec3Labels)
         {
             PV.RPC("InitVectorName", RpcTarget.OthersBuffered, 2, vectors[2]._nameLabel.transform.position, myPlayerRef.myPlayerActorNumber);
-           // beamPlacement.bCanPlaceVec3Labels = false;
+            beamPlacement.bCanPlaceVec3Labels = false;
         }
         if (beamPlacement.bCanPlaceVec4Labels)
         {
             PV.RPC("InitVectorName", RpcTarget.OthersBuffered, 3, vectors[3]._nameLabel.transform.position, myPlayerRef.myPlayerActorNumber);
-           // beamPlacement.bCanPlaceVec4Labels = false;
+            beamPlacement.bCanPlaceVec4Labels = false;
         }
     }
 
     [PunRPC]
-    public void PlaceHeadandTailLabels(int _i, Vector3 _headPos, Vector3 _tailPos, string _headValue, string _tailValue, string _actorNumber)
+    public void PlaceHeadandTailLabels(int _i, bool tail, bool head, Vector3 _headPos, Vector3 _tailPos, string _headValue, string _tailValue, string _actorNumber)
     {
         switch (_i)
         {
             case 0:
                 // head
-                headLabelV1 = Instantiate(headLabels[_i], _headPos, Quaternion.identity);
-                headLabelV1.text = _headValue;
+                if (head)
+                {
+                    headLabelV1 = Instantiate(headLabelPrefab, _headPos, Quaternion.identity);
+                    headLabelV1.text = _headValue;
+                    Debug.Log("head label value is " + headLabelV1.text);
+                    AddToBin(_actorNumber, headLabelV1); // add to bin
+                }
 
-                // tail 
-                tailLabelV1 = Instantiate(tailLabels[_i], _tailPos, Quaternion.identity);
-                tailLabelV1.text = _tailValue;
-
-                AddToBin(_actorNumber, headLabelV1); // add to bin
-                AddToBin(_actorNumber, tailLabelV1); // add to bin
+                if (tail)
+                {
+                    // tail 
+                    tailLabelV1 = Instantiate(tailLabelPrefab, _tailPos, Quaternion.identity);
+                    tailLabelV1.text = _tailValue;
+                    Debug.Log("tail label value is " + tailLabelV1.text);
+                    AddToBin(_actorNumber, tailLabelV1); // add to bin
+                }
                 break;
 
             case 1:
-                headLabelV2 = Instantiate(headLabels[_i], _headPos, Quaternion.identity);
-                headLabelV2.text = _headValue;
+                // head
+                if (head)
+                {
+                    headLabelV2 = Instantiate(headLabelPrefab, _headPos, Quaternion.identity);
+                    headLabelV2.text = _headValue;
+                    AddToBin(_actorNumber, headLabelV2); // add to bin
+                }
 
-                // tail 
-                tailLabelV2 = Instantiate(tailLabels[_i], _tailPos, Quaternion.identity);
-                tailLabelV2.text = _tailValue;
-
-                AddToBin(_actorNumber, headLabelV2); // add to bin
-                AddToBin(_actorNumber, tailLabelV2); // add to bin
+                if (tail)
+                {
+                    // tail 
+                    tailLabelV2 = Instantiate(tailLabelPrefab, _tailPos, Quaternion.identity);
+                    tailLabelV2.text = _tailValue;
+                    AddToBin(_actorNumber, tailLabelV2); // add to bin
+                }
                 break;
             case 2:
-                headLabelV3 = Instantiate(headLabels[_i], _headPos, Quaternion.identity);
-                headLabelV3.text = _headValue;
+                // head
+                if (head)
+                {
+                    headLabelV3 = Instantiate(headLabelPrefab, _headPos, Quaternion.identity);
+                    headLabelV3.text = _headValue;
+                    AddToBin(_actorNumber, headLabelV3); // add to bin
+                }
 
-                // tail 
-                tailLabelV3 = Instantiate(tailLabels[_i], _tailPos, Quaternion.identity);
-                tailLabelV3.text = _tailValue;
-
-                AddToBin(_actorNumber, headLabelV3); // add to bin
-                AddToBin(_actorNumber, tailLabelV3); // add to bin
+                if (tail)
+                {
+                    // tail 
+                    tailLabelV3 = Instantiate(tailLabelPrefab, _tailPos, Quaternion.identity);
+                    tailLabelV3.text = _tailValue;
+                    AddToBin(_actorNumber, tailLabelV3); // add to bin
+                }
                 break;
             case 3:
-                headLabelV4 = Instantiate(headLabels[_i], _headPos, Quaternion.identity);
-                headLabelV4.text = _headValue;
+                // head
+                if (head)
+                {
+                    headLabelV4 = Instantiate(headLabelPrefab, _headPos, Quaternion.identity);
+                    headLabelV4.text = _headValue;
+                    AddToBin(_actorNumber, headLabelV4); // add to bin
+                }
 
-                // tail 
-                tailLabelV4 = Instantiate(tailLabels[_i], _tailPos, Quaternion.identity);
-                tailLabelV4.text = _tailValue;
-
-                AddToBin(_actorNumber, headLabelV4); // add to bin
-                AddToBin(_actorNumber, tailLabelV4); // add to bin
+                if (tail)
+                {
+                    // tail 
+                    tailLabelV4 = Instantiate(tailLabelPrefab, _tailPos, Quaternion.identity);
+                    tailLabelV4.text = _tailValue;
+                    AddToBin(_actorNumber, tailLabelV4); // add to bin
+                }
                 break;
         }
     }

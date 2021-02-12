@@ -165,15 +165,19 @@ public class GiveInstructions : MonoBehaviour
                 "Trigger: place head" + "\n";
                 break;
             case Stage.m3forcesel:
-                if(GLOBALS.count == 0 )
-                    text.text = "SELECT THE VECTOR WITH A KNOWN FORCE VALUE BY HOVERING OVER ITS NAME LABEL" + "\n" 
-                    + "Touchpad: adjust beam length" + "\n" 
-                    + "Trigger: select name label" + "\n";
-                else
-                    text.text = "SELECT A VECTOR TO INPUT ITS CALCULATED FORCE VALUE BY HOVERING OVER ITS NAME LABEL" + "\n"
+                if (GLOBALS.count >0)
+                {
+                   text.text = "SELECT A VECTOR TO INPUT ITS CALCULATED FORCE VALUE BY HOVERING OVER ITS NAME LABEL" + "\n"
                     + "Touchpad: adjust beam length" + "\n"
                     + "Trigger: select name label" + "\n";
-                break;
+                }
+                else if (GLOBALS.count == 0)
+                {
+                    text.text = "SELECT THE VECTOR WITH A KNOWN FORCE VALUE BY HOVERING OVER ITS NAME LABEL" + "\n"
+                     + "Touchpad: adjust beam length" + "\n"
+                     + "Trigger: select name label" + "\n";
+                }
+                 break;
             case Stage.m3keypad:
                 text.text = "INPUT FORCE VALUE" + "\n"
                     + "Trigger: select number" + "\n"; ;
