@@ -165,19 +165,12 @@ public class GiveInstructions : MonoBehaviour
                 "Trigger: place head" + "\n";
                 break;
             case Stage.m3forcesel:
-<<<<<<< Updated upstream
-                if (GLOBALS.count >0)
-                {
-                   text.text = "SELECT A VECTOR TO INPUT ITS CALCULATED FORCE VALUE BY HOVERING OVER ITS NAME LABEL" + "\n"
-                    + "Touchpad: adjust beam length" + "\n"
-                    + "Trigger: select name label" + "\n";
-=======
+       
                 if (GLOBALS.count > 0)
                 {
                     text.text = "SELECT A VECTOR TO INPUT ITS CALCULATED FORCE VALUE BY HOVERING OVER ITS NAME LABEL" + "\n"
                      + "Touchpad: adjust beam length" + "\n"
                      + "Trigger: select name label" + "\n";
->>>>>>> Stashed changes
                 }
                 else if (GLOBALS.count == 0)
                 {
@@ -185,11 +178,7 @@ public class GiveInstructions : MonoBehaviour
                      + "Touchpad: adjust beam length" + "\n"
                      + "Trigger: select name label" + "\n";
                 }
-<<<<<<< Updated upstream
-                 break;
-=======
                 break;
->>>>>>> Stashed changes
             case Stage.m3keypad:
                 text.text = "INPUT FORCE VALUE" + "\n"
                     + "Trigger: select number" + "\n"; ;

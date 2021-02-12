@@ -53,10 +53,8 @@ public class KeypadPanel : MonoBehaviour
         Debug.Log("after vp");
     }
 
-<<<<<<< Updated upstream
 
-=======
->>>>>>> Stashed changes
+    
     public void CheckClicked()
     {
         if (SceneManager.GetActiveScene().buildIndex == 12)
