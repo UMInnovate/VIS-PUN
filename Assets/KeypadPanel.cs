@@ -53,26 +53,32 @@ public class KeypadPanel : MonoBehaviour
         Debug.Log("after vp");
     }
 
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
     public void CheckClicked()
     {
         if (SceneManager.GetActiveScene().buildIndex == 12)
         {
+            
             string value = IFText.text;
             vp.forceValue = int.Parse(value);
-            Debug.Log("vp force val: " + vp.forceValue.ToString());
+            
 
             gameObject.SetActive(false);
             vp.SetForceVal(int.Parse(value));
             vp.BuildForceVector();
             ACClicked();
+            Debug.Log("vp force val: " + vp.forceValue.ToString());
             GLOBALS.stage++;
         }
         else
         {
+            Debug.Log("vp3 force val: " + vp3.forceValue.ToString());
             string value = IFText.text;
             vp3.forceValue = int.Parse(value);
-            Debug.Log("vp3 force val: " + vp3.forceValue.ToString());
+            
 
             gameObject.SetActive(false);
             vp3.SetForceVal(int.Parse(value));

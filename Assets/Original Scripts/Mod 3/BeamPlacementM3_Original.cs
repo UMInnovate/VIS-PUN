@@ -106,6 +106,7 @@ public class BeamPlacementM3_Original : MonoBehaviour
             SnapToGrid();
         HandleBeamPlacement();
         HandleTouchpadInput();
+        _giveInstructions.DisplayText();
 
         pocPos = _poc.transform.position;
         // Debug.Log("POC POS: " + pocPos);
@@ -225,9 +226,9 @@ public class BeamPlacementM3_Original : MonoBehaviour
                     IncrementStage();
                     break;
                 case Stage.m3forcesel:
-                    keypad.SetActive(true);
                     calcPanel.GetComponent<CalculationsPanel>().StartCalculationsSequence();
                     calcPanel.SetActive(true);
+                    //keypad.SetActive(true);
                     break;
                 case Stage.m3keypad:
                     calcPanel.GetComponent<CalculationsPanel>().ComponentCalcs();
@@ -241,13 +242,13 @@ public class BeamPlacementM3_Original : MonoBehaviour
                     //GLOBALS.stage++;
                     //Summary: Checks how many vectors have been given forces. If there is one unknown force left
                     //increment stage, otherwise repeat force selection by decrementing stage
-                    int temp = 0; //Checks how many vectors have been given forces
+                    /*int temp = 0; //Checks how many vectors have been given forces
                     for (int i = 0; i < GetComponent<VectorMathM3_Original>().vectors.Count; i++)
                         if (GetComponent<VectorMathM3_Original>().vectors[i].GetComponent<VectorProperties>().isForceKnown)
-                            temp++;
-
+                            temp++;*/
+                    Debug.Log("Globals.count is: " + GLOBALS.count);
                     //Debug.Log("in m3view- our given force vector is: " + GLOBALS.GivenForceVec.gameObject.name);
-                    if (temp < 4)
+                    if (GLOBALS.count < 4)
                     {
                         DecrementStage();
                         DecrementStage();
@@ -267,8 +268,11 @@ public class BeamPlacementM3_Original : MonoBehaviour
                     break;
                 case Stage.m3forcesys:
                     calcPanel.GetComponent<CalculationsPanel>().LinearCalc();
+                    GLOBALS.stage++;
                     break;
-               
+                case Stage.m3validateview:
+                    calcPanel.GetComponent<CalculationsPanel>().isValid();
+                    break;
                 default:
                     return;
             }

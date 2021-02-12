@@ -221,5 +221,22 @@ public class CalculationsPanel : MonoBehaviour
 
     }
 
+    public void isValid()
+    {
+        Debug.Log("Validating");
+        textLine[0].gameObject.SetActive(true);
+        textLine[1].gameObject.SetActive(false);
+        textLine[2].gameObject.SetActive(false);
+
+        if (GLOBALS.isValidSystem)
+        {
+            textLine[0].text = @"\par Your System Is Correct";
+        }
+        else
+        {
+            textLine[0].text = @"\par Your System Is Incorrect";
+        }
+    }
+
 
 }

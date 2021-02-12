@@ -40,6 +40,7 @@ public enum Stage
     m3view,      
     m3forceview,
     m3forcesys, //TO DO -- ADD CHECK STAGE COMPARING REAL VALS TO USER INPUT VALUES
+    m3validateview,
 };
 
 public enum VecOp
@@ -113,6 +114,7 @@ public static class GLOBALS
     public static List<GameObject> unknownVecs = new List<GameObject>();
     public static int count; //to det which vec is given
     public static GameObject GivenForceVec; //gameobject of first-selected vector
+    public static bool isValidSystem = false;
 
     #region premade colors
     public static Color visCyan = new Color(0.4f, 1, 1, 0.5f);
