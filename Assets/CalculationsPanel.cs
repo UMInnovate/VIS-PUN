@@ -221,6 +221,7 @@ public class CalculationsPanel : MonoBehaviour
 
     }
 
+    //Displays the validity of the force system entered by the user
     public void isValid()
     {
         Debug.Log("Validating");

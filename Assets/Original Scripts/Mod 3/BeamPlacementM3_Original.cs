@@ -239,13 +239,9 @@ public class BeamPlacementM3_Original : MonoBehaviour
                     //GLOBALS.firstVec = false;
                     calcPanel.GetComponent<CalculationsPanel>().ComponentCalcs();
                     calcPanel.GetComponent<CalculationsPanel>().MagCalcs();
-                    //GLOBALS.stage++;
-                    //Summary: Checks how many vectors have been given forces. If there is one unknown force left
-                    //increment stage, otherwise repeat force selection by decrementing stage
-                    /*int temp = 0; //Checks how many vectors have been given forces
-                    for (int i = 0; i < GetComponent<VectorMathM3_Original>().vectors.Count; i++)
-                        if (GetComponent<VectorMathM3_Original>().vectors[i].GetComponent<VectorProperties>().isForceKnown)
-                            temp++;*/
+
+                    //Summary: Checks how many vectors have been given forces. If all forces have been entered increment stage
+                    //otherwise repeat force selection by decrementing stage twice
                     Debug.Log("Globals.count is: " + GLOBALS.count);
                     //Debug.Log("in m3view- our given force vector is: " + GLOBALS.GivenForceVec.gameObject.name);
                     if (GLOBALS.count < 4)

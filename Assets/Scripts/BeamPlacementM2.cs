@@ -346,6 +346,9 @@ public class BeamPlacementM2 : MonoBehaviour
     }
     #endregion
 
+    //Controller Input is disabled while a coroutine is running
+    //Required when calculations are being displayed so the unknown state error doesn't occur
+    //Unknown state error is when the user spams the trigger while being shown the component calculations
     private void disableControllerInput()
     {
         GLOBALS.isInCoroutine = true;

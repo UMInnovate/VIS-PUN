@@ -34,10 +34,19 @@ public class PhotonLobby : MonoBehaviourPunCallbacks
         //RoomHandler();
     }
 
+    /*
+    Room Handler summary
+    If a multiplayer session has been selected by the user, they must join a photon room corresponding to the module of interest
+    If a room for the module selected doesn't exist, a new one will be created
+    Possible issues include the room reaching its max amount of players
+    In this case, the user would join a random room after OnJoinRoomFailed and OnCreateRoomFailed are called
+    */
     public void RoomHandler()
     {
         Debug.Log("Handling Room Assignment");
 
+        //If the user has not connected to the master server yet, Room Handler will be called until user is connected
+        //This might not be the best handling of the issue since the boolean will be true while switching servers
         if (!PhotonNetwork.IsConnected)
         {
             PhotonNetwork.ConnectUsingSettings();
@@ -83,6 +92,7 @@ public class PhotonLobby : MonoBehaviourPunCallbacks
         Debug.Log("Join random room");
         PhotonNetwork.JoinRandomRoom();
     }
+
 
     public override void OnJoinRoomFailed(short returnCode, string message)
     {

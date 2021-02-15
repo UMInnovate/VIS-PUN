@@ -353,7 +353,6 @@ public class VectorMathM3 : MonoBehaviour
         }
     }
 
-
     public void ValidateForceSystem()
     {
         //Summary: Check if input force values equal that of the calculated force values
@@ -361,7 +360,7 @@ public class VectorMathM3 : MonoBehaviour
         //Check if Input1 is > lower tolerance and < high tolerance
         //If yes mark input force value as correct
         //If no mark input force value as incorrect
-
+        int correctForces = 0;
         float tol = 0.1f;
         float[,] forceTol =
         {
@@ -374,60 +373,56 @@ public class VectorMathM3 : MonoBehaviour
         for (int i = 0; i < 3; i++)
         {
 
-            forceTol[i, 0] = GLOBALS.unknownVecs[i].GetComponent<VectorPropertiesM3>().correctForceValue * (1 - tol);
-            forceTol[i, 1] = GLOBALS.unknownVecs[i].GetComponent<VectorPropertiesM3>().correctForceValue * (1 + tol);
+            forceTol[i, 0] = GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().correctForceValue * (1 - tol);
+            forceTol[i, 1] = GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().correctForceValue * (1 + tol);
+
+            //Only swaps high and low tolerances if values are negative
+            //EX: low tol = -9 and high tol = -14. These values need to be change so that the conditions of low <= force value <= high
+            swapTol(forceTol, i);
 
             Debug.Log("low force tol at " + i + " is " + forceTol[i, 0] + " high force tol at " + i + " is " + forceTol[i, 1]);
         }
 
         for (int i = 0; i < 3; i++)
         {
-            if ((float)GLOBALS.unknownVecs[i].GetComponent<VectorPropertiesM3>().forceValue > forceTol[i, 0]
-                && (float)GLOBALS.unknownVecs[i].GetComponent<VectorPropertiesM3>().forceValue < forceTol[i, 1])
+            if ((float)GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().forceValue > forceTol[i, 0]
+                && (float)GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().forceValue < forceTol[i, 1])
             {
-                Debug.Log("Input force " + (float)GLOBALS.unknownVecs[i].GetComponent<VectorPropertiesM3>().forceValue
+                Debug.Log("Input force " + (float)GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().forceValue
                     + " is greater than " + forceTol[i, 0] + " and less than " + forceTol[i, 1]);
+                correctForces++;
             }
             else
             {
-                Debug.Log("Input force " + (float)GLOBALS.unknownVecs[i].GetComponent<VectorPropertiesM3>().forceValue
+                Debug.Log("Input force " + (float)GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().forceValue
                     + " is not greater than " + forceTol[i, 0] + " and less than " + forceTol[i, 1]);
             }
         }
 
-        /*float tol = 0.01f;
-        List<float[]> force_tol = new List<float[]>();
-        float[] force_tolInit = { 0, 0 };
-        force_tol.Add(force_tolInit);
-        force_tol.Add(force_tolInit);
-        force_tol.Add(force_tolInit);
-        force_tol.Add(force_tolInit);
-
-        for (int i = 0; i < 3; i++)
+        if (correctForces == 3)
         {
-            Tolerance(GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().forceValue, force_tol[i], tol);
-            Debug.Log("force tol at " + i + " is " + force_tol[i][0].ToString() +"," + force_tol[i][1].ToString());
+            Debug.Log("All force values were correct");
+            GLOBALS.isValidSystem = true;
         }
 
-        for (int i = 0; i < 3; i++)
+        else
         {
-            if ((float)GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().forceValue > force_tol[i][0] ||
-               (float)GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().forceValue < force_tol[i][1])
-            {
-                Debug.Log("Correct force value");
-            }
-            else
-            {
-                Debug.Log("Incorrect force value");
-            }
-        }*/
+            Debug.Log("Only " + correctForces + " force value(s) were correct");
+            GLOBALS.isValidSystem = false;
+        }
+
     }
 
-    /*public void Tolerance(float val, float[] val_tol, float tol)
+    void swapTol(float[,] tols, int i)
     {
-        val_tol[0] = val * (1 - tol);
-        val_tol[1] = val * (1 + tol);
-    }*/
+        float temp = 0;
+        if (tols[i, 1] < tols[i, 0])
+        {
+            temp = tols[i, 0];
+            tols[i, 0] = tols[i, 1];
+            tols[i, 1] = temp;
+        }
+    }
 }
 
 
