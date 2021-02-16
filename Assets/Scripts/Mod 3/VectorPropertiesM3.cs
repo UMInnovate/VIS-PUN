@@ -86,9 +86,6 @@ public class VectorPropertiesM3 : MonoBehaviour
             GLOBALS.unknownUVecs.Add(uVec); //unknownUVecs holds a list of unit vectors that dont have given force vals
             GLOBALS.unknownVecs.Add(gameObject);
         }
-
-        //
-
     }
 
     private void OnTriggerDown(byte controllerId, float pressure)
@@ -101,10 +98,9 @@ public class VectorPropertiesM3 : MonoBehaviour
             GLOBALS.SelectedVec = gameObject;
             if (GLOBALS.stage == Stage.m3forcesel)
             {  //placed vectors, going into force keypad
-                Debug.Log("hover detected");
-                Debug.Log("trigger press dec vec prop on vector " + gameObject.name);
+                //Debug.Log("hover detected");
+                //Debug.Log("trigger press dec vec prop on vector " + gameObject.name);
                 keypad.SetActive(true);
-                //if (GLOBALS.firstVec) keypad.GetComponent<KeypadPanel>().given = true;
                 keypad.GetComponent<KeypadPanel>().ReceiveVector(gameObject);
                 if (GLOBALS.count == 0)
                 {

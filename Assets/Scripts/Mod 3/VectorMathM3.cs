@@ -100,7 +100,7 @@ public class VectorMathM3 : MonoBehaviour
         }
         else
         {
-            if (Vector3.Distance(loc, GetComponent<BeamPlacementM3>().pocPos) < 0.20f)
+            if (Vector3.Distance(loc, GetComponent<BeamPlacementM3>().pocPos) < 0.15f)
             {
                 vectors[v].transform.position = GetComponent<BeamPlacementM3>().pocPos;
                 vectors[v].GetComponent<VectorControlM3>().isCorrectPlacement = true;

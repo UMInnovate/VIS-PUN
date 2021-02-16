@@ -72,6 +72,7 @@ public class VectorControlM3 : MonoBehaviour
 
     private void Update()
     {
+
         if (vecColor != lastColor) // keeps track of last color
             RecolorVector();
         if (_tail.transform.hasChanged)
@@ -203,6 +204,7 @@ public class VectorControlM3 : MonoBehaviour
 
 
         //***PUN
+       // SpawnHeadAndTail();
         _headGameObject.transform.rotation = _head.rotation;
         _headGameObject.transform.position = _head.position;
         _tailGameObject.transform.position = _tail.position;
@@ -405,12 +407,14 @@ public class VectorControlM3 : MonoBehaviour
         Debug.Log("spawning Head and tail");
         Vector3 headPos = _head.position;
         Vector3 tailPos = _tail.position;
-        Quaternion headRot = _head.localRotation; //change from rot to localrot
-        Quaternion tailRot = _tail.localRotation;
+        Quaternion headRot = _head.rotation; 
+        Quaternion tailRot = _tail.rotation;
 
 
         string _headGameObjectName = _headGameObjectPrefab.name;
         string _tailGameObjectName = _tailGameObjectPrefab.name;
+        Destroy(_headGameObject);
+        Destroy(_tailGameObject);
         _headGameObject = PhotonNetwork.Instantiate(_headGameObjectName, headPos, headRot);
         _tailGameObject = PhotonNetwork.Instantiate(_tailGameObjectName, tailPos, tailRot);
     }

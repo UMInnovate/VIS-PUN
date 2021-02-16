@@ -8,10 +8,7 @@ using Photon.Pun;
 using UnityEngine.UI;
 using System;
 
-/*  BeamPlacementM2.cs handles user input and the scene's state for Module 2
- *  This script handles placing the controller beam, opening/closing menus,
- *  and calling VectorMath and GiveInstructions for other functions
- */
+
 
 public class BeamPlacementM3 : MonoBehaviour
 {
@@ -68,8 +65,6 @@ public class BeamPlacementM3 : MonoBehaviour
     public bool bCanPlaceVec1Labels, bCanPlaceVec2Labels, bCanPlaceVec3Labels, bCanPlaceVec4Labels = false;
 
 
-
-    private bool firstTimeInFSel;
     #endregion
 
     void Start()
@@ -115,14 +110,12 @@ public class BeamPlacementM3 : MonoBehaviour
         HandleTouchpadInput();
 
         pocPos = _poc.transform.position;
-        // Debug.Log("POC POS: " + pocPos);
+
         // if placingHead, have vector head follow beam
         if (placingHead && !aMenuIsActive)
         {
             _vectorMath.PlaceVector3(vec, true, beamEnd);
         }
-
-        // Debug.Log("Vector is valid: " + GLOBALS.isCorrectVectorPlacement);
     }
 
     public void IncrementStage()
@@ -139,7 +132,6 @@ public class BeamPlacementM3 : MonoBehaviour
     public void DecrementStage()
     {
         GLOBALS.stage--;
-
     }
 
 

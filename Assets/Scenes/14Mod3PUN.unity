@@ -5154,8 +5154,8 @@ MonoBehaviour:
     type: 3}
   _tailGameObjectPrefab: {fileID: 2775536957654576240, guid: 27a2e74581c36a448835d3c900b25de2,
     type: 3}
-  _headGameObject: {fileID: 1417264761}
-  _tailGameObject: {fileID: 981239030}
+  _headGameObject: {fileID: 0}
+  _tailGameObject: {fileID: 0}
   rpcReceiverReference: {fileID: 2039162855}
 --- !u!114 &658342035
 MonoBehaviour:
@@ -5243,7 +5243,7 @@ MonoBehaviour:
     type: 3}
   bEnabled: 0
   OriginLocation: {x: 0, y: 0, z: 0}
-  EndpointLocation: {x: -0.88747245, y: -0.607, z: 1.3537422}
+  EndpointLocation: {x: 0, y: 0, z: 0}
 --- !u!1 &687657843
 GameObject:
   m_ObjectHideFlags: 0
@@ -11383,7 +11383,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1417264761}
-  m_LocalRotation: {x: 0.15258405, y: -0.5099914, z: 0.0924767, w: 0.8414719}
+  m_LocalRotation: {x: -0, y: -0.25198492, z: -0, w: 0.9677312}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
