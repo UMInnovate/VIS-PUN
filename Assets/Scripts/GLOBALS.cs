@@ -91,6 +91,7 @@ public static class GLOBALS
     public const float animTime = 2.2f;
     // precision of digits
     public const string format = "F2";
+    
 
     public static bool didCross = false;
     // temporary flag in case need to switch cross product

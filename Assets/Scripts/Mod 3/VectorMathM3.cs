@@ -55,6 +55,31 @@ public class VectorMathM3 : MonoBehaviour
 
     #region public methods
 
+    public void PlaceVector3Point(int v, Vector3 loc) 
+    {
+
+        if (vectors[v].GetComponent<VectorControlM3>().canPlaceHead) //if inputting the head, snap the tail to poc
+        {
+            vectors[v].transform.position = GetComponent<BeamPlacementM3>().pocPos;
+            vectors[v].GetComponent<VectorControlM3>()._head.position = loc;
+    
+
+            GLOBALS.headPos = loc;
+            GLOBALS.tailPos = GetComponent<BeamPlacementM3>().pocPos;
+
+        }
+        else //if inputting the tail, snap the head
+        {
+            vectors[v].transform.position = loc;
+            vectors[v].GetComponent<VectorControlM3>()._head.position = GetComponent<BeamPlacementM3>().pocPos;          
+          
+            GLOBALS.headPos = GetComponent<BeamPlacementM3>().pocPos;
+            GLOBALS.tailPos = loc;
+
+        }
+        vectors[v].gameObject.SetActive(true);
+
+    }
 
     /// <summary>
     /// USE ONLY FOR TRIGGER DOWN
@@ -70,6 +95,9 @@ public class VectorMathM3 : MonoBehaviour
             if (vectors[v].GetComponent<VectorControlM3>().isCorrectPlacement) //if the tail is on the poc, let the user place wherever
             {
                 vectors[v].GetComponent<VectorControlM3>()._head.position = loc;
+
+                RaiseFlagsForHeadTailLabels(v, true, true); 
+                vectors[v].GetComponent<VectorControlM3>()._headGameObject.gameObject.transform.position = loc;
                 if (v == 0)
                 {
                     vectors[v].SetEnabledLabels(true, true, false, false);
@@ -84,6 +112,7 @@ public class VectorMathM3 : MonoBehaviour
             else //if the tail is not on the poc, the user can't choose a place, it auto fills to the poc 
             {
                 vectors[v].GetComponent<VectorControlM3>()._head.position = GetComponent<BeamPlacementM3>().pocPos;
+                vectors[v].GetComponent<VectorControlM3>()._headGameObject.gameObject.transform.position = GetComponent<BeamPlacementM3>().pocPos;
                 if (v == 0)
                 {
                     vectors[v].SetEnabledLabels(true, true, false, false);
@@ -94,10 +123,9 @@ public class VectorMathM3 : MonoBehaviour
                     vectors[v].SetEnabledLabels(true, false, false, false);
                    // RaiseFlagsForHeadTailLabels(v, true, false);
                 }
-                //  GLOBALS.stage++;
             }
-
         }
+
         else
         {
             if (Vector3.Distance(loc, GetComponent<BeamPlacementM3>().pocPos) < 0.15f)
@@ -105,8 +133,8 @@ public class VectorMathM3 : MonoBehaviour
                 vectors[v].transform.position = GetComponent<BeamPlacementM3>().pocPos;
                 vectors[v].GetComponent<VectorControlM3>().isCorrectPlacement = true;
                 vectors[v].SetEnabledLabels(false, false, false, false);
-                RaiseFlagsForHeadTailLabels(v, false, true); //it's snapped to poc, so just show head
-                //  GLOBALS.stage++;
+                if (v == 0) RaiseFlagsForHeadTailLabels(v, true, true); //it's snapped to poc, so just show tail
+                else RaiseFlagsForHeadTailLabels(v, true, false);
             }
             else
             {

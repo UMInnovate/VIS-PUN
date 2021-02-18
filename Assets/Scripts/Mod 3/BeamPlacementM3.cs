@@ -60,6 +60,7 @@ public class BeamPlacementM3 : MonoBehaviour
     // Is a menu being displayed?
     private bool aMenuIsActive;
     private int debugCount;
+    private Vector3 storedBeamEnd; 
 
     [HideInInspector]
     public bool bCanPlaceVec1Labels, bCanPlaceVec2Labels, bCanPlaceVec3Labels, bCanPlaceVec4Labels = false;
@@ -102,7 +103,6 @@ public class BeamPlacementM3 : MonoBehaviour
     void Update()
     {
         _giveInstructions.DisplayText();
-        // Debug.Log("STAGE: " + GLOBALS.stage);
         aMenuIsActive = (operationsPanel.activeSelf || menuPanel.activeSelf);
         if (GLOBALS.gridOn)
             SnapToGrid();
@@ -110,12 +110,6 @@ public class BeamPlacementM3 : MonoBehaviour
         HandleTouchpadInput();
 
         pocPos = _poc.transform.position;
-
-        // if placingHead, have vector head follow beam
-        if (placingHead && !aMenuIsActive)
-        {
-            _vectorMath.PlaceVector3(vec, true, beamEnd);
-        }
     }
 
     public void IncrementStage()
@@ -146,7 +140,7 @@ public class BeamPlacementM3 : MonoBehaviour
             _beamSphere.transform.position = beamEnd;
 
             // the beam sphere is only active for some moments
-            _beamSphere.SetActive(!aMenuIsActive && !placingHead);
+            _beamSphere.SetActive(!aMenuIsActive);
         }
     }
 
@@ -163,7 +157,6 @@ public class BeamPlacementM3 : MonoBehaviour
             {
                 case Stage.m3orig:
                     _origin.SetActive(true);
-                 //   PhotonNetwork.Instantiate("origin", beamEnd, Quaternion.identity);
                     _origin.transform.position = beamEnd;
                     _beamline.enabled = false;
                     IncrementStage();
@@ -177,54 +170,45 @@ public class BeamPlacementM3 : MonoBehaviour
                     PhotonNetwork.Instantiate("POC", beamEnd, Quaternion.identity);
                     _poc.transform.position = beamEnd;
                     GLOBALS.pocPos = _poc.transform.position; //save to global for use in calc canv
+                    Console.WriteLine("\n GLOBAL POC \n" + _poc.transform.position.ToString());
                     IncrementStage();
                     placingHead = true;
                     break;
                 case Stage.m3v1p1:
-                    GLOBALS.displayMode = DispMode.Vector;
-                    _vectorMath.PlaceVector3(vec, false, beamEnd);
-                    GLOBALS.tailPos = beamEnd;
-                    placingHead = true;
+                    _vectorMath.PlaceVector3Point(vec, beamEnd);
+                    storedBeamEnd = beamEnd;
                     IncrementStage();
                     break;
                 case Stage.m3v1p2:
-                    placingHead = false;
                     bCanPlaceVec1Labels = true; //***PUN
                     vec++;
                     IncrementStage();
                     break;
                 case Stage.m3v2p1:
-                    _vectorMath.PlaceVector3(vec, false, beamEnd);
-                    GLOBALS.tailPos = beamEnd;
-                    placingHead = true;
+                    _vectorMath.PlaceVector3Point(vec, beamEnd);
+                    storedBeamEnd = beamEnd;
                     IncrementStage();
                     break;
                 case Stage.m3v2p2:
-                    placingHead = false;
                     bCanPlaceVec2Labels = true; //***PUN
                     vec++;
                     IncrementStage();
                     break;
                 case Stage.m3v3p1:
-                    _vectorMath.PlaceVector3(vec, false, beamEnd);
-                    GLOBALS.tailPos = beamEnd;
-                    placingHead = true;
+                    _vectorMath.PlaceVector3Point(vec, beamEnd);
+                    storedBeamEnd = beamEnd; 
                     IncrementStage();
                     break;
                 case Stage.m3v3p2:
-                    placingHead = false;
                     bCanPlaceVec3Labels = true; //***PUN
                     vec++;
                     IncrementStage();
                     break;
                 case Stage.m3v4p1:
-                    _vectorMath.PlaceVector3(vec, false, beamEnd);
-                    GLOBALS.tailPos = beamEnd;
-                    placingHead = true;
-                    IncrementStage();
+                    _vectorMath.PlaceVector3Point(vec, beamEnd);
+                    storedBeamEnd = beamEnd;
                     break;
                 case Stage.m3v4p2:
-                    placingHead = false;
                     bCanPlaceVec4Labels = true; //***PUN
                     vec++;
                     IncrementStage();
@@ -238,8 +222,6 @@ public class BeamPlacementM3 : MonoBehaviour
                     calcPanel.GetComponent<CalculationsPanel>().MagCalcs();
                     break;
                 case Stage.m3view:
-                    //  Debug.Log("trigg in m3view");
-                    //GLOBALS.firstVec = false;
                     calcPanel.GetComponent<CalculationsPanel>().ComponentCalcs();
                     calcPanel.GetComponent<CalculationsPanel>().MagCalcs();
                     //GLOBALS.stage++;
@@ -268,6 +250,7 @@ public class BeamPlacementM3 : MonoBehaviour
                 case Stage.m3forceview:
                     //calcPanel.GetComponent<CalculationsPanel>().SystemOfEqs();
                     GetComponent<VectorMathM3>().ValidateForceSystem();
+                    calcPanel.GetComponent<CalculationsPanel>().SystemOfEqs();
                     //  calcPanel.GetComponent<CalculationsPanel>().SystemOfEqs();
                     //calcPanel.GetComponent<CalculationsPanel>().ShowCorrectFVecs();
                     GLOBALS.stage++;
@@ -280,7 +263,7 @@ public class BeamPlacementM3 : MonoBehaviour
             }
         }
 
-        Debug.Log("Current stage: " + GLOBALS.stage);
+      //  Debug.Log("Current stage: " + GLOBALS.stage);
     }
 
 
@@ -304,29 +287,14 @@ public class BeamPlacementM3 : MonoBehaviour
         else if (button == MLInput.Controller.Button.Bumper)
         {
             // If we're viewing the completed operation, bumper will toggle the labels we are viewing
-            if (GLOBALS.stage == Stage.m3view)
+            if(GLOBALS.stage >= Stage.m3v1p1 && GLOBALS.stage <= Stage.m3v4p2)
             {
-                switch (GLOBALS.displayMode)
-                {
-                    case DispMode.Vector:
-                        GLOBALS.SelectedVec.GetComponent<VectorControlM3>().SetUnitVec(false);
-                        GLOBALS.SelectedVec.GetComponent<VectorControlM3>().SetEnabledLabels(false, false, true, true);
-                        Debug.Log("in comp mode for vector " + GLOBALS.SelectedVec.name + " bumper press rec");
-                        GLOBALS.displayMode = DispMode.Components;
-                        break;
-                    case DispMode.Components:
-                        GLOBALS.SelectedVec.GetComponent<VectorControlM3>().SetUnitVec(true);
-                        GLOBALS.SelectedVec.GetComponent<VectorControlM3>().SetEnabledLabels(false, false, true, true);
-                        Debug.Log("in unit mode for vector " + GLOBALS.SelectedVec.name + " bumper press rec");
-                        GLOBALS.displayMode = DispMode.Units;
-                        break;
-                    case DispMode.Units:
-                        GLOBALS.SelectedVec.GetComponent<VectorControlM3>().SetUnitVec(false);
-                        GLOBALS.SelectedVec.GetComponent<VectorControlM3>().SetEnabledLabels(false, false, false, false);
-                        Debug.Log("in unit mode for vector " + GLOBALS.SelectedVec.name + " bumper press rec");
-                        GLOBALS.displayMode = DispMode.Vector;
-                        break;
-                }
+              //  Debug.Log("bumper, can place head = " + _vectorMath.vectors[vec].canPlaceHead.ToString());
+                _vectorMath.vectors[vec].canPlaceHead = !_vectorMath.vectors[vec].canPlaceHead;
+                _vectorMath.PlaceVector3Point(vec, storedBeamEnd);
+            
+
+                // Debug.Log("after bumper press = " + _vectorMath.vectors[vec].canPlaceHead);
             }
         }
     }

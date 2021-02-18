@@ -62,11 +62,11 @@ public class CalculationsPanel : MonoBehaviour
     {
         if (SceneManager.GetActiveScene().buildIndex == 12)
         {
-            textLine[0].text = "$$" +
-       "r_" + GLOBALS.SelectedVec.GetComponent<VectorProperties>().gameObject.name.Substring(12) + " = (" +
+            textLine[0].text = @"$$\begin{center} " +
+            "r_" + GLOBALS.SelectedVec.GetComponent<VectorProperties>().gameObject.name.Substring(12) + " = (" +
        GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().relHeadPos.x.ToString(GLOBALS.format) + " - " + GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().relTailPos.x.ToString(GLOBALS.format) + @")i + \par(" +
        GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().relHeadPos.y.ToString(GLOBALS.format) + " - " + GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().relTailPos.y.ToString(GLOBALS.format) + @")j + \par(" +
-       GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().relHeadPos.z.ToString(GLOBALS.format) + " - " + GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().relTailPos.z.ToString(GLOBALS.format) + @")k $$";
+       GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().relHeadPos.z.ToString(GLOBALS.format) + " - " + GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().relTailPos.z.ToString(GLOBALS.format) + @")k \end{center}$$";
         }
 
         else {
@@ -94,9 +94,9 @@ public class CalculationsPanel : MonoBehaviour
            else
            {
                Vector3 relVec = GLOBALS.SelectedVec.GetComponent<VectorControlM3>()._head.position - GLOBALS.SelectedVec.GetComponent<VectorControlM3>()._tail.position;
-               calcPanel.textLine[1].text = @"$$\par \par|" + GLOBALS.SelectedVec.GetComponent<VectorPropertiesM3>().gameObject.name.Substring(12) + "| = " +
+               calcPanel.textLine[1].text = @"$$ \begin{center} \par \par|" + GLOBALS.SelectedVec.GetComponent<VectorPropertiesM3>().gameObject.name.Substring(12) + "| = " +
                   @"\sqrt[2]{(" + relVec.x.ToString(GLOBALS.format) + ")^2 + (" + relVec.y.ToString(GLOBALS.format) + ")^2 + (" + relVec.z.ToString(GLOBALS.format) + ")^2 } " +
-                  @"\par = " + relVec.magnitude.ToString(GLOBALS.format) + "$$";
+                  @"\par = " + relVec.magnitude.ToString(GLOBALS.format) + @"\end{center} $$";
            }
     }
 
@@ -186,7 +186,7 @@ public class CalculationsPanel : MonoBehaviour
             textLine[1].text = @"$$\Sigma F_y = ";
             textLine[2].text = @"$$\Sigma F_z = ";
 
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i <= 2; i++)
             {
                 textLine[0].text += GLOBALS.unknownUVecs[i].x.ToString(GLOBALS.format) + "F_" + GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().gameObject.name.Substring(12) + " + ";
 

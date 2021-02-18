@@ -27,7 +27,7 @@ public class VectorControlM3_Original : MonoBehaviour
     private const float viewOffset = 0.07f;
     [HideInInspector] public Vector3 relHeadPos;
     [HideInInspector] public Vector3 relTailPos;
-    private Vector3 vectorComponents;
+    [HideInInspector] private Vector3 vectorComponents;
 
     public bool isCorrectPlacement = false;
     [HideInInspector] public bool unitVec;

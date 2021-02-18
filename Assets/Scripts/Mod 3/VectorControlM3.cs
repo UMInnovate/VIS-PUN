@@ -49,12 +49,14 @@ public class VectorControlM3 : MonoBehaviour
     public GameObject _tailGameObjectPrefab;
     public GameObject _headGameObject;
     public GameObject _tailGameObject;
+   [HideInInspector] public bool canPlaceHead = false;
     public RPCReceiverM3 rpcReceiverReference;
 
     private PhotonView photonView;
 
     private void Start()
     {
+
         _body = GetComponent<PhotonLineRenderer>();
         _tail = transform.Find("Tail");
         _head = transform.Find("Head");
@@ -140,7 +142,7 @@ public class VectorControlM3 : MonoBehaviour
     private void RecolorVector()
     {
         //PUN _body.startColor = vecColor;
-        //PUN _body.endColor = vecColor;
+        //PUN  _body.endColor = vecColor;
         _head.gameObject.GetComponent<MeshRenderer>().sharedMaterial.color = vecColor;
         _tail.gameObject.GetComponent<MeshRenderer>().sharedMaterial.color = vecColor;
         lastColor = vecColor;
@@ -203,11 +205,22 @@ public class VectorControlM3 : MonoBehaviour
         _head.transform.rotation = Quaternion.LookRotation(_head.transform.position - transform.position);
 
 
+        Debug.Log("in rebuild vector VCM3");
         //***PUN
-       // SpawnHeadAndTail();
-        _headGameObject.transform.rotation = _head.rotation;
-        _headGameObject.transform.position = _head.position;
-        _tailGameObject.transform.position = _tail.position;
+        // SpawnHeadAndTail();
+        if (_headGameObject == null)
+            Debug.Log("head game object is null");
+        else
+            Debug.Log("reg head pos: " + _head.transform.position.ToString(GLOBALS.format) + " and pun head pos: " + _headGameObject.transform.position);
+        if (_tailGameObject == null)
+            Debug.Log("tail game obj is null");
+        else
+            Debug.Log("reg tail pos: " + _tail.transform.position.ToString(GLOBALS.format) + " and pun tail pos: " + _tailGameObject.transform.position);
+
+
+        _headGameObject.transform.rotation = _head.transform.rotation;
+        _headGameObject.transform.position = _head.transform.position;
+        _tailGameObject.transform.position = _tail.transform.position;
 
 
         // local positions are needed because Vectors must be childed to Origin
@@ -413,8 +426,6 @@ public class VectorControlM3 : MonoBehaviour
 
         string _headGameObjectName = _headGameObjectPrefab.name;
         string _tailGameObjectName = _tailGameObjectPrefab.name;
-        Destroy(_headGameObject);
-        Destroy(_tailGameObject);
         _headGameObject = PhotonNetwork.Instantiate(_headGameObjectName, headPos, headRot);
         _tailGameObject = PhotonNetwork.Instantiate(_tailGameObjectName, tailPos, tailRot);
     }
