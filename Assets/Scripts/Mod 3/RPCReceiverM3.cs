@@ -52,27 +52,27 @@ public class RPCReceiverM3 : MonoBehaviour
     public void CheckForLabels()
     {
 
-        if (vectorMath.bCanPlaceVec1Head || vectorMath.bCanPlaceVec1Tail) // V1 head & tail 
+        if (vectorMath.bCanPlaceVec1Head && vectorMath.bCanPlaceVec1Tail) // V1 head & tail 
         {
-
+            PV.RPC("SpawnHeadAndTail", RpcTarget.OthersBuffered, 0);
             PV.RPC("PlaceHeadandTailLabels", RpcTarget.OthersBuffered, 0, vectorMath.bCanPlaceVec1Tail, vectorMath.bCanPlaceVec1Head, vectors[0]._headLabel.transform.position, vectors[0]._tailLabel.transform.position, vectors[0]._headLabel.text, vectors[0]._tailLabel.text, myPlayerRef.myPlayerActorNumber);
             vectorMath.bCanPlaceVec1Head = false; vectorMath.bCanPlaceVec1Tail = false; // reset
         }
-        else if (vectorMath.bCanPlaceVec2Head || vectorMath.bCanPlaceVec2Tail) // V2 head & tail 
+        else if (vectorMath.bCanPlaceVec2Head && vectorMath.bCanPlaceVec2Tail) // V2 head & tail 
         {
-
+            PV.RPC("SpawnHeadAndTail", RpcTarget.OthersBuffered,1);
             PV.RPC("PlaceHeadandTailLabels", RpcTarget.OthersBuffered, 1, vectorMath.bCanPlaceVec2Tail, vectorMath.bCanPlaceVec2Head, vectors[1]._headLabel.transform.position, vectors[1]._tailLabel.transform.position, vectors[1]._headLabel.text, vectors[1]._tailLabel.text, myPlayerRef.myPlayerActorNumber);
             vectorMath.bCanPlaceVec2Head = false; vectorMath.bCanPlaceVec2Tail = false; // reset
         }
-        else if (vectorMath.bCanPlaceVec3Head || vectorMath.bCanPlaceVec3Tail) // V3 head & tail 
+        else if (vectorMath.bCanPlaceVec3Head && vectorMath.bCanPlaceVec3Tail) // V3 head & tail 
         {
-
+            PV.RPC("SpawnHeadAndTail", RpcTarget.OthersBuffered, 2);
             PV.RPC("PlaceHeadandTailLabels", RpcTarget.OthersBuffered, 2, vectorMath.bCanPlaceVec3Tail, vectorMath.bCanPlaceVec3Head, vectors[2]._headLabel.transform.position, vectors[2]._tailLabel.transform.position, vectors[2]._headLabel.text, vectors[2]._tailLabel.text, myPlayerRef.myPlayerActorNumber);
             vectorMath.bCanPlaceVec3Head = false; vectorMath.bCanPlaceVec3Tail = false; // reset
         }
-        else if (vectorMath.bCanPlaceVec4Head || vectorMath.bCanPlaceVec4Tail) // V4 head & tail 
+        else if (vectorMath.bCanPlaceVec4Head && vectorMath.bCanPlaceVec4Tail) // V4 head & tail 
         {
-
+            PV.RPC("SpawnHeadAndTail", RpcTarget.OthersBuffered, 3);
             PV.RPC("PlaceHeadandTailLabels", RpcTarget.OthersBuffered, 3, vectorMath.bCanPlaceVec4Tail, vectorMath.bCanPlaceVec4Head, vectors[3]._headLabel.transform.position, vectors[3]._tailLabel.transform.position, vectors[3]._headLabel.text, vectors[3]._tailLabel.text, myPlayerRef.myPlayerActorNumber);
             vectorMath.bCanPlaceVec4Head = false; vectorMath.bCanPlaceVec4Tail = false; // reset
         }
@@ -106,6 +106,15 @@ public class RPCReceiverM3 : MonoBehaviour
             beamPlacement.bCanPlaceVec4Labels = false;
         }
     }
+
+    [PunRPC] 
+    public void SpawnHeadAndTail(int vec)
+    {
+        //vectors[vec].SpawnHeadAndTail(); 
+        vectorMath.PlaceVector3Point(vec, beamPlacement.storedBeamEnd);
+        Debug.Log("spawning Head and tail of vector " + vec + " of sbe " + beamPlacement.storedBeamEnd.ToString());
+    }
+
 
     [PunRPC]
     public void PlaceHeadandTailLabels(int _i, bool tail, bool head, Vector3 _headPos, Vector3 _tailPos, string _headValue, string _tailValue, string _actorNumber)

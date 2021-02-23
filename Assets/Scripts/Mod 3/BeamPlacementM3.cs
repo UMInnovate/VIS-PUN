@@ -40,7 +40,7 @@ public class BeamPlacementM3 : MonoBehaviour
     // VectorMath handles vector positioning
     private VectorMathM3 _vectorMath = null;
     // Position of end of the beam
-    private Vector3 beamEnd;
+     private Vector3 beamEnd; 
     // Sphere object at end of beam
     private GameObject _beamSphere;
     // Rate of extending/retracting the controller beam
@@ -60,7 +60,7 @@ public class BeamPlacementM3 : MonoBehaviour
     // Is a menu being displayed?
     private bool aMenuIsActive;
     private int debugCount;
-    private Vector3 storedBeamEnd; 
+    [HideInInspector] public Vector3 storedBeamEnd; //* PUN STORED POS OF BEAMEND
 
     [HideInInspector]
     public bool bCanPlaceVec1Labels, bCanPlaceVec2Labels, bCanPlaceVec3Labels, bCanPlaceVec4Labels = false;
@@ -207,9 +207,11 @@ public class BeamPlacementM3 : MonoBehaviour
                 case Stage.m3v4p1:
                     _vectorMath.PlaceVector3Point(vec, beamEnd);
                     storedBeamEnd = beamEnd;
+                    IncrementStage();
                     break;
                 case Stage.m3v4p2:
                     bCanPlaceVec4Labels = true; //***PUN
+                   // storedBeamEnd = beamEnd;
                     vec++;
                     IncrementStage();
                     break;

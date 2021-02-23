@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GiveInstructions : MonoBehaviour
 {
@@ -125,44 +126,119 @@ public class GiveInstructions : MonoBehaviour
                     "Trigger: place";
                 break;
             case Stage.m3v1p1:
-                text.text = "PLACE VECTOR 1 TAIL" + "\n" +
-                    "Touchpad: adjust beam length" + "\n" +
-                    "Trigger: place tail" + "\n";
+                if (SceneManager.GetActiveScene().buildIndex == 12)
+                {
+                    text.text = "PLACE VECTOR 1 TAIL" + "\n" +
+                        "Touchpad: adjust beam length" + "\n" +
+                        "Trigger: place tail" + "\n";
+                }
+                else {
+                    text.text = "PLACE VECTOR 1 POINT" + "\n" +
+                        "Touchpad: adjust beam length" + "\n" +
+                        "Trigger: place point" + "\n";
+                }
                 break;
             case Stage.m3v1p2:
-                text.text = "PLACE VECTOR 1 HEAD" + "\n" +
+                if (SceneManager.GetActiveScene().buildIndex == 12)
+                {
+                    text.text = "PLACE VECTOR 1 HEAD" + "\n" +
                 "Touchpad: adjust beam length" + "\n" +
                 "Trigger: place head" + "\n";
+
+                }
+                else
+                {
+                    text.text = "SWITCH BETWEEN HEAD/TAIL" + "\n" +
+                    "Bumper: toggle head/tail" + "\n" +
+"                   Trigger: validate placement" + "\n";
+                }
                 break;
             case Stage.m3v2p1:
-                text.text = "PLACE VECTOR 2 TAIL" + "\n" +
-                    "Touchpad: adjust beam length" + "\n" +
-                    "Trigger: place tail" + "\n";
+                if (SceneManager.GetActiveScene().buildIndex == 12)
+                {
+                    text.text = "PLACE VECTOR 2 TAIL" + "\n" +
+                        "Touchpad: adjust beam length" + "\n" +
+                        "Trigger: place tail" + "\n";
+                }
+                else
+                {
+                    text.text = "PLACE VECTOR 2 POINT" + "\n" +
+                        "Touchpad: adjust beam length" + "\n" +
+                        "Trigger: place point" + "\n";
+                }
                 break;
             case Stage.m3v2p2:
-                text.text = "PLACE VECTOR 2 HEAD" + "\n" +
+                if (SceneManager.GetActiveScene().buildIndex == 12)
+                {
+                    text.text = "PLACE VECTOR 2 HEAD" + "\n" +
                 "Touchpad: adjust beam length" + "\n" +
                 "Trigger: place head" + "\n";
+
+                }
+                else
+                {
+                    text.text = "SWITCH BETWEEN HEAD/TAIL" + "\n" +
+                    "Bumper: toggle head/tail" + "\n" +
+"                   Trigger: validate placement" + "\n";
+                }
                 break;
             case Stage.m3v3p1:
-                text.text = "PLACE VECTOR 3 TAIL" + "\n" +
-                    "Touchpad: adjust beam length" + "\n" +
-                    "Trigger: place tail" + "\n";
+                if (SceneManager.GetActiveScene().buildIndex == 12)
+                {
+                    text.text = "PLACE VECTOR 3 TAIL" + "\n" +
+                        "Touchpad: adjust beam length" + "\n" +
+                        "Trigger: place tail" + "\n";
+                }
+                else
+                {
+                    text.text = "PLACE VECTOR 3 POINT" + "\n" +
+                        "Touchpad: adjust beam length" + "\n" +
+                        "Trigger: place point" + "\n";
+                }
                 break;
             case Stage.m3v3p2:
-                text.text = "PLACE VECTOR 3 HEAD" + "\n" +
+                if (SceneManager.GetActiveScene().buildIndex == 12)
+                {
+                    text.text = "PLACE VECTOR 3 HEAD" + "\n" +
                 "Touchpad: adjust beam length" + "\n" +
                 "Trigger: place head" + "\n";
+
+                }
+                else
+                {
+                    text.text = "SWITCH BETWEEN HEAD/TAIL" + "\n" +
+                    "Bumper: toggle head/tail" + "\n" +
+"                   Trigger: validate placement" + "\n";
+                }
                 break;
             case Stage.m3v4p1:
-                text.text = "PLACE VECTOR 4 TAIL" + "\n" +
-                    "Touchpad: adjust beam length" + "\n" +
-                    "Trigger: place tail" + "\n";
+                if (SceneManager.GetActiveScene().buildIndex == 12)
+                {
+                    text.text = "PLACE VECTOR 4 TAIL" + "\n" +
+                        "Touchpad: adjust beam length" + "\n" +
+                        "Trigger: place tail" + "\n";
+                }
+                else
+                {
+                    text.text = "PLACE VECTOR 4 POINT" + "\n" +
+                        "Touchpad: adjust beam length" + "\n" +
+                        "Trigger: place point" + "\n";
+                }
                 break;
             case Stage.m3v4p2:
-                text.text = "PLACE VECTOR 4 HEAD" + "\n" +
+                if (SceneManager.GetActiveScene().buildIndex == 12)
+                {
+                    text.text = "PLACE VECTOR 4 HEAD" + "\n" +
                 "Touchpad: adjust beam length" + "\n" +
                 "Trigger: place head" + "\n";
+
+                }
+                else
+                {
+                    text.text = "SWITCH BETWEEN HEAD/TAIL" + "\n" +
+                    "Bumper: toggle head/tail" + "\n" +
+"                   Trigger: validate placement" + "\n";
+                }
                 break;
             case Stage.m3forcesel:
        

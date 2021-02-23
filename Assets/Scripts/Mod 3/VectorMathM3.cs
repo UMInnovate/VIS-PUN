@@ -62,8 +62,8 @@ public class VectorMathM3 : MonoBehaviour
         {
             vectors[v].transform.position = GetComponent<BeamPlacementM3>().pocPos;
             vectors[v].GetComponent<VectorControlM3>()._head.position = loc;
-    
 
+            
             GLOBALS.headPos = loc;
             GLOBALS.tailPos = GetComponent<BeamPlacementM3>().pocPos;
 
@@ -77,8 +77,8 @@ public class VectorMathM3 : MonoBehaviour
             GLOBALS.tailPos = loc;
 
         }
+        RaiseFlagsForHeadTailLabels(v, true, true);
         vectors[v].gameObject.SetActive(true);
-
     }
 
     /// <summary>
