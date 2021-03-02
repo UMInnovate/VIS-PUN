@@ -1,37 +1,43 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 using TMPro;
+using UnityEngine.UI;
+using Unity.Mathematics;
 
 public class RPCReceiverM3 : MonoBehaviour
 {
     //VECTOR LABELS
-    public TextMeshPro[] nameLabel;
-    public TextMeshPro[] headLabels;
-    public TextMeshPro[] tailLabels;
+    //public TextMeshPro[] nameLabel;
+  //  public TextMeshPro[] headLabels;
+    //public TextMeshPro[] tailLabels;
 
-    private TextMeshPro headLabelV1, tailLabelV1, headLabelV2, tailLabelV2, 
-        
-        headLabelV3, tailLabelV3, headLabelV4, tailLabelV4;
+    private TextMeshPro vecLabelV1, vecLabelV2, vecLabelV3, vecLabelV4;
+    private TextMeshPro nameA, nameB, nameC, nameD;
+    private TextMeshPro pocLabel;
 
     [SerializeField] TextMeshPro nameLabelPrefab;
-    [SerializeField] TextMeshPro headLabelPrefab;
-    [SerializeField] TextMeshPro tailLabelPrefab;
+    [SerializeField] TextMeshPro vecLabelPrefab;
+    [SerializeField] TextMeshPro pocLabelPrefab;
 
 
     //VECTOR NAMES
     public BeamPlacementM3 beamPlacement;
     public VectorMathM3 vectorMath;
     public List<VectorControlM3> vectors;
+    public KeypadPanel keypadPanel;
 
     [SerializeField]
     private myPlayer myPlayerRef;
     [SerializeField]
     private StorableObjectBin storableObjectBin_Ref;
 
-    private PhotonView PV; 
+    private PhotonView PV;
+
+    private Vector3 offsetConst = new Vector3(0, 0.04f, 0);
         //CLEAN UP
     //ORIGIN LABELS
 
@@ -43,38 +49,84 @@ public class RPCReceiverM3 : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
+        CheckForOrigin();
         CheckNames();
+        CheckForPrefab();
         CheckForLabels();
+
+    }
+
+    public void CheckForOrigin()
+    {
+        //if someone has placed the origin
+        if(beamPlacement.bOriginPlaced) { PV.RPC("SetViewerPriviledges", RpcTarget.OthersBuffered);  }
+    }
+
+    public void CheckForPrefab()
+    {
+        if(vectorMath.bCanPlaceVec1)
+        {
+            PV.RPC("SpawnHeadAndTail", RpcTarget.OthersBuffered, 0, vectorMath.vec1Pos);
+        }
+        else if (vectorMath.bCanPlaceVec2)
+        {
+            PV.RPC("SpawnHeadAndTail", RpcTarget.OthersBuffered, 1, vectorMath.vec2Pos);
+        }
+        else if (vectorMath.bCanPlaceVec3)
+        {
+            PV.RPC("SpawnHeadAndTail", RpcTarget.OthersBuffered, 2, vectorMath.vec3Pos);
+        }
+        else if (vectorMath.bCanPlaceVec4)
+        {
+            PV.RPC("SpawnHeadAndTail", RpcTarget.OthersBuffered, 3, vectorMath.vec4Pos);
+        }
+        else
+        {
+            return;
+        }
     }
 
     public void CheckForLabels()
     {
+        Console.WriteLine("Can Place V1: " + vectorMath.bCanPlaceVec1 + " V2 " + vectorMath.bCanPlaceVec2 + " V3 " + vectorMath.bCanPlaceVec3 + " V4 " + vectorMath.bCanPlaceVec4);
 
-        if (vectorMath.bCanPlaceVec1Head && vectorMath.bCanPlaceVec1Tail) // V1 head & tail 
+        if(beamPlacement.bCanPlacePOC)
         {
-            PV.RPC("SpawnHeadAndTail", RpcTarget.OthersBuffered, 0);
-            PV.RPC("PlaceHeadandTailLabels", RpcTarget.OthersBuffered, 0, vectorMath.bCanPlaceVec1Tail, vectorMath.bCanPlaceVec1Head, vectors[0]._headLabel.transform.position, vectors[0]._tailLabel.transform.position, vectors[0]._headLabel.text, vectors[0]._tailLabel.text, myPlayerRef.myPlayerActorNumber);
-            vectorMath.bCanPlaceVec1Head = false; vectorMath.bCanPlaceVec1Tail = false; // reset
+            PV.RPC("PlacePOCLabel", RpcTarget.AllBuffered, GLOBALS.pocPos + offsetConst, (GLOBALS.pocPos - beamPlacement._origin.transform.position).ToString(GLOBALS.format), myPlayerRef.myPlayerActorNumber);
+            beamPlacement.bCanPlacePOC = false; 
         }
-        else if (vectorMath.bCanPlaceVec2Head && vectorMath.bCanPlaceVec2Tail) // V2 head & tail 
+
+        if (vectorMath.bCanPlaceVec1) // V1 head & tail 
         {
-            PV.RPC("SpawnHeadAndTail", RpcTarget.OthersBuffered,1);
-            PV.RPC("PlaceHeadandTailLabels", RpcTarget.OthersBuffered, 1, vectorMath.bCanPlaceVec2Tail, vectorMath.bCanPlaceVec2Head, vectors[1]._headLabel.transform.position, vectors[1]._tailLabel.transform.position, vectors[1]._headLabel.text, vectors[1]._tailLabel.text, myPlayerRef.myPlayerActorNumber);
-            vectorMath.bCanPlaceVec2Head = false; vectorMath.bCanPlaceVec2Tail = false; // reset
+           // PV.RPC("SpawnHeadAndTail", RpcTarget.OthersBuffered, 0, vectorMath.vec1Pos);
+            PV.RPC("PlaceVectorLabels", RpcTarget.AllBuffered, 0, vectorMath.vec1Pos, vectorMath.localVec1Pos, myPlayerRef.myPlayerActorNumber); 
+            vectorMath.bCanPlaceVec1 = false; // reset
         }
-        else if (vectorMath.bCanPlaceVec3Head && vectorMath.bCanPlaceVec3Tail) // V3 head & tail 
+
+        else if (vectorMath.bCanPlaceVec2) // V2 head & tail 
         {
-            PV.RPC("SpawnHeadAndTail", RpcTarget.OthersBuffered, 2);
-            PV.RPC("PlaceHeadandTailLabels", RpcTarget.OthersBuffered, 2, vectorMath.bCanPlaceVec3Tail, vectorMath.bCanPlaceVec3Head, vectors[2]._headLabel.transform.position, vectors[2]._tailLabel.transform.position, vectors[2]._headLabel.text, vectors[2]._tailLabel.text, myPlayerRef.myPlayerActorNumber);
-            vectorMath.bCanPlaceVec3Head = false; vectorMath.bCanPlaceVec3Tail = false; // reset
+         //   PV.RPC("SpawnHeadAndTail", RpcTarget.OthersBuffered, 1, vectorMath.vec2Pos);
+            Console.WriteLine("place vector labels v2");
+            PV.RPC("PlaceVectorLabels", RpcTarget.AllBuffered, 1, vectorMath.vec2Pos, vectorMath.localVec2Pos, myPlayerRef.myPlayerActorNumber);
+            Console.WriteLine("after place vector labels v2");
+            vectorMath.bCanPlaceVec2 = false; // reset
         }
-        else if (vectorMath.bCanPlaceVec4Head && vectorMath.bCanPlaceVec4Tail) // V4 head & tail 
+
+        else if (vectorMath.bCanPlaceVec3) // V3 head & tail 
         {
-            PV.RPC("SpawnHeadAndTail", RpcTarget.OthersBuffered, 3);
-            PV.RPC("PlaceHeadandTailLabels", RpcTarget.OthersBuffered, 3, vectorMath.bCanPlaceVec4Tail, vectorMath.bCanPlaceVec4Head, vectors[3]._headLabel.transform.position, vectors[3]._tailLabel.transform.position, vectors[3]._headLabel.text, vectors[3]._tailLabel.text, myPlayerRef.myPlayerActorNumber);
-            vectorMath.bCanPlaceVec4Head = false; vectorMath.bCanPlaceVec4Tail = false; // reset
+           // PV.RPC("SpawnHeadAndTail", RpcTarget.OthersBuffered, 2, vectorMath.vec3Pos);
+            Console.WriteLine("place vector labels v3");
+            PV.RPC("PlaceVectorLabels", RpcTarget.AllBuffered, 2, vectorMath.vec3Pos, vectorMath.localVec3Pos, myPlayerRef.myPlayerActorNumber);
+            Console.WriteLine("after place vector labels v3");
+            vectorMath.bCanPlaceVec3 = false;
+        }
+        else if (vectorMath.bCanPlaceVec4) // V4 head & tail 
+        {
+         //   PV.RPC("SpawnHeadAndTail", RpcTarget.OthersBuffered, 3, vectorMath.vec4Pos);
+            PV.RPC("PlaceVectorLabels", RpcTarget.AllBuffered, 3, vectorMath.vec4Pos, vectorMath.localVec4Pos, myPlayerRef.myPlayerActorNumber);
+            vectorMath.bCanPlaceVec4 = false; // reset
         }
 
         else
@@ -85,154 +137,167 @@ public class RPCReceiverM3 : MonoBehaviour
 
     public void CheckNames()
     {
+        
         if(beamPlacement.bCanPlaceVec1Labels)
         {
-            PV.RPC("InitVectorName", RpcTarget.OthersBuffered, 0, vectors[0]._nameLabel.transform.position, myPlayerRef.myPlayerActorNumber);
-           beamPlacement.bCanPlaceVec1Labels = false;
+            PV.RPC("InitVectorName", RpcTarget.OthersBuffered, 0, vectors[0]._nameLabel.transform.position, 0, myPlayerRef.myPlayerActorNumber);
+          
+
+            beamPlacement.bCanPlaceVec1Labels = false;
         }
-        if (beamPlacement.bCanPlaceVec2Labels)
+        else if (beamPlacement.bCanPlaceVec2Labels)
         {
-            PV.RPC("InitVectorName", RpcTarget.OthersBuffered, 1, vectors[1]._nameLabel.transform.position, myPlayerRef.myPlayerActorNumber);
+           
+            PV.RPC("InitVectorName", RpcTarget.OthersBuffered, 1, vectors[1]._nameLabel.transform.position, 0, myPlayerRef.myPlayerActorNumber);
+            
             beamPlacement.bCanPlaceVec2Labels = false;
         }
-        if (beamPlacement.bCanPlaceVec3Labels)
+        else if (beamPlacement.bCanPlaceVec3Labels)
         {
-            PV.RPC("InitVectorName", RpcTarget.OthersBuffered, 2, vectors[2]._nameLabel.transform.position, myPlayerRef.myPlayerActorNumber);
+           
+            PV.RPC("InitVectorName", RpcTarget.OthersBuffered, 2, vectors[2]._nameLabel.transform.position, 0, myPlayerRef.myPlayerActorNumber);
+           
             beamPlacement.bCanPlaceVec3Labels = false;
         }
-        if (beamPlacement.bCanPlaceVec4Labels)
+        else if (beamPlacement.bCanPlaceVec4Labels)
         {
-            PV.RPC("InitVectorName", RpcTarget.OthersBuffered, 3, vectors[3]._nameLabel.transform.position, myPlayerRef.myPlayerActorNumber);
+            
+            PV.RPC("InitVectorName", RpcTarget.OthersBuffered, 3, vectors[3]._nameLabel.transform.position, 0, myPlayerRef.myPlayerActorNumber);
+            
             beamPlacement.bCanPlaceVec4Labels = false;
         }
+        else
+        {
+            return;
+        }
+    }
+
+
+    [PunRPC]
+    public void PlacePOCLabel(Vector3 placementPos, string _value, string _actorNumber) 
+    {
+        pocLabel = Instantiate(pocLabelPrefab, placementPos, Quaternion.identity);
+        pocLabel.text = _value;
+        Console.WriteLine("poc val: " + _value);
+        AddToBin(_actorNumber, pocLabel);
+    }
+
+    [PunRPC]
+    public void SetViewerPriviledges() //possible issue if two people press trigger to place ori at the same time
+    {
+        beamPlacement.bIsViewer = true; 
     }
 
     [PunRPC] 
-    public void SpawnHeadAndTail(int vec)
+    public void SpawnHeadAndTail(int vec, Vector3 pos)
     {
         //vectors[vec].SpawnHeadAndTail(); 
-        vectorMath.PlaceVector3Point(vec, beamPlacement.storedBeamEnd);
-        Debug.Log("spawning Head and tail of vector " + vec + " of sbe " + beamPlacement.storedBeamEnd.ToString());
+        vectorMath.PlaceVector3Point(vec, pos);
+      //  Debug.Log("spawning Head and tail of vector " + vec + " of sbe " + beamPlacement.storedBeamEnd);
+       // Console.WriteLine("Point Value Vector " + vec + " has value " + pos);
     }
 
 
     [PunRPC]
-    public void PlaceHeadandTailLabels(int _i, bool tail, bool head, Vector3 _headPos, Vector3 _tailPos, string _headValue, string _tailValue, string _actorNumber)
+    public void PlaceVectorLabels(int _v, Vector3 ptPos, Vector3 localPos, string _actorNumber)
     {
-        switch (_i)
+        Console.WriteLine("in vectorlabels with index " + _v);
+        switch (_v)
         {
             case 0:
-                // head
-                if (head)
-                {
-                    headLabelV1 = Instantiate(headLabelPrefab, _headPos, Quaternion.identity);
-                    headLabelV1.text = _headValue;
-                    Debug.Log("head label value is " + headLabelV1.text);
-                    AddToBin(_actorNumber, headLabelV1); // add to bin
-                }
+                Console.WriteLine("case 0 is being called in placevectorlabels");
+                vecLabelV1 = Instantiate(pocLabelPrefab, ptPos + offsetConst, Quaternion.identity);
 
-                if (tail)
-                {
-                    // tail 
-                    tailLabelV1 = Instantiate(tailLabelPrefab, _tailPos, Quaternion.identity);
-                    tailLabelV1.text = _tailValue;
-                    Debug.Log("tail label value is " + tailLabelV1.text);
-                    AddToBin(_actorNumber, tailLabelV1); // add to bin
-                }
+                if(beamPlacement.bIsViewer) //if you are only viewing the system, rely on the value fed by rpc
+                    vecLabelV1.text = (localPos).ToString(GLOBALS.format); 
+                else  //if you are controlling the experience, call your local var
+                    vecLabelV1.text = (vectorMath.localVec1Pos).ToString(GLOBALS.format);
+
+                AddToBin(_actorNumber, vecLabelV1); // add to bin
+                vectorMath.bCanPlaceVec1 = false;
                 break;
 
             case 1:
-                // head
-                if (head)
-                {
-                    headLabelV2 = Instantiate(headLabelPrefab, _headPos, Quaternion.identity);
-                    headLabelV2.text = _headValue;
-                    AddToBin(_actorNumber, headLabelV2); // add to bin
-                }
+                Console.WriteLine("case 1 is being called in placevectorlabels");
+                vecLabelV2 = Instantiate(pocLabelPrefab, ptPos + offsetConst, Quaternion.identity);
 
-                if (tail)
-                {
-                    // tail 
-                    tailLabelV2 = Instantiate(tailLabelPrefab, _tailPos, Quaternion.identity);
-                    tailLabelV2.text = _tailValue;
-                    AddToBin(_actorNumber, tailLabelV2); // add to bin
-                }
+                if (beamPlacement.bIsViewer)
+                    vecLabelV2.text = (localPos).ToString(GLOBALS.format); 
+                else
+                    vecLabelV2.text = (vectorMath.localVec2Pos).ToString(GLOBALS.format);
+
+                AddToBin(_actorNumber, vecLabelV2); // add to bin
+                vectorMath.bCanPlaceVec2 = false;
                 break;
             case 2:
-                // head
-                if (head)
-                {
-                    headLabelV3 = Instantiate(headLabelPrefab, _headPos, Quaternion.identity);
-                    headLabelV3.text = _headValue;
-                    AddToBin(_actorNumber, headLabelV3); // add to bin
-                }
+                Console.WriteLine("case 2 is being called in placevectorlabels");
+                vecLabelV3 = Instantiate(pocLabelPrefab, ptPos + offsetConst, Quaternion.identity);
+                
+                if (beamPlacement.bIsViewer)
+                    vecLabelV3.text = (localPos).ToString(GLOBALS.format); 
+                else
+                    vecLabelV3.text = (vectorMath.localVec3Pos).ToString(GLOBALS.format);
 
-                if (tail)
-                {
-                    // tail 
-                    tailLabelV3 = Instantiate(tailLabelPrefab, _tailPos, Quaternion.identity);
-                    tailLabelV3.text = _tailValue;
-                    AddToBin(_actorNumber, tailLabelV3); // add to bin
-                }
+                AddToBin(_actorNumber, vecLabelV3); // add to bin
+                vectorMath.bCanPlaceVec3 = false;
                 break;
             case 3:
-                // head
-                if (head)
-                {
-                    headLabelV4 = Instantiate(headLabelPrefab, _headPos, Quaternion.identity);
-                    headLabelV4.text = _headValue;
-                    AddToBin(_actorNumber, headLabelV4); // add to bin
-                }
+                Console.WriteLine("case 3 is being called in placevectorlabels");
+                vecLabelV4 = Instantiate(pocLabelPrefab, ptPos + offsetConst, Quaternion.identity);
+                
+                if (beamPlacement.bIsViewer)
+                    vecLabelV4.text = (localPos).ToString(GLOBALS.format); 
+                else
+                    vecLabelV4.text = (vectorMath.localVec4Pos).ToString(GLOBALS.format);
 
-                if (tail)
-                {
-                    // tail 
-                    tailLabelV4 = Instantiate(tailLabelPrefab, _tailPos, Quaternion.identity);
-                    tailLabelV4.text = _tailValue;
-                    AddToBin(_actorNumber, tailLabelV4); // add to bin
-                }
+                AddToBin(_actorNumber, vecLabelV4); // add to bin
+                vectorMath.bCanPlaceVec4 = false;
                 break;
         }
     }
 
     [PunRPC]
-    public void InitVectorName(int _i, Vector3 _pos, string _actorNumber)
+    public void InitVectorName(int _i, Vector3 _pos, int fval, string _actorNumber)
     {
         Debug.Log("Executing Init Vector Names RPC");
 
         switch (_i)
         {
             case 0:
-                Debug.Log("Instantiating A");
-                TextMeshPro _nameA = Instantiate(nameLabelPrefab, _pos, Quaternion.identity);
-                _nameA.text = "A";
+                    Console.WriteLine("Instantiating A");
+                    TextMeshPro nameA = Instantiate(nameLabelPrefab, _pos, Quaternion.identity);
+                    nameA.text = "A";
 
-                AddToBin(_actorNumber, _nameA); // add to bin
+                    AddToBin(_actorNumber, nameA); // add to bin
 
+                beamPlacement.bCanPlaceVec1Labels = false; 
                 break;
             case 1:
-                Debug.Log("Instantiating b");
-                TextMeshPro _nameB = Instantiate(nameLabelPrefab, _pos, Quaternion.identity);
-                _nameB.text = "B";
+                Console.WriteLine("Instantiating b");
+                TextMeshPro nameB = Instantiate(nameLabelPrefab, _pos, Quaternion.identity);
+                nameB.text = "B";
 
-                AddToBin(_actorNumber, _nameB); // add to bin
+                AddToBin(_actorNumber, nameB); // add to bin
 
+                beamPlacement.bCanPlaceVec2Labels = false;
                 break;
             case 2:
-                Debug.Log("Instantiating C");
-                TextMeshPro _nameC = Instantiate(nameLabelPrefab, _pos, Quaternion.identity);
-                _nameC.text = "C";
+                Console.WriteLine("Instantiating C");
+                TextMeshPro nameC = Instantiate(nameLabelPrefab, _pos, Quaternion.identity);
+                nameC.text = "C";
 
-                AddToBin(_actorNumber, _nameC); // add to bin
+                AddToBin(_actorNumber, nameC); // add to bin
 
+                beamPlacement.bCanPlaceVec3Labels = false;
                 break;
             case 3:
-                Debug.Log("Instantiating D");
-                TextMeshPro _nameD = Instantiate(nameLabelPrefab, _pos, Quaternion.identity);
-                _nameD.text = "D";
+                Console.WriteLine("Instantiating D");
+                TextMeshPro nameD = Instantiate(nameLabelPrefab, _pos, Quaternion.identity);
+                nameD.text = "D";
 
-                AddToBin(_actorNumber, _nameD); // add to bin
+                AddToBin(_actorNumber, nameD); // add to bin
 
+                beamPlacement.bCanPlaceVec4Labels = false;
                 break;
         }
     }

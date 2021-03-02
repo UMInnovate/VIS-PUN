@@ -5,7 +5,8 @@ using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.XR.MagicLeap;
 
-public class VectorPropertiesM3 : MonoBehaviour
+public class 
+    VectorPropertiesM3 : MonoBehaviour
 {
     [HideInInspector]
     public bool isValidPlacement; //is the head or tail component colliding?
@@ -32,7 +33,7 @@ public class VectorPropertiesM3 : MonoBehaviour
     [SerializeField] private MLInput.Controller inputController;
     public GameObject keypad;
 
-    [SerializeField] BeamPlacementM3 beamPlacement;
+    [SerializeField] public BeamPlacementM3 beamPlacement;
 
     #region Public Methods
     public void SetNameLabelHoverState(bool isHovered)
@@ -46,6 +47,8 @@ public class VectorPropertiesM3 : MonoBehaviour
         //REGEX \b([A]|[B]|[C]|[D])
         //SpaceVector A
         string subA = gameObject.name.Substring(12);
+
+
         // Debug.Log("subA = " + subA);
         if (GLOBALS.inFeet) gameObject.GetComponent<VectorControlM3>().SetName(subA + " = " + fval.ToString() + " lbs");
         else gameObject.GetComponent<VectorControlM3>().SetName(subA + " = " + fval.ToString() + " N");

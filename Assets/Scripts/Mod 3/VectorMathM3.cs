@@ -14,10 +14,13 @@ public class VectorMathM3 : MonoBehaviour
     private static float[,] Fsystem;
 
     private static Vector3 v1, v2, v3 = Vector3.one; // ASSUME UNIT VEC V1, V2, V3
-
+    private int debugCount = 0; 
     [HideInInspector]
-    public bool bCanPlaceVec1Head, bCanPlaceVec1Tail, bCanPlaceVec2Head, bCanPlaceVec2Tail,
-    bCanPlaceVec3Head, bCanPlaceVec3Tail, bCanPlaceVec4Head, bCanPlaceVec4Tail = false; ///* PUN STUFF 
+    public bool bCanPlaceVec1, bCanPlaceVec2,
+    bCanPlaceVec3, bCanPlaceVec4 = false; ///* PUN STUFF 
+
+    [HideInInspector] public Vector3 vec1Pos, vec2Pos, vec3Pos, vec4Pos; //* PUN STUFF
+    [HideInInspector] public Vector3 localVec1Pos, localVec2Pos, localVec3Pos, localVec4Pos; 
     void Start()
     {
 
@@ -63,7 +66,7 @@ public class VectorMathM3 : MonoBehaviour
             vectors[v].transform.position = GetComponent<BeamPlacementM3>().pocPos;
             vectors[v].GetComponent<VectorControlM3>()._head.position = loc;
 
-            
+            //vectors[v].SetEnabledLabels(false, true, false, false);
             GLOBALS.headPos = loc;
             GLOBALS.tailPos = GetComponent<BeamPlacementM3>().pocPos;
 
@@ -71,13 +74,37 @@ public class VectorMathM3 : MonoBehaviour
         else //if inputting the tail, snap the head
         {
             vectors[v].transform.position = loc;
-            vectors[v].GetComponent<VectorControlM3>()._head.position = GetComponent<BeamPlacementM3>().pocPos;          
-          
+            Console.WriteLine("loc " + loc);
+            switch (v) {
+                case 0:
+                    localVec1Pos = vectors[v].transform.localPosition;
+                    Console.WriteLine("local loc at v1 " + v + " is " + localVec1Pos);
+                    break;
+                case 1:
+                    localVec2Pos = vectors[v].transform.localPosition;
+                    break;
+                case 2:
+                    localVec3Pos = vectors[v].transform.localPosition;
+                    break;
+                case 3:
+                    localVec4Pos = vectors[v].transform.localPosition;
+                    break;
+                default:
+                    Debug.Log("this is so disgusting im so sorry.");
+                    break;
+
+            } 
+
+            vectors[v].GetComponent<VectorControlM3>()._head.position = GetComponent<BeamPlacementM3>().pocPos;
+
+            Console.WriteLine("raising flag for v" + v);
+            RaiseFlagsForHeadTailLabels(v, true, loc);
+            // vectors[v].SetEnabledLabels(true, false, false, false);
             GLOBALS.headPos = GetComponent<BeamPlacementM3>().pocPos;
             GLOBALS.tailPos = loc;
 
         }
-        RaiseFlagsForHeadTailLabels(v, true, true);
+
         vectors[v].gameObject.SetActive(true);
     }
 
@@ -96,7 +123,7 @@ public class VectorMathM3 : MonoBehaviour
             {
                 vectors[v].GetComponent<VectorControlM3>()._head.position = loc;
 
-                RaiseFlagsForHeadTailLabels(v, true, true); 
+              //  RaiseFlagsForHeadTailLabels(v, true); 
                 vectors[v].GetComponent<VectorControlM3>()._headGameObject.gameObject.transform.position = loc;
                 if (v == 0)
                 {
@@ -133,15 +160,15 @@ public class VectorMathM3 : MonoBehaviour
                 vectors[v].transform.position = GetComponent<BeamPlacementM3>().pocPos;
                 vectors[v].GetComponent<VectorControlM3>().isCorrectPlacement = true;
                 vectors[v].SetEnabledLabels(false, false, false, false);
-                if (v == 0) RaiseFlagsForHeadTailLabels(v, true, true); //it's snapped to poc, so just show tail
-                else RaiseFlagsForHeadTailLabels(v, true, false);
+                //if (v == 0) RaiseFlagsForHeadTailLabels(v, true); //it's snapped to poc, so just show tail
+               // else RaiseFlagsForHeadTailLabels(v, true);
             }
             else
             {
                 vectors[v].transform.position = loc;
                 vectors[v].GetComponent<VectorControlM3>().isCorrectPlacement = false;
                 vectors[v].SetEnabledLabels(true, false, false, false);
-                RaiseFlagsForHeadTailLabels(v, true, true);
+               // RaiseFlagsForHeadTailLabels(v, true);
             }
             vectors[v].gameObject.SetActive(true);
 
@@ -155,25 +182,23 @@ public class VectorMathM3 : MonoBehaviour
     /// <param name="v">Vector Number in reference to vectorcontorl arr</param>
     /// <param name="tail">is the tail going to be sent out</param>
     /// <param name="head">is the head going to be sent out</param>
-    private void RaiseFlagsForHeadTailLabels(int v, bool tail, bool head)
+    private void RaiseFlagsForHeadTailLabels(int v, bool flag, Vector3 loc)
     {
+        debugCount++;
+        Console.WriteLine("DB COUNT " + debugCount);
         switch(v)
         {
             case 0:
-                if (tail) bCanPlaceVec1Tail = true;
-                if (head) bCanPlaceVec1Head = true;
+                if (flag) { bCanPlaceVec1 = true; vec1Pos = loc; bCanPlaceVec2 = false; bCanPlaceVec3 = false; bCanPlaceVec4 = false; }
                 break;
             case 1:
-                if (tail) bCanPlaceVec2Tail = true;
-                if (head) bCanPlaceVec2Head = true;
+                if (flag) { bCanPlaceVec2 = true; vec2Pos = loc; bCanPlaceVec1 = false; bCanPlaceVec3 = false; bCanPlaceVec4 = false; }
                 break;
             case 2:
-                if (tail) bCanPlaceVec3Tail = true;
-                if (head) bCanPlaceVec3Head = true;
+                if (flag) { bCanPlaceVec3 = true; vec3Pos = loc; bCanPlaceVec1 = false; bCanPlaceVec2 = false; bCanPlaceVec4 = false; }
                 break;
             case 3:
-                if (tail) bCanPlaceVec4Tail = true;
-                if (head) bCanPlaceVec4Head = true;
+                if (flag) { bCanPlaceVec4 = true; vec4Pos = loc; bCanPlaceVec1 = false; bCanPlaceVec2 = false; bCanPlaceVec3 = false; }
                 break;
 
             default:

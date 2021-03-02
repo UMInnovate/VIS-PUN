@@ -14,6 +14,8 @@ public class KeypadPanel : MonoBehaviour
     [SerializeField] List<Button> ValueButtons;
     [SerializeField] Button CheckButton;
 
+    [HideInInspector] public bool updateForceText = false; 
+
     [HideInInspector] public bool given;
     //[SerializeField] Button ConfirmButton;
     public Text IFText;
@@ -21,7 +23,7 @@ public class KeypadPanel : MonoBehaviour
     private GameObject panel;
 
     private VectorProperties vp;
-    private VectorPropertiesM3 vp3;
+    public VectorPropertiesM3 vp3;
     bool check;
     //PhotonView PV;
 
@@ -29,7 +31,6 @@ public class KeypadPanel : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
         check = false;
         if (!MLInput.IsStarted) MLInput.Start();
         MLInput.OnTriggerUp += OnTriggerUp;
@@ -73,15 +74,25 @@ public class KeypadPanel : MonoBehaviour
         }
         else
         {
+           // updateForceText = true;   //raise flag that the value has been set
+            
             Debug.Log("vp3 force val: " + vp3.forceValue.ToString());
             string value = IFText.text;
             vp3.forceValue = int.Parse(value);
             
 
             gameObject.SetActive(false);
+
+
             vp3.SetForceVal(int.Parse(value));
+
+
+
             vp3.BuildForceVector();
             ACClicked();
+
+            //updateForceText = false; //set the flag to false
+
             GLOBALS.stage++;
         }
     }

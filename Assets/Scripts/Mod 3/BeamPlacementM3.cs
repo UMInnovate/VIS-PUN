@@ -24,13 +24,12 @@ public class BeamPlacementM3 : MonoBehaviour
     public Text inputText;
     #endregion
 
-
     #region Private member variables
     [HideInInspector] public Vector3 pocPos;
     // Content root
     private GameObject _root;
     // Origin of coordinate system
-    private GameObject _origin;
+    [HideInInspector] public GameObject _origin;
     //Point of concurrency of system
     private GameObject _poc;
     // Input controller
@@ -61,15 +60,17 @@ public class BeamPlacementM3 : MonoBehaviour
     private bool aMenuIsActive;
     private int debugCount;
     [HideInInspector] public Vector3 storedBeamEnd; //* PUN STORED POS OF BEAMEND
+    public bool bOriginPlaced, bIsViewer; ///* Origin Placed by someone
 
     [HideInInspector]
-    public bool bCanPlaceVec1Labels, bCanPlaceVec2Labels, bCanPlaceVec3Labels, bCanPlaceVec4Labels = false;
+    public bool bCanPlaceVec1Labels, bCanPlaceVec2Labels, bCanPlaceVec3Labels, bCanPlaceVec4Labels, bCanPlacePOC = false;
 
 
     #endregion
 
     void Start()
     {
+        bIsViewer = false; 
         GLOBALS.displayMode = DispMode.Vector;
         _root = GameObject.Find("Content Root");
         _origin = _root.transform.Find("Origin").gameObject;
@@ -88,6 +89,8 @@ public class BeamPlacementM3 : MonoBehaviour
         MLInput.OnTriggerUp += OnTriggerUp;
         _beamline.SetPosition(0, _controller.Position); //***PUN
         _beamline.SetPosition(1, beamEnd); //***PUN
+
+
         _origin.SetActive(false);
 
         menuPanel.SetActive(false);
@@ -98,6 +101,7 @@ public class BeamPlacementM3 : MonoBehaviour
         _giveInstructions.DisplayText();
         debugCount = 0;
         GLOBALS.count = 0;
+        bOriginPlaced = false;
     }
 
     void Update()
@@ -150,7 +154,7 @@ public class BeamPlacementM3 : MonoBehaviour
     // Note - the trigger click handles what happens upon EXITING the stage given in the switch statement.
     private void OnTriggerUp(byte controllerId, float pressure)
     {
-        if (!aMenuIsActive)
+        if (!aMenuIsActive && !bIsViewer)
         {
 
             switch (GLOBALS.stage)
@@ -159,6 +163,8 @@ public class BeamPlacementM3 : MonoBehaviour
                     _origin.SetActive(true);
                     _origin.transform.position = beamEnd;
                     _beamline.enabled = false;
+                    bOriginPlaced = true;
+                    GLOBALS.isHost = true; 
                     IncrementStage();
                     break;
                 case Stage.m3rotate:
@@ -170,13 +176,14 @@ public class BeamPlacementM3 : MonoBehaviour
                     PhotonNetwork.Instantiate("POC", beamEnd, Quaternion.identity);
                     _poc.transform.position = beamEnd;
                     GLOBALS.pocPos = _poc.transform.position; //save to global for use in calc canv
-                    Console.WriteLine("\n GLOBAL POC \n" + _poc.transform.position.ToString());
+                    bCanPlacePOC = true; 
+                   // Console.WriteLine("\n GLOBAL POC \n" + _poc.transform.position.ToString());
                     IncrementStage();
                     placingHead = true;
                     break;
                 case Stage.m3v1p1:
-                    _vectorMath.PlaceVector3Point(vec, beamEnd);
                     storedBeamEnd = beamEnd;
+                    _vectorMath.PlaceVector3Point(vec, storedBeamEnd);
                     IncrementStage();
                     break;
                 case Stage.m3v1p2:
@@ -185,8 +192,8 @@ public class BeamPlacementM3 : MonoBehaviour
                     IncrementStage();
                     break;
                 case Stage.m3v2p1:
-                    _vectorMath.PlaceVector3Point(vec, beamEnd);
                     storedBeamEnd = beamEnd;
+                    _vectorMath.PlaceVector3Point(vec, storedBeamEnd);
                     IncrementStage();
                     break;
                 case Stage.m3v2p2:
@@ -195,8 +202,8 @@ public class BeamPlacementM3 : MonoBehaviour
                     IncrementStage();
                     break;
                 case Stage.m3v3p1:
-                    _vectorMath.PlaceVector3Point(vec, beamEnd);
-                    storedBeamEnd = beamEnd; 
+                    storedBeamEnd = beamEnd;
+                    _vectorMath.PlaceVector3Point(vec, storedBeamEnd);
                     IncrementStage();
                     break;
                 case Stage.m3v3p2:
@@ -205,8 +212,8 @@ public class BeamPlacementM3 : MonoBehaviour
                     IncrementStage();
                     break;
                 case Stage.m3v4p1:
-                    _vectorMath.PlaceVector3Point(vec, beamEnd);
                     storedBeamEnd = beamEnd;
+                    _vectorMath.PlaceVector3Point(vec, storedBeamEnd);
                     IncrementStage();
                     break;
                 case Stage.m3v4p2:
@@ -217,6 +224,7 @@ public class BeamPlacementM3 : MonoBehaviour
                     break;
                 case Stage.m3forcesel:
                     calcPanel.GetComponent<CalculationsPanel>().StartCalculationsSequence();
+                    PhotonNetwork.Instantiate("CalcPanel", GLOBALS.pocPos + new Vector3(0.5f, 0, 0.5f), Quaternion.identity);
                     calcPanel.SetActive(true);
                     break;
                 case Stage.m3keypad:
@@ -226,28 +234,11 @@ public class BeamPlacementM3 : MonoBehaviour
                 case Stage.m3view:
                     calcPanel.GetComponent<CalculationsPanel>().ComponentCalcs();
                     calcPanel.GetComponent<CalculationsPanel>().MagCalcs();
-                    //GLOBALS.stage++;
-                    //Summary: Checks how many vectors have been given forces. If there is one unknown force left
-                    //increment stage, otherwise repeat force selection by decrementing stage
-                    int temp = 0; //Checks how many vectors have been given forces
-                    for (int i = 0; i < GetComponent<VectorMathM3>().vectors.Count; i++)
-                        if (GetComponent<VectorMathM3>().vectors[i].GetComponent<VectorProperties>().isForceKnown)
-                            temp++;
-                    bCanPlaceVec1Labels = true; //***PUN
-                    bCanPlaceVec2Labels = true; //***PUN
-                    bCanPlaceVec3Labels = true; //***PUN
-                    bCanPlaceVec4Labels = true; //***PUN
-                    //Debug.Log("in m3view- our given force vector is: " + GLOBALS.GivenForceVec.gameObject.name);
-                    if (temp < 4)
-                    {
-                        DecrementStage();
-                        DecrementStage();
-                    }
-                    else
-                    {
-                        GLOBALS.stage++;
+
+
+                    GLOBALS.stage++;
                         GetComponent<VectorMathM3>().SolveSystemOfEquations();
-                    }
+                   // }
                     break;
                 case Stage.m3forceview:
                     //calcPanel.GetComponent<CalculationsPanel>().SystemOfEqs();
@@ -289,14 +280,11 @@ public class BeamPlacementM3 : MonoBehaviour
         else if (button == MLInput.Controller.Button.Bumper)
         {
             // If we're viewing the completed operation, bumper will toggle the labels we are viewing
-            if(GLOBALS.stage >= Stage.m3v1p1 && GLOBALS.stage <= Stage.m3v4p2)
+            if(GLOBALS.stage == Stage.m3v1p2 || GLOBALS.stage == Stage.m3v2p2 || GLOBALS.stage == Stage.m3v3p2 || GLOBALS.stage == Stage.m3v4p2)
             {
               //  Debug.Log("bumper, can place head = " + _vectorMath.vectors[vec].canPlaceHead.ToString());
                 _vectorMath.vectors[vec].canPlaceHead = !_vectorMath.vectors[vec].canPlaceHead;
                 _vectorMath.PlaceVector3Point(vec, storedBeamEnd);
-            
-
-                // Debug.Log("after bumper press = " + _vectorMath.vectors[vec].canPlaceHead);
             }
         }
     }

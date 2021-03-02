@@ -19,36 +19,48 @@ public class CalculationsPanel : MonoBehaviour
     [SerializeField]
     private StorableObjectBin storableObjectBin_Ref;
 
+    private PhotonView PV;
     // Start is called before the first frame update
     void Start()
     {
-       gameObject.SetActive(true);
+        gameObject.SetActive(true);
+
+        if (PV) { //init pun items from client
+            cam = GameObject.Find("Main Camera").GetComponent<Camera>();
+            myPlayerRef = GameObject.Find("CleanUp").GetComponent<myPlayer>();
+            storableObjectBin_Ref = GameObject.Find("CleanUp").GetComponent<StorableObjectBin>(); 
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (gameObject.activeSelf)
+        if (gameObject.activeSelf && SceneManager.GetActiveScene().buildIndex == 12)
             gameObject.transform.rotation = Quaternion.LookRotation(gameObject.transform.position - cam.transform.position);
-        if (PhotonNetwork.InRoom && gameObject.activeSelf)
-        {
-            Debug.Log("if in room and act");
-            calcPanel.GetComponentInParent<GameObject>().gameObject.transform.rotation = Quaternion.LookRotation(gameObject.transform.position - cam.transform.position);
-        }
+        else if (gameObject.activeSelf && SceneManager.GetActiveScene().buildIndex == 14 && GLOBALS.isHost)
+            gameObject.transform.rotation = Quaternion.LookRotation(gameObject.transform.position - cam.transform.position);
+        else //static
+            gameObject.transform.rotation = Quaternion.identity;
+        // if (PhotonNetwork.InRoom && gameObject.activeSelf)
+        //  {
+        //    Debug.Log("if in room and act");
+        //  calcPanel.GetComponentInParent<GameObject>().gameObject.transform.rotation = Quaternion.LookRotation(gameObject.transform.position - cam.transform.position);
+        // }
     }
 
     public void StartCalculationsSequence()
     {
         gameObject.SetActive(true);
         gameObject.transform.position = GLOBALS.pocPos + new Vector3(0.5f, 0, 0.5f);
-        if(PhotonNetwork.InRoom)
+
+        /*if(PV)
         {
             GameObject calcPanelObject = PhotonNetwork.Instantiate("CalcPanel", gameObject.transform.position, Quaternion.identity);
             calcPanel = calcPanelObject.GetComponent<CalculationsPanel>();
             Debug.Log("is calcPanelObj active: " + calcPanelObject.gameObject.activeSelf + " and is calcPanel active: " + calcPanel.name  );
             // cam = GameObject.Find("Main Camera").GetComponent<Camera>();
           //  AddToBin(myPlayerRef.myPlayerActorNumber, calcPanel);
-        }
+        }*/
     }
 
     public void CleanCanvas()
@@ -64,9 +76,9 @@ public class CalculationsPanel : MonoBehaviour
         {
             textLine[0].text = @"$$\begin{center} " +
             "r_" + GLOBALS.SelectedVec.GetComponent<VectorProperties>().gameObject.name.Substring(12) + " = (" +
-       GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().relHeadPos.x.ToString(GLOBALS.format) + " - " + GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().relTailPos.x.ToString(GLOBALS.format) + @")i + \par(" +
-       GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().relHeadPos.y.ToString(GLOBALS.format) + " - " + GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().relTailPos.y.ToString(GLOBALS.format) + @")j + \par(" +
-       GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().relHeadPos.z.ToString(GLOBALS.format) + " - " + GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().relTailPos.z.ToString(GLOBALS.format) + @")k \end{center}$$";
+            GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().relHeadPos.x.ToString(GLOBALS.format) + " - " + GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().relTailPos.x.ToString(GLOBALS.format) + @")i + \par(" +
+            GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().relHeadPos.y.ToString(GLOBALS.format) + " - " + GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().relTailPos.y.ToString(GLOBALS.format) + @")j + \par(" +
+            GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().relHeadPos.z.ToString(GLOBALS.format) + " - " + GLOBALS.SelectedVec.GetComponent<VectorControlM3_Original>().relTailPos.z.ToString(GLOBALS.format) + @")k \end{center}$$";
         }
 
         else {

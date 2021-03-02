@@ -5157,7 +5157,6 @@ MonoBehaviour:
   _headGameObject: {fileID: 1417264761}
   _tailGameObject: {fileID: 981239030}
   canPlaceHead: 0
-  rpcReceiverReference: {fileID: 2039162855}
 --- !u!114 &658342035
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10249,7 +10248,6 @@ MonoBehaviour:
   _headGameObject: {fileID: 165822705}
   _tailGameObject: {fileID: 1471200120}
   canPlaceHead: 0
-  rpcReceiverReference: {fileID: 2039162855}
 --- !u!114 &1300835808
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10866,8 +10864,10 @@ MonoBehaviour:
   - {fileID: 1848678725}
   - {fileID: 1687988576}
   CheckButton: {fileID: 1761305918}
+  updateForceText: 0
   given: 0
   IFText: {fileID: 107027126}
+  vp3: {fileID: 0}
 --- !u!114 &1349472208
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14660,7 +14660,6 @@ MonoBehaviour:
   _headGameObject: {fileID: 1286043119}
   _tailGameObject: {fileID: 1885367692}
   canPlaceHead: 0
-  rpcReceiverReference: {fileID: 2039162855}
 --- !u!114 &1807785118
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14985,7 +14984,6 @@ MonoBehaviour:
   _headGameObject: {fileID: 1424570891}
   _tailGameObject: {fileID: 114234712}
   canPlaceHead: 0
-  rpcReceiverReference: {fileID: 2039162855}
 --- !u!114 &1831409265
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16759,10 +16757,15 @@ MonoBehaviour:
   calcPanel: {fileID: 846765501}
   inputText: {fileID: 1873523227}
   pocPos: {x: 0, y: 0, z: 0}
+  _origin: {fileID: 0}
+  storedBeamEnd: {x: 0, y: 0, z: 0}
+  bOriginPlaced: 0
+  bIsViewer: 0
   bCanPlaceVec1Labels: 0
   bCanPlaceVec2Labels: 0
   bCanPlaceVec3Labels: 0
   bCanPlaceVec4Labels: 0
+  bCanPlacePOC: 0
 --- !u!114 &1941305930
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16797,14 +16800,18 @@ MonoBehaviour:
   - {fileID: 1831409264}
   - {fileID: 1300835807}
   - {fileID: 1807785117}
-  bCanPlaceVec1Head: 0
-  bCanPlaceVec1Tail: 0
-  bCanPlaceVec2Head: 0
-  bCanPlaceVec2Tail: 0
-  bCanPlaceVec3Head: 0
-  bCanPlaceVec3Tail: 0
-  bCanPlaceVec4Head: 0
-  bCanPlaceVec4Tail: 0
+  bCanPlaceVec1: 0
+  bCanPlaceVec2: 0
+  bCanPlaceVec3: 0
+  bCanPlaceVec4: 0
+  vec1Pos: {x: 0, y: 0, z: 0}
+  vec2Pos: {x: 0, y: 0, z: 0}
+  vec3Pos: {x: 0, y: 0, z: 0}
+  vec4Pos: {x: 0, y: 0, z: 0}
+  localVec1Pos: {x: 0, y: 0, z: 0}
+  localVec2Pos: {x: 0, y: 0, z: 0}
+  localVec3Pos: {x: 0, y: 0, z: 0}
+  localVec4Pos: {x: 0, y: 0, z: 0}
 --- !u!114 &1941305932
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17671,26 +17678,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b8bea5fc89f4e6479c281bfdb420d02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nameLabel:
-  - {fileID: 1545212112}
-  - {fileID: 562849134}
-  - {fileID: 1125763788}
-  - {fileID: 1120382114}
-  headLabels:
-  - {fileID: 130174162}
-  - {fileID: 1035061226}
-  - {fileID: 1139072942}
-  - {fileID: 567743836}
-  tailLabels:
-  - {fileID: 948216113}
-  - {fileID: 1469752320}
-  - {fileID: 1997421612}
-  - {fileID: 813723349}
   nameLabelPrefab: {fileID: 2687141213104381220, guid: 2f8449eddb0320e429b5d6b68ebcd710,
     type: 3}
-  headLabelPrefab: {fileID: 4955967375824387240, guid: 4eb6773b0430df244885c6c28332de20,
+  vecLabelPrefab: {fileID: 4955967375824387240, guid: 7f08ac1ea9144ee4ca94c598e03b56a8,
     type: 3}
-  tailLabelPrefab: {fileID: 4955967375824387240, guid: 4eb6773b0430df244885c6c28332de20,
+  pocLabelPrefab: {fileID: 4955967375824387240, guid: 4eb6773b0430df244885c6c28332de20,
     type: 3}
   beamPlacement: {fileID: 1941305929}
   vectorMath: {fileID: 1941305931}
@@ -17699,6 +17691,7 @@ MonoBehaviour:
   - {fileID: 1831409264}
   - {fileID: 1300835807}
   - {fileID: 1807785117}
+  keypadPanel: {fileID: 1349472207}
   myPlayerRef: {fileID: 4612489494966770603}
   storableObjectBin_Ref: {fileID: 4612489494966770602}
 --- !u!1 &2088109194
@@ -18393,7 +18386,7 @@ PrefabInstance:
     - target: {fileID: 8831282816750438092, guid: 69793e5b99b86ff49aa7adb96600dc94,
         type: 3}
       propertyPath: m_Text
-      value: '\par Hi queen '
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 8831282816750438095, guid: 69793e5b99b86ff49aa7adb96600dc94,
         type: 3}
@@ -18494,17 +18487,17 @@ PrefabInstance:
     - target: {fileID: 8831282817460620990, guid: 69793e5b99b86ff49aa7adb96600dc94,
         type: 3}
       propertyPath: m_Color.b
-      value: 0.49056602
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8831282817460620990, guid: 69793e5b99b86ff49aa7adb96600dc94,
         type: 3}
       propertyPath: m_Color.g
-      value: 0.06610664
+      value: 0.7735849
       objectReference: {fileID: 0}
     - target: {fileID: 8831282817460620990, guid: 69793e5b99b86ff49aa7adb96600dc94,
         type: 3}
       propertyPath: m_Color.r
-      value: 0
+      value: 0.26748753
       objectReference: {fileID: 0}
     - target: {fileID: 8831282817460620992, guid: 69793e5b99b86ff49aa7adb96600dc94,
         type: 3}
@@ -18619,7 +18612,7 @@ PrefabInstance:
     - target: {fileID: 8831282817460620993, guid: 69793e5b99b86ff49aa7adb96600dc94,
         type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8831282817460620993, guid: 69793e5b99b86ff49aa7adb96600dc94,
         type: 3}

@@ -101,7 +101,7 @@ public static class GLOBALS
     public static bool showingCoords = false;
 
     public static bool isInCoroutine = false;
-
+    public static bool isHost = false;
 
     /* DEBUG GLOBALS */
     //public static bool firstVec;

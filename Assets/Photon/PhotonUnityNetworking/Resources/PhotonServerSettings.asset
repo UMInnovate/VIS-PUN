@@ -18,7 +18,7 @@ MonoBehaviour:
     AppIdVoice: 
     AppVersion: 
     UseNameServer: 1
-    FixedRegion: 
+    FixedRegion: us
     Server: 
     Port: 0
     ProxyServer: 
@@ -55,6 +55,10 @@ MonoBehaviour:
   - V2AnimationHappening
   - InitVectorName
   - SpawnHeadAndTail
+  - SetViewerPriviledges
+  - PlacePOCLabel
+  - PlaceVectorLabels
+  - UpdateNameLabel
   DisableAutoOpenWizard: 1
-  ShowSettings: 0
+  ShowSettings: 1
   DevRegionSetOnce: 0

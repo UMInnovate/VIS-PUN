@@ -50,7 +50,7 @@ public class VectorControlM3 : MonoBehaviour
     public GameObject _headGameObject;
     public GameObject _tailGameObject;
    [HideInInspector] public bool canPlaceHead = false;
-    public RPCReceiverM3 rpcReceiverReference;
+   // public RPCReceiverM3 rpcReceiverReference;
 
     private PhotonView photonView;
 
@@ -203,20 +203,6 @@ public class VectorControlM3 : MonoBehaviour
         _body.SetPosition(0, transform.position);
         _body.SetPosition(1, _head.transform.position);
         _head.transform.rotation = Quaternion.LookRotation(_head.transform.position - transform.position);
-
-
-        Debug.Log("in rebuild vector VCM3");
-        //***PUN
-        // SpawnHeadAndTail();
-        if (_headGameObject == null)
-            Debug.Log("head game object is null");
-        else
-            Debug.Log("reg head pos: " + _head.transform.position.ToString(GLOBALS.format) + " and pun head pos: " + _headGameObject.transform.position);
-        if (_tailGameObject == null)
-            Debug.Log("tail game obj is null");
-        else
-            Debug.Log("reg tail pos: " + _tail.transform.position.ToString(GLOBALS.format) + " and pun tail pos: " + _tailGameObject.transform.position);
-
 
         _headGameObject.transform.rotation = _head.transform.rotation;
         _headGameObject.transform.position = _head.transform.position;
