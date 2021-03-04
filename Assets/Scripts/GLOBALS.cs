@@ -125,5 +125,8 @@ public static class GLOBALS
     public static Color visValid = new Color(207, 255, 212);
     public static Color visInvalid = new Color(237, 0, 24);
     public static Color visHovered = new Color(222, 248, 255);
+
+    public static int chosenVecInt { get; internal set; }
+    public static int forceVal { get; internal set; }
     #endregion
 }

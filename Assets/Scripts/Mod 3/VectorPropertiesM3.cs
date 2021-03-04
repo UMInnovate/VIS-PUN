@@ -48,6 +48,23 @@ public class
         //SpaceVector A
         string subA = gameObject.name.Substring(12);
 
+        switch(subA) {
+            case "A":
+                GLOBALS.chosenVecInt = 0;
+                break;
+            case "B":
+              GLOBALS.chosenVecInt = 1;
+              break;
+            case "C":
+                GLOBALS.chosenVecInt = 2;
+                break;
+            case "D":
+                GLOBALS.chosenVecInt = 3;
+                break;
+            default:
+                GLOBALS.chosenVecInt = -1;
+                break; 
+        }
 
         // Debug.Log("subA = " + subA);
         if (GLOBALS.inFeet) gameObject.GetComponent<VectorControlM3>().SetName(subA + " = " + fval.ToString() + " lbs");
@@ -78,6 +95,7 @@ public class
         Debug.Log(relVec.ToString(GLOBALS.format));
         float floatrelMag = relVec.magnitude;
         uVec = new Vector3(relVec.x / floatrelMag, relVec.y / floatrelMag, relVec.z / floatrelMag);
+
         if (isGivenForceValue)
         {
             forceVec = forceValue * uVec;

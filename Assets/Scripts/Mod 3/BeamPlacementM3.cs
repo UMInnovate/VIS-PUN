@@ -237,7 +237,7 @@ public class BeamPlacementM3 : MonoBehaviour
 
 
                     GLOBALS.stage++;
-                        GetComponent<VectorMathM3>().SolveSystemOfEquations();
+                    GetComponent<VectorMathM3>().SolveSystemOfEquations();
                    // }
                     break;
                 case Stage.m3forceview:

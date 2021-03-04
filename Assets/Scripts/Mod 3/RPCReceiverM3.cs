@@ -16,7 +16,7 @@ public class RPCReceiverM3 : MonoBehaviour
     //public TextMeshPro[] tailLabels;
 
     private TextMeshPro vecLabelV1, vecLabelV2, vecLabelV3, vecLabelV4;
-    private TextMeshPro nameA, nameB, nameC, nameD;
+    private TextMeshPro nameA, nameB, nameC, nameD, nameUpdated;
     private TextMeshPro pocLabel;
 
     [SerializeField] TextMeshPro nameLabelPrefab;
@@ -29,7 +29,7 @@ public class RPCReceiverM3 : MonoBehaviour
     public VectorMathM3 vectorMath;
     public List<VectorControlM3> vectors;
     public KeypadPanel keypadPanel;
-
+    public bool setVal = true; 
     [SerializeField]
     private myPlayer myPlayerRef;
     [SerializeField]
@@ -38,10 +38,7 @@ public class RPCReceiverM3 : MonoBehaviour
     private PhotonView PV;
 
     private Vector3 offsetConst = new Vector3(0, 0.04f, 0);
-        //CLEAN UP
-    //ORIGIN LABELS
-
-
+    public List<Vector3> vector3s;
     // Start is called before the first frame update
     void Start()
     {
@@ -56,6 +53,14 @@ public class RPCReceiverM3 : MonoBehaviour
         CheckForPrefab();
         CheckForLabels();
 
+   //     Console.WriteLine("Global force val " + GLOBALS.forceVal + " and set val " + setVal);
+        if(GLOBALS.forceVal != -1 && setVal)
+        {
+          //  Console.WriteLine("")
+            PV.RPC("SetForceVal", RpcTarget.OthersBuffered, GLOBALS.forceVal, GLOBALS.chosenVecInt);
+            setVal = false;
+            Console.WriteLine("setval is set to " + setVal);
+        }
     }
 
     public void CheckForOrigin()
@@ -90,7 +95,7 @@ public class RPCReceiverM3 : MonoBehaviour
 
     public void CheckForLabels()
     {
-        Console.WriteLine("Can Place V1: " + vectorMath.bCanPlaceVec1 + " V2 " + vectorMath.bCanPlaceVec2 + " V3 " + vectorMath.bCanPlaceVec3 + " V4 " + vectorMath.bCanPlaceVec4);
+       // Console.WriteLine("Can Place V1: " + vectorMath.bCanPlaceVec1 + " V2 " + vectorMath.bCanPlaceVec2 + " V3 " + vectorMath.bCanPlaceVec3 + " V4 " + vectorMath.bCanPlaceVec4);
 
         if(beamPlacement.bCanPlacePOC)
         {
@@ -110,7 +115,7 @@ public class RPCReceiverM3 : MonoBehaviour
          //   PV.RPC("SpawnHeadAndTail", RpcTarget.OthersBuffered, 1, vectorMath.vec2Pos);
             Console.WriteLine("place vector labels v2");
             PV.RPC("PlaceVectorLabels", RpcTarget.AllBuffered, 1, vectorMath.vec2Pos, vectorMath.localVec2Pos, myPlayerRef.myPlayerActorNumber);
-            Console.WriteLine("after place vector labels v2");
+          //  Console.WriteLine("after place vector labels v2");
             vectorMath.bCanPlaceVec2 = false; // reset
         }
 
@@ -141,8 +146,6 @@ public class RPCReceiverM3 : MonoBehaviour
         if(beamPlacement.bCanPlaceVec1Labels)
         {
             PV.RPC("InitVectorName", RpcTarget.OthersBuffered, 0, vectors[0]._nameLabel.transform.position, 0, myPlayerRef.myPlayerActorNumber);
-          
-
             beamPlacement.bCanPlaceVec1Labels = false;
         }
         else if (beamPlacement.bCanPlaceVec2Labels)
@@ -172,6 +175,23 @@ public class RPCReceiverM3 : MonoBehaviour
         }
     }
 
+    [PunRPC] 
+    public void SetForceVal(int val, int v)
+    {
+        GLOBALS.chosenVecInt = v;
+        GLOBALS.forceVal = val;
+       // keypadPanel.forceVal = val;
+        if(val != -1 && v >= 0)
+        {
+                vectors[v].GetComponent<VectorPropertiesM3>().SetForceVal(val);
+                UpdateNameLabel();
+                Console.WriteLine("updated name label w " + val);
+                //vectors[v].GetComponent<VectorPropertiesM3>().isGivenForceValue = true;
+              //  vectors[v].GetComponent<VectorPropertiesM3>().BuildForceVector();
+                Console.WriteLine("set the force val as " + val);
+        }
+      //  setVal = false; 
+    }
 
     [PunRPC]
     public void PlacePOCLabel(Vector3 placementPos, string _value, string _actorNumber) 
@@ -195,6 +215,43 @@ public class RPCReceiverM3 : MonoBehaviour
         vectorMath.PlaceVector3Point(vec, pos);
       //  Debug.Log("spawning Head and tail of vector " + vec + " of sbe " + beamPlacement.storedBeamEnd);
        // Console.WriteLine("Point Value Vector " + vec + " has value " + pos);
+    }
+
+
+    public void UpdateNameLabel()
+    {
+        Console.WriteLine("index of chosen: " + GLOBALS.chosenVecInt);
+        switch(GLOBALS.chosenVecInt)
+        {
+            case 0:
+             //   nameA.GetComponent<MeshRenderer>().enabled = false; 
+               // nameUpdated = Instantiate(pocLabelPrefab, vector3s[0], Quaternion.identity);
+                nameA.text = "A = " + GLOBALS.forceVal + " N";
+                AddToBin(myPlayerRef.myPlayerActorNumber, nameA);
+                break;
+            case 1:
+              //  Destroy(nameB);
+              //  nameB = Instantiate(pocLabelPrefab, vector3s[1], Quaternion.identity);
+                nameB.text = "B = " + GLOBALS.forceVal + " N";
+                AddToBin(myPlayerRef.myPlayerActorNumber, nameB);
+                break;
+            case 2:
+               // Destroy(nameC);
+              //  nameC = Instantiate(pocLabelPrefab, vector3s[2], Quaternion.identity);
+                nameC.text = "C = " + GLOBALS.forceVal + " N";
+                AddToBin(myPlayerRef.myPlayerActorNumber, nameC);
+                break;
+            case 3:
+              //  Destroy(nameD);
+              //  nameD = Instantiate(pocLabelPrefab, vector3s[3], Quaternion.identity);
+                nameD.text = "D = " + GLOBALS.forceVal + " N";
+                AddToBin(myPlayerRef.myPlayerActorNumber, nameD);
+                break;
+            default:
+                Console.WriteLine("default case");
+                break;
+        }
+        Console.WriteLine("value of vecLabel: " + vecLabelV1.text + " " + vecLabelV2.text + " " + vecLabelV3.text + " " + vecLabelV4.text + " ");
     }
 
 
@@ -264,37 +321,37 @@ public class RPCReceiverM3 : MonoBehaviour
         switch (_i)
         {
             case 0:
-                    Console.WriteLine("Instantiating A");
-                    TextMeshPro nameA = Instantiate(nameLabelPrefab, _pos, Quaternion.identity);
-                    nameA.text = "A";
-
-                    AddToBin(_actorNumber, nameA); // add to bin
+              Console.WriteLine("Instantiating A");
+              nameA = Instantiate(nameLabelPrefab, _pos, Quaternion.identity);
+              nameA.text = "A";
+             //   vector3s[0] = _pos;
+               AddToBin(_actorNumber, nameA); // add to bin
 
                 beamPlacement.bCanPlaceVec1Labels = false; 
                 break;
             case 1:
                 Console.WriteLine("Instantiating b");
-                TextMeshPro nameB = Instantiate(nameLabelPrefab, _pos, Quaternion.identity);
+                nameB = Instantiate(nameLabelPrefab, _pos, Quaternion.identity);
                 nameB.text = "B";
-
+            //    vector3s[1] = _pos;
                 AddToBin(_actorNumber, nameB); // add to bin
 
                 beamPlacement.bCanPlaceVec2Labels = false;
                 break;
             case 2:
                 Console.WriteLine("Instantiating C");
-                TextMeshPro nameC = Instantiate(nameLabelPrefab, _pos, Quaternion.identity);
+                nameC = Instantiate(nameLabelPrefab, _pos, Quaternion.identity);
                 nameC.text = "C";
-
+            //    vector3s[2] = _pos;
                 AddToBin(_actorNumber, nameC); // add to bin
 
                 beamPlacement.bCanPlaceVec3Labels = false;
                 break;
             case 3:
                 Console.WriteLine("Instantiating D");
-                TextMeshPro nameD = Instantiate(nameLabelPrefab, _pos, Quaternion.identity);
+                nameD = Instantiate(nameLabelPrefab, _pos, Quaternion.identity);
                 nameD.text = "D";
-
+             //   vector3s[3] = _pos;
                 AddToBin(_actorNumber, nameD); // add to bin
 
                 beamPlacement.bCanPlaceVec4Labels = false;

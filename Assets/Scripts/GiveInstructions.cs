@@ -150,7 +150,7 @@ public class GiveInstructions : MonoBehaviour
                 {
                     text.text = "SWITCH BETWEEN HEAD/TAIL" + "\n" +
                     "Bumper: toggle head/tail" + "\n" +
-"                   Trigger: validate placement" + "\n";
+                    "Trigger: validate placement" + "\n";
                 }
                 break;
             case Stage.m3v2p1:
@@ -250,9 +250,10 @@ public class GiveInstructions : MonoBehaviour
                 }
                 else if (GLOBALS.count == 0)
                 {
-                    text.text = "SELECT THE VECTOR WITH A KNOWN FORCE VALUE BY HOVERING OVER ITS NAME LABEL" + "\n"
+                    text.text = "PRESS TRIGGER TO SPAWN CALCULATIONS CANVAS";
+                        /*SELECT THE VECTOR WITH A KNOWN FORCE VALUE BY HOVERING OVER ITS NAME LABEL" + "\n"
                      + "Touchpad: adjust beam length" + "\n"
-                     + "Trigger: select name label" + "\n";
+                     + "Trigger: select name label" + "\n";*/
                 }
                 break;
             case Stage.m3keypad:

@@ -19,6 +19,7 @@ public class KeypadPanel : MonoBehaviour
     [HideInInspector] public bool given;
     //[SerializeField] Button ConfirmButton;
     public Text IFText;
+    public int forceVal;
 
     private GameObject panel;
 
@@ -32,6 +33,7 @@ public class KeypadPanel : MonoBehaviour
     void Start()
     {
         check = false;
+        GLOBALS.forceVal = -1;
         if (!MLInput.IsStarted) MLInput.Start();
         MLInput.OnTriggerUp += OnTriggerUp;
         panel = GetComponent<GameObject>();
@@ -74,19 +76,22 @@ public class KeypadPanel : MonoBehaviour
         }
         else
         {
-           // updateForceText = true;   //raise flag that the value has been set
+            //updateForceText = true;   //raise flag that the value has been set
             
-            Debug.Log("vp3 force val: " + vp3.forceValue.ToString());
+          //  Debug.Log("vp3 force val: " + vp3.forceValue.ToString());
             string value = IFText.text;
-            vp3.forceValue = int.Parse(value);
-            
-
-            gameObject.SetActive(false);
+            Console.WriteLine("Inputted Value: " + value);
+            //vp3.forceValue = int.Parse(value);
 
 
+            gameObject.SetActive(false); //turn off keypad
+
+            //run this method through rpc, need to get which vector we clicked first and run setforceval
             vp3.SetForceVal(int.Parse(value));
 
-
+            Console.WriteLine("VP3 Value: " + vp3.forceValue);
+            GLOBALS.forceVal = vp3.forceValue;
+            Console.WriteLine("index of chosen: " + GLOBALS.chosenVecInt);
 
             vp3.BuildForceVector();
             ACClicked();
