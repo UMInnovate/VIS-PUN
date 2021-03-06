@@ -140,13 +140,14 @@ public class CalculationsPanelM3 : MonoBehaviour
         textLine[1].gameObject.SetActive(false);
         textLine[2].gameObject.SetActive(false);
 
-        if (GLOBALS.isValidSystem)
+        textLine[0].text = " ";
+
+        //given force value
+        textLine[0].text += @"$$\par F_" + GLOBALS.GivenForceVec.GetComponent<VectorPropertiesM3>().gameObject.name.Substring(12) + " = " + GLOBALS.GivenForceVec.GetComponent<VectorPropertiesM3>().forceValue;
+        for(int i = 0; i <= 2; i++)
         {
-            textLine[0].text = @"\par Your System Is Correct";
+            textLine[0].text += @"\par F_" + GLOBALS.unknownVecs[i].GetComponent<VectorPropertiesM3>().gameObject.name.Substring(12) + " = " + bp3.GetComponent<VectorMathM3>().systemSolution[i].ToString(GLOBALS.format);
         }
-        else
-        {
-            textLine[0].text = @"\par Your System Is Incorrect";
-        }
+        textLine[0].text += "$$"; 
     }
 }

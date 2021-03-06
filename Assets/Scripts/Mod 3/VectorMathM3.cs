@@ -19,6 +19,8 @@ public class VectorMathM3 : MonoBehaviour
     public bool bCanPlaceVec1, bCanPlaceVec2,
     bCanPlaceVec3, bCanPlaceVec4 = false; ///* PUN STUFF 
 
+    [HideInInspector] public List<float> systemSolution; 
+
     [HideInInspector] public Vector3 vec1Pos, vec2Pos, vec3Pos, vec4Pos; //* PUN STUFF
     [HideInInspector] public Vector3 localVec1Pos, localVec2Pos, localVec3Pos, localVec4Pos; 
     void Start()
@@ -380,6 +382,8 @@ public class VectorMathM3 : MonoBehaviour
             flag = CheckConsistency(Fsystem, n, flag);
 
         List<float> solution = PrintResult(Fsystem, n, flag);
+        systemSolution = solution; 
+
         if (solution == null)
         {
             Debug.Log("solution is 0 or inf");
@@ -399,8 +403,6 @@ public class VectorMathM3 : MonoBehaviour
                 Debug.Log("force vec for " + GLOBALS.unknownVecs[i].name + " is "
                     + GLOBALS.unknownVecs[i].GetComponent<VectorPropertiesM3>().forceVec);
             }
-
-
         }
     }
 

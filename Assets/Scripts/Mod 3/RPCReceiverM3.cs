@@ -99,6 +99,12 @@ public class RPCReceiverM3 : MonoBehaviour
             PV.RPC("LinearSys", RpcTarget.OthersBuffered);
             beamPlacement.bLinearSys = false;
         }
+        if(beamPlacement.bValidate)
+        {
+            PV.RPC("ValidateSys", RpcTarget.OthersBuffered);
+            beamPlacement.bValidate = false;
+        }
+   
     }
 
     [PunRPC]
@@ -246,6 +252,7 @@ public class RPCReceiverM3 : MonoBehaviour
     {
         //   beamPlacement.GetComponent<VectorMathM3>().ValidateForceSystem();
         Console.WriteLine("excuting rpc for soe");
+        beamPlacement.GetComponent<VectorMathM3>().SolveSystemOfEquations();
         calcPanel.GetComponent<CalculationsPanelM3>().SystemOfEqs();
 
         beamPlacement.bCalcSoE = false; 
@@ -257,6 +264,13 @@ public class RPCReceiverM3 : MonoBehaviour
         calcPanel.GetComponent<CalculationsPanelM3>().LinearCalc();
         Console.WriteLine("executing rpc for linearsys");
         beamPlacement.bLinearSys = false;
+    }
+
+    [PunRPC]
+    public void ValidateSys()
+    {
+        calcPanel.GetComponent<CalculationsPanelM3>().isValid();
+        beamPlacement.bValidate = false; 
     }
 
 
