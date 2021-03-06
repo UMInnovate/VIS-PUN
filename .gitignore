@@ -67,3 +67,4 @@ crashlytics-build.properties
 *.package
 *.mpk
 .out/
+Assets/MagicLeap/Soundfield/Plugins/x86_64/AudioPluginMSASpatializer.dll
