@@ -63,9 +63,11 @@ public class BeamPlacementM3 : MonoBehaviour
     public bool bOriginPlaced, bIsViewer; ///* Origin Placed by someone
 
     [HideInInspector]
-    public bool bCanPlaceVec1Labels, bCanPlaceVec2Labels, bCanPlaceVec3Labels, bCanPlaceVec4Labels, bCanPlacePOC = false;
+    public bool bCanPlaceVec1Labels, bCanPlaceVec2Labels, bCanPlaceVec3Labels, bCanPlaceVec4Labels, bCanPlacePOC, bCalcPanel, bCalc1, bCalcSoE, bLinearSys, bValidate = false;
 
+    public bool forceSystemText = false;
 
+    [HideInInspector] public Vector3 adjPOCPos; //*PUN POC
     #endregion
 
     void Start()
@@ -220,36 +222,59 @@ public class BeamPlacementM3 : MonoBehaviour
                     bCanPlaceVec4Labels = true; //***PUN
                    // storedBeamEnd = beamEnd;
                     vec++;
+                    bCalcPanel = true;
                     IncrementStage();
                     break;
                 case Stage.m3forcesel:
-                    calcPanel.GetComponent<CalculationsPanel>().StartCalculationsSequence();
-                    PhotonNetwork.Instantiate("CalcPanel", GLOBALS.pocPos + new Vector3(0.5f, 0, 0.5f), Quaternion.identity);
+                    calcPanel.GetComponent<CalculationsPanelM3>().StartCalculationsSequence();
                     calcPanel.SetActive(true);
                     break;
                 case Stage.m3keypad:
-                    calcPanel.GetComponent<CalculationsPanel>().ComponentCalcs();
-                    calcPanel.GetComponent<CalculationsPanel>().MagCalcs();
+                    bCalc1 = true;
+                    calcPanel.GetComponent<CalculationsPanelM3>().ComponentCalcs();
+                    calcPanel.GetComponent<CalculationsPanelM3>().MagCalcs();
                     break;
                 case Stage.m3view:
-                    calcPanel.GetComponent<CalculationsPanel>().ComponentCalcs();
-                    calcPanel.GetComponent<CalculationsPanel>().MagCalcs();
-
-
-                    GLOBALS.stage++;
+                    switch (GLOBALS.chosenVecInt)
+                    {
+                        case 0: //a is chosen
+                            SetBuild(1); SetBuild(2); SetBuild(3);
+                            break;
+                        case 1:
+                            SetBuild(0); SetBuild(2); SetBuild(3);
+                            break;
+                        case 2:
+                            SetBuild(1); SetBuild(0); SetBuild(3);
+                            break;
+                        case 3:
+                            SetBuild(1); SetBuild(2); SetBuild(0);
+                            break;
+                        default:
+                            SetBuild(1); SetBuild(2); SetBuild(3);
+                            Console.WriteLine("default case in m3view, setbuild");
+                            break;
+                    }
                     GetComponent<VectorMathM3>().SolveSystemOfEquations();
-                   // }
+                    GLOBALS.stage++;
                     break;
                 case Stage.m3forceview:
                     //calcPanel.GetComponent<CalculationsPanel>().SystemOfEqs();
-                    GetComponent<VectorMathM3>().ValidateForceSystem();
-                    calcPanel.GetComponent<CalculationsPanel>().SystemOfEqs();
+                    bCalcSoE = true; 
+                 //   GetComponent<VectorMathM3>().ValidateForceSystem();
+                    calcPanel.GetComponent<CalculationsPanelM3>().SystemOfEqs();
                     //  calcPanel.GetComponent<CalculationsPanel>().SystemOfEqs();
                     //calcPanel.GetComponent<CalculationsPanel>().ShowCorrectFVecs();
                     GLOBALS.stage++;
                     break;
                 case Stage.m3forcesys:
-                    calcPanel.GetComponent<CalculationsPanel>().LinearCalc();
+                    bLinearSys = true; 
+                    calcPanel.GetComponent<CalculationsPanelM3>().LinearCalc();
+                    GLOBALS.stage++;
+                
+                    break;
+                case Stage.m3validateview:
+                    bValidate = true; 
+                    calcPanel.GetComponent<CalculationsPanelM3>().isValid();
                     break;
                 default:
                     return;
@@ -259,7 +284,11 @@ public class BeamPlacementM3 : MonoBehaviour
       //  Debug.Log("Current stage: " + GLOBALS.stage);
     }
 
-
+    public void SetBuild(int v)
+    {
+        _vectorMath.vectors[v].GetComponent<VectorPropertiesM3>().isGivenForceValue = false;
+        _vectorMath.vectors[v].GetComponent<VectorPropertiesM3>().BuildForceVector();
+    }
 
     // Home or Bumper click handled here
     private void OnButtonUp(byte controllerId, MLInput.Controller.Button button)

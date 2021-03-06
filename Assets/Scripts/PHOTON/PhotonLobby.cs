@@ -29,6 +29,7 @@ public class PhotonLobby : MonoBehaviourPunCallbacks
     public override void OnConnectedToMaster()
     {
         Debug.Log("We are connected to the Photon Master server");
+     // DEBUG TEST SCENE   RoomHandler(); 
         //PhotonNetwork.AutomaticallySyncScene = true; // when master joins a scene, all players connected to master client will load same scene***
         //JoinRandomRoom(); // join random room
         //RoomHandler();
@@ -83,7 +84,7 @@ public class PhotonLobby : MonoBehaviourPunCallbacks
             }
             else
                 Debug.Log("Failed to Join a room");
-            //PhotonNetwork.JoinOrCreateRoom("OtherRoom", _roomOptions, TypedLobby.Default);
+           // PhotonNetwork.JoinOrCreateRoom("OtherRoom", _roomOptions, TypedLobby.Default); }
         }
     }
 
@@ -108,6 +109,8 @@ public class PhotonLobby : MonoBehaviourPunCallbacks
 
         else if (SceneManager.GetActiveScene().buildIndex == 13 || SceneManager.GetActiveScene().buildIndex == 14)
             _roomName = "Mod1Room";
+    //    else
+    //        _roomName = "OtherRoom";
 
         CreateRoom(_roomName); // create a new room
     }

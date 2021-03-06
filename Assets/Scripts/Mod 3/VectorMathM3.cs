@@ -398,8 +398,6 @@ public class VectorMathM3 : MonoBehaviour
 
                 Debug.Log("force vec for " + GLOBALS.unknownVecs[i].name + " is "
                     + GLOBALS.unknownVecs[i].GetComponent<VectorPropertiesM3>().forceVec);
-
-
             }
 
 
@@ -426,8 +424,8 @@ public class VectorMathM3 : MonoBehaviour
         for (int i = 0; i < 3; i++)
         {
 
-            forceTol[i, 0] = GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().correctForceValue * (1 - tol);
-            forceTol[i, 1] = GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().correctForceValue * (1 + tol);
+            forceTol[i, 0] = GLOBALS.unknownVecs[i].GetComponent<VectorPropertiesM3>().correctForceValue * (1 - tol);
+            forceTol[i, 1] = GLOBALS.unknownVecs[i].GetComponent<VectorPropertiesM3>().correctForceValue * (1 + tol);
 
             //Only swaps high and low tolerances if values are negative
             //EX: low tol = -9 and high tol = -14. These values need to be change so that the conditions of low <= force value <= high
@@ -436,12 +434,12 @@ public class VectorMathM3 : MonoBehaviour
             Debug.Log("low force tol at " + i + " is " + forceTol[i, 0] + " high force tol at " + i + " is " + forceTol[i, 1]);
         }
 
-        for (int i = 0; i < 3; i++)
+     /*   for (int i = 0; i < 3; i++)
         {
-            if ((float)GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().forceValue > forceTol[i, 0]
-                && (float)GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().forceValue < forceTol[i, 1])
+            if ((float)GLOBALS.unknownVecs[i].GetComponent<VectorPropertiesM3>().forceValue > forceTol[i, 0]
+                && (float)GLOBALS.unknownVecs[i].GetComponent<VectorPropertiesM3>().forceValue < forceTol[i, 1])
             {
-                Debug.Log("Input force " + (float)GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().forceValue
+                Debug.Log("Input force " + (float)GLOBALS.unknownVecs[i].GetComponent<VectorPropertiesM3>().forceValue
                     + " is greater than " + forceTol[i, 0] + " and less than " + forceTol[i, 1]);
                 correctForces++;
             }
@@ -450,7 +448,7 @@ public class VectorMathM3 : MonoBehaviour
                 Debug.Log("Input force " + (float)GLOBALS.unknownVecs[i].GetComponent<VectorProperties>().forceValue
                     + " is not greater than " + forceTol[i, 0] + " and less than " + forceTol[i, 1]);
             }
-        }
+        }*/
 
         if (correctForces == 3)
         {
@@ -463,7 +461,6 @@ public class VectorMathM3 : MonoBehaviour
             Debug.Log("Only " + correctForces + " force value(s) were correct");
             GLOBALS.isValidSystem = false;
         }
-
     }
 
     void swapTol(float[,] tols, int i)

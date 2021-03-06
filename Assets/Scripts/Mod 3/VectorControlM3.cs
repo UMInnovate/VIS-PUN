@@ -28,6 +28,11 @@ public class VectorControlM3 : MonoBehaviour
     private const float viewOffset = 0.07f;
     [HideInInspector] public Vector3 relHeadPos;
     [HideInInspector] public Vector3 relTailPos;
+
+
+    [HideInInspector] public Vector3 photonPos; //* PUN POS
+
+
     private Vector3 vectorComponents;
 
     [HideInInspector] public bool isCorrectPlacement = false;

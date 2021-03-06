@@ -50,6 +50,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/14Mod3PUN.unity
     guid: 7bbb13887c0f06d40bf66ca3204ee3cf
+  - enabled: 0
+    path: Assets/Scenes/TEST.unity
+    guid: f317ac93381607d4ab36e9bda6a97c36
   m_configObjects:
     com.unity.xr.magicleap.magic_leap_settings: {fileID: 11400000, guid: cc39af361da53364b8b592bbebb21ebd,
       type: 2}

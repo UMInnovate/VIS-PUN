@@ -14,10 +14,6 @@ public class CalculationsPanel : MonoBehaviour
     public Camera cam;
 
     private CalculationsPanel calcPanel; //private variable for the PUN instance of the CalcPanel script
-    [SerializeField]
-    private myPlayer myPlayerRef;
-    [SerializeField]
-    private StorableObjectBin storableObjectBin_Ref;
 
     private PhotonView PV;
     // Start is called before the first frame update
@@ -27,20 +23,16 @@ public class CalculationsPanel : MonoBehaviour
 
         if (PV) { //init pun items from client
             cam = GameObject.Find("Main Camera").GetComponent<Camera>();
-            myPlayerRef = GameObject.Find("CleanUp").GetComponent<myPlayer>();
-            storableObjectBin_Ref = GameObject.Find("CleanUp").GetComponent<StorableObjectBin>(); 
+            
         }
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (gameObject.activeSelf && SceneManager.GetActiveScene().buildIndex == 12)
+       
             gameObject.transform.rotation = Quaternion.LookRotation(gameObject.transform.position - cam.transform.position);
-        else if (gameObject.activeSelf && SceneManager.GetActiveScene().buildIndex == 14 && GLOBALS.isHost)
-            gameObject.transform.rotation = Quaternion.LookRotation(gameObject.transform.position - cam.transform.position);
-        else //static
-            gameObject.transform.rotation = Quaternion.identity;
+       
         // if (PhotonNetwork.InRoom && gameObject.activeSelf)
         //  {
         //    Debug.Log("if in room and act");
@@ -87,9 +79,7 @@ public class CalculationsPanel : MonoBehaviour
                     GLOBALS.SelectedVec.GetComponent<VectorControlM3>().relHeadPos.x.ToString(GLOBALS.format) + " - " + GLOBALS.SelectedVec.GetComponent<VectorControlM3>().relTailPos.x.ToString(GLOBALS.format) + @")i + \par(" +
                     GLOBALS.SelectedVec.GetComponent<VectorControlM3>().relHeadPos.y.ToString(GLOBALS.format) + " - " + GLOBALS.SelectedVec.GetComponent<VectorControlM3>().relTailPos.y.ToString(GLOBALS.format) + @")j + \par(" +
                     GLOBALS.SelectedVec.GetComponent<VectorControlM3>().relHeadPos.z.ToString(GLOBALS.format) + " - " + GLOBALS.SelectedVec.GetComponent<VectorControlM3>().relTailPos.z.ToString(GLOBALS.format) + @")k $$";
-
         }
-   
     }
 
 

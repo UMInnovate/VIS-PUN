@@ -91,11 +91,20 @@ public class
 
     public void BuildForceVector()
     {
-        Vector3 relVec = GetComponent<VectorControlM3>()._head.position - GetComponent<VectorControlM3>()._tail.position;
-        Debug.Log(relVec.ToString(GLOBALS.format));
-        float floatrelMag = relVec.magnitude;
-        uVec = new Vector3(relVec.x / floatrelMag, relVec.y / floatrelMag, relVec.z / floatrelMag);
-
+        if (beamPlacement.bIsViewer)
+        {
+            Vector3 relVec = beamPlacement.adjPOCPos - GetComponent<VectorControlM3>().photonPos;
+            Debug.Log(relVec.ToString(GLOBALS.format));
+            float floatrelMag = relVec.magnitude;
+            uVec = new Vector3(relVec.x / floatrelMag, relVec.y / floatrelMag, relVec.z / floatrelMag);
+        }
+        else
+        {
+            Vector3 relVec = beamPlacement.adjPOCPos - GetComponent<VectorControlM3>().relTailPos;
+            Debug.Log(relVec.ToString(GLOBALS.format));
+            float floatrelMag = relVec.magnitude;
+            uVec = new Vector3(relVec.x / floatrelMag, relVec.y / floatrelMag, relVec.z / floatrelMag);
+        }
         if (isGivenForceValue)
         {
             forceVec = forceValue * uVec;
