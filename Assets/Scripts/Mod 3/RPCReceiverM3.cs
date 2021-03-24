@@ -297,10 +297,11 @@ public class RPCReceiverM3 : MonoBehaviour
     [PunRPC]
     public void PlacePOCLabel(Vector3 placementPos, Vector3 _value, string _actorNumber) 
     {
+        beamPlacement.adjPOCPos = _value;
         GLOBALS.pocPos = placementPos;
         pocLabel = Instantiate(pocLabelPrefab, placementPos, Quaternion.identity);
-        pocLabel.text = _value.ToString(GLOBALS.format);
-        beamPlacement.adjPOCPos = _value;
+        pocLabel.text = new Vector3(_value.x, _value.y, _value.z*-1).ToString(GLOBALS.format);
+
        // Console.WriteLine("poc val: " + _value);
         AddToBin(_actorNumber, pocLabel);
     }
@@ -379,11 +380,11 @@ public class RPCReceiverM3 : MonoBehaviour
 
                 if (beamPlacement.bIsViewer) //if you are only viewing the system, rely on the value fed by rpc
                 {
-                    vecLabelV1.text = (localPos).ToString(GLOBALS.format);
+                    vecLabelV1.text = new Vector3(localPos.x, localPos.y, -1*localPos.z).ToString(GLOBALS.format);
                     vectors[_v].photonPos = localPos;
                 }
                 else  //if you are controlling the experience, call your local var
-                    vecLabelV1.text = (vectorMath.localVec1Pos).ToString(GLOBALS.format);
+                    vecLabelV1.text = new Vector3(vectorMath.localVec1Pos.x, vectorMath.localVec1Pos.y, -1* vectorMath.localVec1Pos.z).ToString(GLOBALS.format);
 
                 AddToBin(_actorNumber, vecLabelV1); // add to bin
                 vectorMath.bCanPlaceVec1 = false;
@@ -395,11 +396,11 @@ public class RPCReceiverM3 : MonoBehaviour
 
                 if (beamPlacement.bIsViewer)
                 {
-                    vecLabelV2.text = (localPos).ToString(GLOBALS.format);
+                    vecLabelV2.text = new Vector3(localPos.x, localPos.y, -1 * localPos.z).ToString(GLOBALS.format);
                     vectors[_v].photonPos = localPos;
                 }
                 else
-                    vecLabelV2.text = (vectorMath.localVec2Pos).ToString(GLOBALS.format);
+                    vecLabelV2.text = new Vector3(vectorMath.localVec2Pos.x, vectorMath.localVec2Pos.y, -1 * vectorMath.localVec2Pos.z).ToString(GLOBALS.format);
 
                 AddToBin(_actorNumber, vecLabelV2); // add to bin
                 vectorMath.bCanPlaceVec2 = false;
@@ -410,11 +411,11 @@ public class RPCReceiverM3 : MonoBehaviour
 
                 if (beamPlacement.bIsViewer)
                 {
-                    vecLabelV3.text = (localPos).ToString(GLOBALS.format);
+                    vecLabelV3.text = new Vector3(localPos.x, localPos.y, -1 * localPos.z).ToString(GLOBALS.format);
                     vectors[_v].photonPos = localPos;
                 }
                 else
-                    vecLabelV3.text = (vectorMath.localVec3Pos).ToString(GLOBALS.format);
+                    vecLabelV3.text = new Vector3(vectorMath.localVec3Pos.x, vectorMath.localVec3Pos.y, -1 * vectorMath.localVec3Pos.z).ToString(GLOBALS.format);
 
                 AddToBin(_actorNumber, vecLabelV3); // add to bin
                 vectorMath.bCanPlaceVec3 = false;
@@ -425,11 +426,11 @@ public class RPCReceiverM3 : MonoBehaviour
 
                 if (beamPlacement.bIsViewer)
                 {
-                    vecLabelV4.text = (localPos).ToString(GLOBALS.format);
+                    vecLabelV4.text = new Vector3(localPos.x, localPos.y, -1 * localPos.z).ToString(GLOBALS.format);
                     vectors[_v].photonPos = localPos; //Save it into a new var
                 }
                 else
-                    vecLabelV4.text = (vectorMath.localVec4Pos).ToString(GLOBALS.format);
+                    vecLabelV4.text = new Vector3(vectorMath.localVec4Pos.x, vectorMath.localVec4Pos.y, -1 * vectorMath.localVec4Pos.z).ToString(GLOBALS.format);
 
                 AddToBin(_actorNumber, vecLabelV4); // add to bin
                 vectorMath.bCanPlaceVec4 = false;

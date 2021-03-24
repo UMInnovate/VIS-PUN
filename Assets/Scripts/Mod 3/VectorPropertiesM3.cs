@@ -96,14 +96,14 @@ public class
             Vector3 relVec = beamPlacement.adjPOCPos - GetComponent<VectorControlM3>().photonPos;
             Debug.Log(relVec.ToString(GLOBALS.format));
             float floatrelMag = relVec.magnitude;
-            uVec = new Vector3(relVec.x / floatrelMag, relVec.y / floatrelMag, relVec.z / floatrelMag);
+            uVec = new Vector3(relVec.x / floatrelMag, relVec.y / floatrelMag, -1*relVec.z / floatrelMag);
         }
         else
         {
             Vector3 relVec = beamPlacement.adjPOCPos - GetComponent<VectorControlM3>().relTailPos;
             Debug.Log(relVec.ToString(GLOBALS.format));
             float floatrelMag = relVec.magnitude;
-            uVec = new Vector3(relVec.x / floatrelMag, relVec.y / floatrelMag, relVec.z / floatrelMag);
+            uVec = new Vector3(relVec.x / floatrelMag, relVec.y / floatrelMag, -1*relVec.z / floatrelMag);
         }
         if (isGivenForceValue)
         {

@@ -66,7 +66,7 @@ public class CalculationsPanelM3 : MonoBehaviour
                     "r_" + GLOBALS.SelectedVec.GetComponent<VectorPropertiesM3>().gameObject.name.Substring(12) + " = (" +
                     bp3.adjPOCPos.x.ToString(GLOBALS.format) + addSignComponent(GLOBALS.SelectedVec.GetComponent<VectorControlM3>().photonPos.x) + Math.Abs(GLOBALS.SelectedVec.GetComponent<VectorControlM3>().photonPos.x).ToString(GLOBALS.format) + @")i + \par(" +
                    bp3.adjPOCPos.y.ToString(GLOBALS.format) + addSignComponent(GLOBALS.SelectedVec.GetComponent<VectorControlM3>().photonPos.y) + Math.Abs(GLOBALS.SelectedVec.GetComponent<VectorControlM3>().photonPos.y).ToString(GLOBALS.format) + @")j + \par(" +
-                    bp3.adjPOCPos.z.ToString(GLOBALS.format) + addSignComponent(GLOBALS.SelectedVec.GetComponent<VectorControlM3>().photonPos.z) + Math.Abs(GLOBALS.SelectedVec.GetComponent<VectorControlM3>().photonPos.z).ToString(GLOBALS.format) + @")k $$";
+                   (-1*bp3.adjPOCPos.z).ToString(GLOBALS.format) + addSignComponent(GLOBALS.SelectedVec.GetComponent<VectorControlM3>().photonPos.z) + Math.Abs(GLOBALS.SelectedVec.GetComponent<VectorControlM3>().photonPos.z).ToString(GLOBALS.format) + @")k $$";
 
         }
         else
@@ -75,7 +75,7 @@ public class CalculationsPanelM3 : MonoBehaviour
                     "r_" + GLOBALS.SelectedVec.GetComponent<VectorPropertiesM3>().gameObject.name.Substring(12) + " = (" +
                     bp3.adjPOCPos.x.ToString(GLOBALS.format) + addSignComponent(GLOBALS.SelectedVec.GetComponent<VectorControlM3>().relTailPos.x) + Math.Abs(GLOBALS.SelectedVec.GetComponent<VectorControlM3>().relTailPos.x).ToString(GLOBALS.format) + @")i + \par(" +
                     bp3.adjPOCPos.y.ToString(GLOBALS.format) + addSignComponent(GLOBALS.SelectedVec.GetComponent<VectorControlM3>().relTailPos.y) + Math.Abs(GLOBALS.SelectedVec.GetComponent<VectorControlM3>().relTailPos.y).ToString(GLOBALS.format) + @")j + \par(" +
-                    bp3.adjPOCPos.z.ToString(GLOBALS.format) + addSignComponent(GLOBALS.SelectedVec.GetComponent<VectorControlM3>().relTailPos.z) + Math.Abs(GLOBALS.SelectedVec.GetComponent<VectorControlM3>().relTailPos.z).ToString(GLOBALS.format) + @")k $$";
+                    (-1*bp3.adjPOCPos.z).ToString(GLOBALS.format) + addSignComponent(GLOBALS.SelectedVec.GetComponent<VectorControlM3>().relTailPos.z) + Math.Abs(GLOBALS.SelectedVec.GetComponent<VectorControlM3>().relTailPos.z).ToString(GLOBALS.format) + @")k $$";
         }
     }
 
@@ -85,8 +85,8 @@ public class CalculationsPanelM3 : MonoBehaviour
         
             Vector3 relVec = bp3.adjPOCPos - GLOBALS.SelectedVec.GetComponent<VectorControlM3>().transform.position;
            textLine[1].text = @"$$ \begin{center} \par \par|" + GLOBALS.SelectedVec.GetComponent<VectorPropertiesM3>().gameObject.name.Substring(12) + "| = " +
-               @"\sqrt[2]{(" + relVec.x.ToString(GLOBALS.format) + ")^2 + (" + relVec.y.ToString(GLOBALS.format) + ")^2 + (" + relVec.z.ToString(GLOBALS.format) + ")^2 } " +
-               @"\par = " + relVec.magnitude.ToString(GLOBALS.format) + @"\end{center} $$";
+               @"\sqrt[2]{(" + relVec.x.ToString(GLOBALS.format) + ")^2 + (" + relVec.y.ToString(GLOBALS.format) + ")^2 + (" + (-1*relVec.z).ToString(GLOBALS.format) + ")^2 } " +
+               @"\par = " + new Vector3(relVec.x, relVec.y, -1*relVec.z).magnitude.ToString(GLOBALS.format) + @"\end{center} $$";
     }
 
     public void SystemOfEqs()

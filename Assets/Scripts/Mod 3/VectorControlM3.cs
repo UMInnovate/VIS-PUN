@@ -365,10 +365,10 @@ public class VectorControlM3 : MonoBehaviour
         {
             answer = "(" + (vector3.x * GLOBALS.m2ft).ToString(GLOBALS.format) + ", "
                 + (vector3.y * GLOBALS.m2ft).ToString(GLOBALS.format) + ", "
-                + (vector3.z * GLOBALS.flipZ * GLOBALS.m2ft).ToString(GLOBALS.format) + ")";
+                + (-1*vector3.z * GLOBALS.flipZ * GLOBALS.m2ft).ToString(GLOBALS.format) + ")";
         }
         else
-            answer = "(" + vector3.x.ToString(GLOBALS.format) + ", " + vector3.y.ToString(GLOBALS.format) + ", " + (vector3.z * GLOBALS.flipZ).ToString(GLOBALS.format) + ")";
+            answer = "(" + vector3.x.ToString(GLOBALS.format) + ", " + vector3.y.ToString(GLOBALS.format) + ", " + (-1*vector3.z * GLOBALS.flipZ).ToString(GLOBALS.format) + ")";
         return answer;
     }
 
