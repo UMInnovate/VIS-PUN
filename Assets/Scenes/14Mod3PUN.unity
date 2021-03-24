@@ -415,8 +415,8 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 78600269}
-  m_LocalRotation: {x: -0, y: 1, z: -0, w: 0.000000015366822}
-  m_LocalPosition: {x: 0, y: 0, z: -3.2977402}
+  m_LocalRotation: {x: -0, y: 0.000000015366822, z: -0, w: -1}
+  m_LocalPosition: {x: 0, y: 0, z: -2.6977403}
   m_LocalScale: {x: 0.008, y: 0.008, z: 0.008}
   m_Children: []
   m_Father: {fileID: 687657844}
@@ -5299,6 +5299,7 @@ MonoBehaviour:
   vecColor: {r: 0, g: 0, b: 0, a: 0}
   relHeadPos: {x: -1.435, y: -0.607, z: 0.749}
   relTailPos: {x: 0, y: 0, z: 0}
+  photonPos: {x: 0, y: 0, z: 0}
   isCorrectPlacement: 0
   unitVec: 0
   comps: []
@@ -10485,6 +10486,7 @@ MonoBehaviour:
   vecColor: {r: 1, g: 0, b: 0.9315591, a: 0}
   relHeadPos: {x: 0.124, y: 0.063, z: 0.16}
   relTailPos: {x: 0, y: 0, z: 0}
+  photonPos: {x: 0, y: 0, z: 0}
   isCorrectPlacement: 0
   unitVec: 0
   comps: []
@@ -11142,7 +11144,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 3b6c59d3605d0e043af580be35db9d57, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 35b179e795d57704382a1d4088defe64, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -14898,6 +14900,7 @@ MonoBehaviour:
   vecColor: {r: 1, g: 0, b: 0.9371233, a: 0}
   relHeadPos: {x: 0.124, y: 0.063, z: 0.16}
   relTailPos: {x: 0, y: 0, z: 0}
+  photonPos: {x: 0, y: 0, z: 0}
   isCorrectPlacement: 0
   unitVec: 0
   comps: []
@@ -15222,6 +15225,7 @@ MonoBehaviour:
   vecColor: {r: 1, g: 0, b: 0.87771463, a: 0}
   relHeadPos: {x: -0.346, y: 0.355, z: 0.469}
   relTailPos: {x: 0, y: 0, z: 0}
+  photonPos: {x: 0, y: 0, z: 0}
   isCorrectPlacement: 0
   unitVec: 0
   comps: []
@@ -16121,10 +16125,10 @@ MonoBehaviour:
   origin_axes:
   - {fileID: 203355969}
   - {fileID: 1859571597}
-  - {fileID: 1773630484}
+  - {fileID: 1290786665}
   - {fileID: 1849715816}
   - {fileID: 1982701323}
-  - {fileID: 1290786665}
+  - {fileID: 1773630484}
   beamMaterial: {fileID: 2100000, guid: b06844f3bfa6c45d8876a150b8b06681, type: 2}
   xAxisText: {fileID: 1900398157}
   yAxisText: {fileID: 1577209861}
@@ -16153,7 +16157,7 @@ MonoBehaviour:
   xAxisText: {fileID: 1900398157}
   yAxisText: {fileID: 1577209861}
   zAxisText: {fileID: 78600271}
-  rpcReceiverReference: {fileID: 0}
+  rpcReceiverReference: {fileID: 5570250648270669956}
 --- !u!114 &1867376872
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17024,7 +17028,9 @@ MonoBehaviour:
   bCalc1: 0
   bCalcSoE: 0
   bLinearSys: 0
+  bValidate: 0
   forceSystemText: 0
+  adjPOCPos: {x: 0, y: 0, z: 0}
 --- !u!114 &1941305930
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17063,6 +17069,7 @@ MonoBehaviour:
   bCanPlaceVec2: 0
   bCanPlaceVec3: 0
   bCanPlaceVec4: 0
+  systemSolution: []
   vec1Pos: {x: 0, y: 0, z: 0}
   vec2Pos: {x: 0, y: 0, z: 0}
   vec3Pos: {x: 0, y: 0, z: 0}
@@ -18486,6 +18493,7 @@ GameObject:
   - component: {fileID: 5570250648270669954}
   - component: {fileID: 5570250648270669980}
   - component: {fileID: 2039162855}
+  - component: {fileID: 5570250648270669956}
   m_Layer: 0
   m_Name: RPC Receiver
   m_TagString: Untagged
@@ -18493,6 +18501,34 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &5570250648270669956
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5570250648270669955}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e65637efaab8dfb4382962eacc904166, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  label: {fileID: 0}
+  beamPlacementM1_Ref: {fileID: 0}
+  beamPlacementM2_Ref: {fileID: 0}
+  vectorMath_Ref: {fileID: 0}
+  vectors: []
+  nameLabelPrefab: {fileID: 0}
+  dotProjectionBody: {fileID: 0}
+  vector2: {fileID: 0}
+  angle: {fileID: 0}
+  myPlayerRef: {fileID: 4612489494966770603}
+  storableObjectBin_Ref: {fileID: 4612489494966770602}
+  xLabel: {fileID: 1900398157}
+  yLabel: {fileID: 1577209861}
+  zLabel: {fileID: 78600271}
+  originControl_Ref: {fileID: 1867376870}
+  originSphere: {fileID: 0}
 --- !u!114 &5570250648270669980
 MonoBehaviour:
   m_ObjectHideFlags: 0

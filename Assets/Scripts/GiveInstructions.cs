@@ -252,38 +252,28 @@ public class GiveInstructions : MonoBehaviour
                     }
                     break;
                 case Stage.m3forcesel:
-
-                    if (GLOBALS.count > 0)
-                    {
                         text.text = "SELECT A VECTOR TO INPUT ITS CALCULATED FORCE VALUE BY HOVERING OVER ITS NAME LABEL" + "\n"
                          + "Touchpad: adjust beam length" + "\n"
                          + "Trigger: select name label" + "\n";
-                    }
-                    else if (GLOBALS.count == 0)
-                    {
-                        text.text = "PRESS TRIGGER TO SPAWN CALCULATIONS CANVAS";
-                        /*SELECT THE VECTOR WITH A KNOWN FORCE VALUE BY HOVERING OVER ITS NAME LABEL" + "\n"
-                     + "Touchpad: adjust beam length" + "\n"
-                     + "Trigger: select name label" + "\n";*/
-                    }
                     break;
                 case Stage.m3keypad:
                     text.text = "INPUT FORCE VALUE" + "\n"
                         + "Trigger: select number" + "\n"; ;
                     break;
                 case Stage.m3view:
-                    text.text = "Viewing Vector " + GLOBALS.SelectedVec.name.Substring(12).ToString();
+                    text.text = "Viewing Vector " + GLOBALS.SelectedVec.name.Substring(12).ToString() +"\n"
+                    + "Trigger: see force system definition" + "\n";
                     break;
                 case Stage.m3forceview:
                     text.text = "SEE CALCULATIONS CANVAS FOR FORCE SYSTEM DEFINITION" + "\n"
                        + "Trigger: see system of equations" + "\n"; ;
                     break;
                 case Stage.m3forcesys:
-                    text.text = "Your system was incorrect." + "\n"
-                       + "Trigger: see correct values" + "\n"; ;
+                    text.text = "SEE CALCULATIONS FOR SYSTEM OF EQUATIONS" + "\n"
+                       + "Trigger: see correct force values" + "\n"; ;
                     break;
                 case Stage.m3validateview:
-                    text.text = "SEE CALCULATIONS CANVAS FOR FORCE SYSTEM VALIDATION";
+                text.text = "SEE CALCULATIONS CANVAS FOR FORCE SYSTEM VALIDATION\n"; ;
                     break;
                 case Stage.opSel:
                     text.text = "";
@@ -314,73 +304,76 @@ public class GiveInstructions : MonoBehaviour
      */
     public void PlayAudio()
     {
-        switch (GLOBALS.stage)
+        if (GLOBALS.soundOn)
         {
-            case Stage.m1orig:
-              
-                break;
+            switch (GLOBALS.stage)
+            {
+                case Stage.m1orig:
 
-            case Stage.m1rotate:
-                
-                break;
-            case Stage.m1vector:
-                
-                break;
-            case Stage.m1view:
-                
-                break;
-            // note Module 1 vs. Module 2
-            case Stage.m2orig:
-                
-                break;
-            case Stage.m2rotate:
-                
-                break;
-            case Stage.v1p1:
-                clip = Resources.Load("place_the_tail_of_vector_1") as AudioClip;
-                audioSource.PlayOneShot(clip);
-                break;
-            case Stage.v1p2:
-                clip = Resources.Load("place_the_head_of_vector_1") as AudioClip;
-                audioSource.PlayOneShot(clip);
-                break;
-            case Stage.v1calc:
-                clip = Resources.Load("click_to_show_component_calculation") as AudioClip;
-                audioSource.PlayOneShot(clip);
+                    break;
 
-                break;
-            case Stage.v2p1:
-                clip = Resources.Load("place_the_tail_of_vector_2") as AudioClip;
-                audioSource.PlayOneShot(clip);
+                case Stage.m1rotate:
 
-                break;
-            case Stage.v2p2:
-                clip = Resources.Load("place_the_head_of_vector_2") as AudioClip;
-                audioSource.PlayOneShot(clip);
+                    break;
+                case Stage.m1vector:
 
-                break;
-            case Stage.v2calc:
-                clip = Resources.Load("click_to_show_component_calculation") as AudioClip;
-                audioSource.PlayOneShot(clip);
+                    break;
+                case Stage.m1view:
 
-                break;
-            case Stage.m3orig:
-                break;
-            case Stage.m3rotate:
-                break;
-            case Stage.m3poc:
-                break;
-            case Stage.opSel:
-                clip = Resources.Load("select_an_opertation") as AudioClip;
-                audioSource.PlayOneShot(clip);
-                break;
-            case Stage.opView:
-                
-                break;
+                    break;
+                // note Module 1 vs. Module 2
+                case Stage.m2orig:
 
-            default:
-                // nothing happens here
-                return;
+                    break;
+                case Stage.m2rotate:
+
+                    break;
+                case Stage.v1p1:
+                    clip = Resources.Load("place_the_tail_of_vector_1") as AudioClip;
+                    audioSource.PlayOneShot(clip);
+                    break;
+                case Stage.v1p2:
+                    clip = Resources.Load("place_the_head_of_vector_1") as AudioClip;
+                    audioSource.PlayOneShot(clip);
+                    break;
+                case Stage.v1calc:
+                    clip = Resources.Load("click_to_show_component_calculation") as AudioClip;
+                    audioSource.PlayOneShot(clip);
+
+                    break;
+                case Stage.v2p1:
+                    clip = Resources.Load("place_the_tail_of_vector_2") as AudioClip;
+                    audioSource.PlayOneShot(clip);
+
+                    break;
+                case Stage.v2p2:
+                    clip = Resources.Load("place_the_head_of_vector_2") as AudioClip;
+                    audioSource.PlayOneShot(clip);
+
+                    break;
+                case Stage.v2calc:
+                    clip = Resources.Load("click_to_show_component_calculation") as AudioClip;
+                    audioSource.PlayOneShot(clip);
+
+                    break;
+                case Stage.m3orig:
+                    break;
+                case Stage.m3rotate:
+                    break;
+                case Stage.m3poc:
+                    break;
+                case Stage.opSel:
+                    clip = Resources.Load("select_an_opertation") as AudioClip;
+                    audioSource.PlayOneShot(clip);
+                    break;
+                case Stage.opView:
+
+                    break;
+
+                default:
+                    // nothing happens here
+                    return;
+            }
         }
     }
 }

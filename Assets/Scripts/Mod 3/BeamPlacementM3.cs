@@ -108,7 +108,15 @@ public class BeamPlacementM3 : MonoBehaviour
 
     void Update()
     {
-        _giveInstructions.DisplayText();
+        if (!bIsViewer)
+        {
+            _giveInstructions.DisplayText();
+        }
+        else
+        {
+            _giveInstructions.text.text = "You are a viewer. Your controller is disabled.";
+        }
+
         aMenuIsActive = (operationsPanel.activeSelf || menuPanel.activeSelf);
         if (GLOBALS.gridOn)
             SnapToGrid();
@@ -227,9 +235,10 @@ public class BeamPlacementM3 : MonoBehaviour
                     break;
                 case Stage.m3forcesel:
                     calcPanel.GetComponent<CalculationsPanelM3>().StartCalculationsSequence();
-                    calcPanel.SetActive(true);
+             //       calcPanel.SetActive(true);
                     break;
                 case Stage.m3keypad:
+                    calcPanel.SetActive(true);
                     bCalc1 = true;
                     calcPanel.GetComponent<CalculationsPanelM3>().ComponentCalcs();
                     calcPanel.GetComponent<CalculationsPanelM3>().MagCalcs();

@@ -130,8 +130,9 @@ public class VectorMathM3 : MonoBehaviour
                 if (v == 0)
                 {
                     vectors[v].SetEnabledLabels(true, true, false, false);
-                   // RaiseFlagsForHeadTailLabels(v, true, true);
                 }
+
+                   // RaiseFlagsForHeadTailLabels(v, true, true);
                 else
                 {
                     vectors[v].SetEnabledLabels(false, true, false, false);
