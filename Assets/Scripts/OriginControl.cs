@@ -77,7 +77,7 @@ public class OriginControl : MonoBehaviour
 
         xAxisText.transform.position = transform.position + transform.right * axes_length * 0.3f;
         yAxisText.transform.position = transform.position + transform.up * axes_length * 0.3f;
-        zAxisText.transform.position = transform.position - transform.forward * axes_length * 0.3f * GLOBALS.flipZ;
+        zAxisText.transform.position = transform.position + transform.forward * axes_length * 0.3f * GLOBALS.flipZ;
     }
 
     private void InitializeText()
