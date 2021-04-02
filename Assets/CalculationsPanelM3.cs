@@ -74,7 +74,7 @@ public class CalculationsPanelM3 : MonoBehaviour
                     "r_" + GLOBALS.SelectedVec.GetComponent<VectorPropertiesM3>().gameObject.name.Substring(12) + " = (" +
                     bp3.adjPOCPos.x.ToString(GLOBALS.format) + addSignComponent(GLOBALS.SelectedVec.GetComponent<VectorControlM3>().relTailPos.x) + Math.Abs(GLOBALS.SelectedVec.GetComponent<VectorControlM3>().relTailPos.x).ToString(GLOBALS.format) + @")i + \par(" +
                     bp3.adjPOCPos.y.ToString(GLOBALS.format) + addSignComponent(GLOBALS.SelectedVec.GetComponent<VectorControlM3>().relTailPos.y) + Math.Abs(GLOBALS.SelectedVec.GetComponent<VectorControlM3>().relTailPos.y).ToString(GLOBALS.format) + @")j + \par(" +
-                    (-1*bp3.adjPOCPos.z).ToString(GLOBALS.format) + addSignComponent(GLOBALS.SelectedVec.GetComponent<VectorControlM3>().relTailPos.z) + Math.Abs(GLOBALS.SelectedVec.GetComponent<VectorControlM3>().relTailPos.z).ToString(GLOBALS.format) + @")k $$";
+                    (-1*bp3.adjPOCPos.z).ToString(GLOBALS.format) + addSignComponent(-1*GLOBALS.SelectedVec.GetComponent<VectorControlM3>().relTailPos.z) + Math.Abs(GLOBALS.SelectedVec.GetComponent<VectorControlM3>().relTailPos.z).ToString(GLOBALS.format) + @")k $$";
         }
     }
 
@@ -86,13 +86,16 @@ public class CalculationsPanelM3 : MonoBehaviour
         else { relVec = bp3.adjPOCPos - GLOBALS.SelectedVec.GetComponent<VectorControlM3>().relTailPos;  }
            textLine[1].text = @"$$ \begin{center} \par \par|" + GLOBALS.SelectedVec.GetComponent<VectorPropertiesM3>().gameObject.name.Substring(12) + "| = " +
                @"\sqrt[2]{(" + relVec.x.ToString(GLOBALS.format) + ")^2 + (" + relVec.y.ToString(GLOBALS.format) + ")^2 + (" + (-1*relVec.z).ToString(GLOBALS.format) + ")^2 } " +
-               @"\par = " + new Vector3(relVec.x, relVec.y, -1*relVec.z).magnitude.ToString(GLOBALS.format) + @"\end{center} $$";
+               " = " + new Vector3(relVec.x, relVec.y, -1*relVec.z).magnitude.ToString(GLOBALS.format) + @"\end{center} $$";
     }
 
     public void SystemOfEqs()
     {
-        
-            textLine[0].gameObject.SetActive(false);
+        Vector3 relVec;
+        if (bp3.bIsViewer) { relVec = bp3.adjPOCPos - GLOBALS.SelectedVec.GetComponent<VectorControlM3>().photonPos; }
+        else { relVec = bp3.adjPOCPos - GLOBALS.SelectedVec.GetComponent<VectorControlM3>().relTailPos; }
+
+        textLine[0].gameObject.SetActive(false);
             textLine[1].gameObject.SetActive(false);
             textLine[2].gameObject.SetActive(true);
             Debug.Log("in soe, tl 0 is " + textLine[0].isActiveAndEnabled + " and t2 is " + textLine[1].isActiveAndEnabled);
@@ -100,9 +103,9 @@ public class CalculationsPanelM3 : MonoBehaviour
 
             textLine[2].text = "$$ F_" + GLOBALS.GivenForceVec.GetComponent<VectorPropertiesM3>().gameObject.name.Substring(12) + "= " 
            + GLOBALS.GivenForceVec.GetComponent<VectorPropertiesM3>().forceValue.ToString(GLOBALS.format) + " * ("
-           + GLOBALS.GivenForceVec.GetComponent<VectorPropertiesM3>().uVec.x.ToString(GLOBALS.format) + "i " + addSign(GLOBALS.GivenForceVec.GetComponent<VectorPropertiesM3>().uVec.y)
-           + Math.Abs(GLOBALS.GivenForceVec.GetComponent<VectorPropertiesM3>().uVec.y).ToString(GLOBALS.format) + "j " + addSign(GLOBALS.GivenForceVec.GetComponent<VectorPropertiesM3>().uVec.z)
-           + Math.Abs(GLOBALS.GivenForceVec.GetComponent<VectorPropertiesM3>().uVec.z).ToString(GLOBALS.format) + "k"
+           + (relVec.x/relVec.magnitude).ToString(GLOBALS.format) + "i " + addSign(relVec.y / relVec.magnitude)
+           + Math.Abs((relVec.y / relVec.magnitude)).ToString(GLOBALS.format) + "j " + addSign((relVec.z / relVec.magnitude))
+           + Math.Abs((relVec.z / relVec.magnitude)).ToString(GLOBALS.format) + "k"
            + ") ";
 
 
@@ -112,10 +115,10 @@ public class CalculationsPanelM3 : MonoBehaviour
 
 
             for (int i = 0; i <= 2; i++)
-            {
+            { 
                 textLine[2].text += @"\par \bf F_" + GLOBALS.unknownVecs[i].GetComponent<VectorPropertiesM3>().gameObject.name.Substring(12) + " = | "
                 + "F_" + GLOBALS.unknownVecs[i].GetComponent<VectorPropertiesM3>().gameObject.name.Substring(12) + " | * ( " //GLOBALS.unknownVecs[i].GetComponent<VectorPropertiesM3>().forceValue + " * ("
-                + GLOBALS.unknownUVecs[i].x.ToString(GLOBALS.format) + "i " + addSign(GLOBALS.unknownUVecs[i].y)
+                + GLOBALS.unknownVecs[i].x.ToString(GLOBALS.format) + "i " + addSign(GLOBALS.unknownUVecs[i].y)
                 + Math.Abs(GLOBALS.unknownUVecs[i].y).ToString(GLOBALS.format) + "j " + addSign(GLOBALS.unknownUVecs[i].z)
                 + Math.Abs(GLOBALS.unknownUVecs[i].z).ToString(GLOBALS.format) + "k"
                 + ")";
