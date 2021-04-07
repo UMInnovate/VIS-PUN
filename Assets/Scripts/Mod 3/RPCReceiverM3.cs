@@ -65,19 +65,19 @@ public class RPCReceiverM3 : MonoBehaviour
           //  Console.WriteLine("")
             PV.RPC("SetForceVal", RpcTarget.OthersBuffered, GLOBALS.forceVal, GLOBALS.chosenVecInt);
             setVal = false;
-            Console.WriteLine("setval is set to " + setVal);
+          //  Console.WriteLine("setval is set to " + setVal);
         }
 
         if(beamPlacement.bCalcPanel)
         {
-            Console.WriteLine("calcpanel has been enabled by the host");
+            //Console.WriteLine("calcpanel has been enabled by the host");
             PV.RPC("StartCalcSequence", RpcTarget.AllBuffered);
             beamPlacement.bCalcPanel = false;
         }
 
         if(beamPlacement.bCalc1)
         {
-            Console.WriteLine("bcalc1 enabled");
+           // Console.WriteLine("bcalc1 enabled");
             PV.RPC("MagCompSequence", RpcTarget.OthersBuffered);
             beamPlacement.bCalc1 = false;
         }
@@ -251,10 +251,12 @@ public class RPCReceiverM3 : MonoBehaviour
     public void SystemOfEquations()
     {
         //   beamPlacement.GetComponent<VectorMathM3>().ValidateForceSystem();
-        Console.WriteLine("excuting rpc for soe");
-        beamPlacement.GetComponent<VectorMathM3>().SolveSystemOfEquations();
-        calcPanel.GetComponent<CalculationsPanelM3>().SystemOfEqs();
-
+        // Console.WriteLine("excuting rpc for soe");
+        if (beamPlacement.bIsViewer)
+        {
+            beamPlacement.GetComponent<VectorMathM3>().SolveSystemOfEquations();
+            calcPanel.GetComponent<CalculationsPanelM3>().SystemOfEqs();
+        }
         beamPlacement.bCalcSoE = false; 
     }
 
@@ -262,7 +264,7 @@ public class RPCReceiverM3 : MonoBehaviour
     public void LinearSys()
     {
         calcPanel.GetComponent<CalculationsPanelM3>().LinearCalc();
-        Console.WriteLine("executing rpc for linearsys");
+       // Console.WriteLine("executing rpc for linearsys");
         beamPlacement.bLinearSys = false;
     }
 
@@ -279,17 +281,20 @@ public class RPCReceiverM3 : MonoBehaviour
     {
         GLOBALS.chosenVecInt = v;
         GLOBALS.forceVal = val;
-       // keypadPanel.forceVal = val;
-        if(val != -1 && v >= 0)
+        if (beamPlacement.bIsViewer)
         {
+            // keypadPanel.forceVal = val;
+            if (val != -1 && v >= 0)
+            {
                 vectors[v].GetComponent<VectorPropertiesM3>().SetForceVal(val);
                 GLOBALS.SelectedVec = vectors[v].gameObject;
                 GLOBALS.GivenForceVec = vectors[v].gameObject;
                 UpdateNameLabel();
-              //  Console.WriteLine("updated name label w " + val);
+                Console.WriteLine("updated name label w " + val);
                 vectors[v].GetComponent<VectorPropertiesM3>().isGivenForceValue = true;
                 vectors[v].GetComponent<VectorPropertiesM3>().BuildForceVector();
-              //  Console.WriteLine("set the force val as " + val);
+                //  Console.WriteLine("set the force val as " + val);
+            }
         }
       //  setVal = false; 
     }
@@ -323,13 +328,15 @@ public class RPCReceiverM3 : MonoBehaviour
 
     public void SetBuild(int v)
     {
+        Console.WriteLine("building vector " + v);
         vectors[v].GetComponent<VectorPropertiesM3>().isGivenForceValue = false;
         vectors[v].GetComponent<VectorPropertiesM3>().BuildForceVector();
+        Console.WriteLine("writing force vector of " + v + " as : " + vectors[v].GetComponent<VectorPropertiesM3>().forceVec.ToString(GLOBALS.format));
     }
 
     public void UpdateNameLabel()
     {
-        Console.WriteLine("index of chosen: " + GLOBALS.chosenVecInt);
+      //  Console.WriteLine("index of chosen: " + GLOBALS.chosenVecInt);
         switch(GLOBALS.chosenVecInt)
         {
             case 0:
@@ -337,45 +344,54 @@ public class RPCReceiverM3 : MonoBehaviour
                // nameUpdated = Instantiate(pocLabelPrefab, vector3s[0], Quaternion.identity);
                 nameA.text = "A = " + GLOBALS.forceVal + " N";
                 AddToBin(myPlayerRef.myPlayerActorNumber, nameA);
-                SetBuild(1); SetBuild(2); SetBuild(3);
+                vectors[1].GetComponent<VectorPropertiesM3>().BuildForceVector();
+                vectors[2].GetComponent<VectorPropertiesM3>().BuildForceVector();
+                vectors[3].GetComponent<VectorPropertiesM3>().BuildForceVector();
                 break;
             case 1:
               //  Destroy(nameB);
               //  nameB = Instantiate(pocLabelPrefab, vector3s[1], Quaternion.identity);
                 nameB.text = "B = " + GLOBALS.forceVal + " N";
                 AddToBin(myPlayerRef.myPlayerActorNumber, nameB);
-                SetBuild(0); SetBuild(2); SetBuild(3);
+                vectors[0].GetComponent<VectorPropertiesM3>().BuildForceVector();
+                vectors[2].GetComponent<VectorPropertiesM3>().BuildForceVector();
+                vectors[3].GetComponent<VectorPropertiesM3>().BuildForceVector();
                 break;
             case 2:
                // Destroy(nameC);
               //  nameC = Instantiate(pocLabelPrefab, vector3s[2], Quaternion.identity);
                 nameC.text = "C = " + GLOBALS.forceVal + " N";
                 AddToBin(myPlayerRef.myPlayerActorNumber, nameC);
-                SetBuild(1); SetBuild(0); SetBuild(3);
+                vectors[0].GetComponent<VectorPropertiesM3>().BuildForceVector();
+                vectors[1].GetComponent<VectorPropertiesM3>().BuildForceVector();
+                vectors[3].GetComponent<VectorPropertiesM3>().BuildForceVector();
                 break;
             case 3:
               //  Destroy(nameD);
               //  nameD = Instantiate(pocLabelPrefab, vector3s[3], Quaternion.identity);
                 nameD.text = "D = " + GLOBALS.forceVal + " N";
                 AddToBin(myPlayerRef.myPlayerActorNumber, nameD);
-                SetBuild(1); SetBuild(2); SetBuild(0);
+                vectors[0].GetComponent<VectorPropertiesM3>().BuildForceVector();
+                vectors[1].GetComponent<VectorPropertiesM3>().BuildForceVector();
+                vectors[2].GetComponent<VectorPropertiesM3>().BuildForceVector();
+                //SetBuild(0); SetBuild(1); SetBuild(2); 
                 break;
             default:
                 Console.WriteLine("default case");
                 break;
         }
-        Console.WriteLine("value of vecLabel: " + vecLabelV1.text + " " + vecLabelV2.text + " " + vecLabelV3.text + " " + vecLabelV4.text + " ");
+       // Console.WriteLine("value of vecLabel: " + vecLabelV1.text + " " + vecLabelV2.text + " " + vecLabelV3.text + " " + vecLabelV4.text + " ");
     }
 
 
     [PunRPC]
     public void PlaceVectorLabels(int _v, Vector3 ptPos, Vector3 localPos, string _actorNumber)
     {
-        Console.WriteLine("in vectorlabels with index " + _v);
+       // Console.WriteLine("in vectorlabels with index " + _v);
         switch (_v)
         {
             case 0:
-                Console.WriteLine("case 0 is being called in placevectorlabels");
+            //    Console.WriteLine("case 0 is being called in placevectorlabels");
                 vecLabelV1 = Instantiate(pocLabelPrefab, ptPos + offsetConst, Quaternion.identity);
 
                 if (beamPlacement.bIsViewer) //if you are only viewing the system, rely on the value fed by rpc

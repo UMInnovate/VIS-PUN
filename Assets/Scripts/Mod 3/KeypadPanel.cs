@@ -92,7 +92,7 @@ public class KeypadPanel : MonoBehaviour
             Console.WriteLine("VP3 Value: " + vp3.forceValue);
             GLOBALS.forceVal = vp3.forceValue;
             Console.WriteLine("index of chosen: " + GLOBALS.chosenVecInt);
-
+            vp3.isGivenForceValue = true; 
             vp3.BuildForceVector();
             ACClicked();
 

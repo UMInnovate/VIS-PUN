@@ -107,7 +107,41 @@ public class VectorMathM3 : MonoBehaviour
 
         }
 
+
         vectors[v].gameObject.SetActive(true);
+
+        //Building the relative vector
+        if (vectors[v].GetComponent<VectorPropertiesM3>().isHeadCollidingWithPOC)
+        {
+            if (GetComponent<BeamPlacementM3>().bIsViewer)
+            {
+                vectors[v].GetComponent<VectorPropertiesM3>().relativeVec = GetComponent<BeamPlacementM3>().adjPOCPos - GLOBALS.SelectedVec.GetComponent<VectorControlM3>().photonPos;
+                Console.WriteLine("REL VEC: " + GetComponent<BeamPlacementM3>().adjPOCPos + " - " + GLOBALS.SelectedVec.GetComponent<VectorControlM3>().photonPos + " = " + vectors[v].GetComponent<VectorPropertiesM3>().relativeVec);
+            }
+            else
+            {
+                vectors[v].GetComponent<VectorPropertiesM3>().relativeVec = GetComponent<BeamPlacementM3>().pocPos - vectors[v].GetComponent<VectorControlM3>().relTailPos;
+                Console.WriteLine("REL VEC: " + GetComponent<BeamPlacementM3>().pocPos + " - " + vectors[v].GetComponent<VectorControlM3>().relTailPos + " = " + vectors[v].GetComponent<VectorPropertiesM3>().relativeVec);
+            }
+
+        }
+        else
+        {
+            if (GetComponent<BeamPlacementM3>().bIsViewer)
+            {
+                vectors[v].GetComponent<VectorPropertiesM3>().relativeVec = GLOBALS.SelectedVec.GetComponent<VectorControlM3>().photonPos - GetComponent<BeamPlacementM3>().adjPOCPos;
+                Console.WriteLine("REL VEC: " + GLOBALS.SelectedVec.GetComponent<VectorControlM3>().photonPos + " - " + GetComponent<BeamPlacementM3>().adjPOCPos + " = " + vectors[v].GetComponent<VectorPropertiesM3>().relativeVec);
+            }
+            else
+            {
+                vectors[v].GetComponent<VectorPropertiesM3>().relativeVec = vectors[v].GetComponent<VectorControlM3>().relTailPos - GetComponent<BeamPlacementM3>().pocPos;
+                Console.WriteLine("REL VEC: " + vectors[v].GetComponent<VectorControlM3>().relTailPos + " - " + GetComponent<BeamPlacementM3>().pocPos + " = " + vectors[v].GetComponent<VectorPropertiesM3>().relativeVec);
+            }
+        }
+
+
+
+
     }
 
     /// <summary>

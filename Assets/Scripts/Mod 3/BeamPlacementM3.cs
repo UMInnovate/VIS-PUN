@@ -244,22 +244,35 @@ public class BeamPlacementM3 : MonoBehaviour
                     calcPanel.GetComponent<CalculationsPanelM3>().MagCalcs();
                     break;
                 case Stage.m3view:
+                    Console.WriteLine("going into setbuild stuff - our chosen int is " + GLOBALS.chosenVecInt);
                     switch (GLOBALS.chosenVecInt)
                     {
                         case 0: //a is chosen
-                            SetBuild(1); SetBuild(2); SetBuild(3);
+                          //  SetBuild(1); SetBuild(2); SetBuild(3);
+                            _vectorMath.vectors[1].GetComponent<VectorPropertiesM3>().BuildForceVector();
+                            _vectorMath.vectors[2].GetComponent<VectorPropertiesM3>().BuildForceVector();
+                            _vectorMath.vectors[3].GetComponent<VectorPropertiesM3>().BuildForceVector();
                             break;
                         case 1:
-                            SetBuild(0); SetBuild(2); SetBuild(3);
+                            // SetBuild(0); SetBuild(2); SetBuild(3);
+                            _vectorMath.vectors[0].GetComponent<VectorPropertiesM3>().BuildForceVector();
+                            _vectorMath.vectors[2].GetComponent<VectorPropertiesM3>().BuildForceVector();
+                            _vectorMath.vectors[3].GetComponent<VectorPropertiesM3>().BuildForceVector();
                             break;
                         case 2:
-                            SetBuild(1); SetBuild(0); SetBuild(3);
+                         //   SetBuild(0); SetBuild(1); SetBuild(3);
+                            _vectorMath.vectors[0].GetComponent<VectorPropertiesM3>().BuildForceVector();
+                            _vectorMath.vectors[1].GetComponent<VectorPropertiesM3>().BuildForceVector();
+                            _vectorMath.vectors[3].GetComponent<VectorPropertiesM3>().BuildForceVector();
                             break;
                         case 3:
-                            SetBuild(1); SetBuild(2); SetBuild(0);
+                          //  SetBuild(0); SetBuild(1); SetBuild(2);
+                            _vectorMath.vectors[0].GetComponent<VectorPropertiesM3>().BuildForceVector();
+                            _vectorMath.vectors[1].GetComponent<VectorPropertiesM3>().BuildForceVector();
+                            _vectorMath.vectors[2].GetComponent<VectorPropertiesM3>().BuildForceVector();
                             break;
                         default:
-                            SetBuild(1); SetBuild(2); SetBuild(3);
+                           
                             Console.WriteLine("default case in m3view, setbuild");
                             break;
                     }
@@ -268,8 +281,9 @@ public class BeamPlacementM3 : MonoBehaviour
                     break;
                 case Stage.m3forceview:
                     //calcPanel.GetComponent<CalculationsPanel>().SystemOfEqs();
-                    bCalcSoE = true; 
-                 //   GetComponent<VectorMathM3>().ValidateForceSystem();
+                    bCalcSoE = true;
+                    //   GetComponent<VectorMathM3>().ValidateForceSystem();
+                    Console.WriteLine("ENTERING STAGE M3FORCEVIEW");
                     calcPanel.GetComponent<CalculationsPanelM3>().SystemOfEqs();
                     //  calcPanel.GetComponent<CalculationsPanel>().SystemOfEqs();
                     //calcPanel.GetComponent<CalculationsPanel>().ShowCorrectFVecs();
@@ -279,7 +293,6 @@ public class BeamPlacementM3 : MonoBehaviour
                     bLinearSys = true; 
                     calcPanel.GetComponent<CalculationsPanelM3>().LinearCalc();
                     GLOBALS.stage++;
-                
                     break;
                 case Stage.m3validateview:
                     bValidate = true; 
@@ -294,9 +307,12 @@ public class BeamPlacementM3 : MonoBehaviour
     }
 
     public void SetBuild(int v)
-    {
+    { 
+        Console.WriteLine("in set build for " + v);
         _vectorMath.vectors[v].GetComponent<VectorPropertiesM3>().isGivenForceValue = false;
         _vectorMath.vectors[v].GetComponent<VectorPropertiesM3>().BuildForceVector();
+        Console.WriteLine("for v = " + v + " uvec is " + _vectorMath.vectors[v].GetComponent<VectorPropertiesM3>().uVec.ToString(GLOBALS.format));
+        Console.WriteLine("uvecs at v is " + GLOBALS.unknownUVecs[v].ToString(GLOBALS.format) + " relativeVec: " + GLOBALS.unknownVecs[v].GetComponent<VectorPropertiesM3>().relativeVec.ToString(GLOBALS.format));
     }
 
     // Home or Bumper click handled here
@@ -322,6 +338,9 @@ public class BeamPlacementM3 : MonoBehaviour
             {
               //  Debug.Log("bumper, can place head = " + _vectorMath.vectors[vec].canPlaceHead.ToString());
                 _vectorMath.vectors[vec].canPlaceHead = !_vectorMath.vectors[vec].canPlaceHead;
+
+                Console.WriteLine("isheadcol was " + _vectorMath.vectors[vec].GetComponent<VectorPropertiesM3>().isHeadCollidingWithPOC + " is now " + !_vectorMath.vectors[vec].GetComponent<VectorPropertiesM3>().isHeadCollidingWithPOC);
+                _vectorMath.vectors[vec].GetComponent<VectorPropertiesM3>().isHeadCollidingWithPOC = !_vectorMath.vectors[vec].GetComponent<VectorPropertiesM3>().isHeadCollidingWithPOC;
                 _vectorMath.PlaceVector3Point(vec, storedBeamEnd);
             }
         }
