@@ -15,26 +15,21 @@ public class
     public Vector3 forceVec;
 
     [HideInInspector]
-    public float correctForceValue; // DEPRECATED
+    public float correctForceValue;
 
     [HideInInspector]
     public Vector3 uVec;
-    public float magnitude; 
 
     [HideInInspector]
     public bool isForceKnown; //has the user selected/inputted a constant force value
 
     [HideInInspector]
-    public bool isGivenForceValue = false; //is this the known force value
+    public bool isGivenForceValue; //is this the known force value
 
 
     [HideInInspector] public int forceValue; //user-inputted force value
 
-    [HideInInspector] public bool isHeadCollidingWithPOC = true;
-    [HideInInspector] public Vector3 relativeVec; 
-
     private bool nameLabelHovered;
-
     [SerializeField] private MLInput.Controller inputController;
     public GameObject keypad;
 
@@ -96,11 +91,27 @@ public class
 
     public void BuildForceVector()
     {
-        Console.WriteLine("entering build force vector with vector " + gameObject.name);
-        float floatrelMag = relativeVec.magnitude;
-        magnitude = floatrelMag;
-        uVec = new Vector3(relativeVec.x / floatrelMag, relativeVec.y / floatrelMag, -1*relativeVec.z / floatrelMag);
+        Vector3 relVec; 
+        if (beamPlacement.bIsViewer)
+        {
+            relVec = beamPlacement.adjPOCPos - GetComponent<VectorControlM3>().photonPos;
+            Debug.Log(relVec.ToString(GLOBALS.format));
+            float floatrelMag = relVec.magnitude;
+            uVec = new Vector3(relVec.x / floatrelMag, relVec.y / floatrelMag, -1*relVec.z / floatrelMag);
 
+
+            GLOBALS.unknownUVecs.Add(uVec); //unknownUVecs holds a list of unit vectors that dont have given force vals
+            GLOBALS.unknownVecs.Add(gameObject);
+        }
+        else
+        {
+            relVec = beamPlacement.adjPOCPos - GetComponent<VectorControlM3>().relTailPos;
+            Debug.Log(relVec.ToString(GLOBALS.format));
+            float floatrelMag = relVec.magnitude;
+            uVec = new Vector3(relVec.x / floatrelMag, relVec.y / floatrelMag, -1*relVec.z / floatrelMag);
+            //GLOBALS.unknownUVecs.Add(uVec); //unknownUVecs holds a list of unit vectors that dont have given force vals
+           // GLOBALS.unknownVecs.Add(gameObject);
+        }
         if (isGivenForceValue)
         {
             forceVec = forceValue * uVec;
@@ -109,14 +120,8 @@ public class
         }
         else
         {
-            //GLOBALS.unknownUVecs.RemoveAt(GLOBALS.unknownUVecs.Count);
-            GLOBALS.unknownUVecs.Add(uVec); //unknownUVecs holds a list of unit vectors that dont have given force vals
-            Console.WriteLine("vector " + gameObject.name + " added its uvec " + uVec.ToString("F2") + " to the unknownVecs list, list size is now: " + GLOBALS.unknownVecs.Count);
-           // GLOBALS.unknownVecs.RemoveAt(GLOBALS.unknownVecs.Count);
+            GLOBALS.unknownUVecs.Add(relVec); //unknownUVecs holds a list of unit vectors that dont have given force vals
             GLOBALS.unknownVecs.Add(gameObject);
-            Console.WriteLine("vector " + gameObject.name + " added its gameobject to the unknown vecs list, size is now " + GLOBALS.unknownVecs.Count);
-
-            Console.WriteLine("uvecs at v is " + GLOBALS.unknownUVecs[GLOBALS.unknownVecs.Count].ToString(GLOBALS.format) + " relativeVec: " + GLOBALS.unknownVecs[GLOBALS.unknownVecs.Count].GetComponent<VectorPropertiesM3>().relativeVec.ToString(GLOBALS.format));
         }
     }
 
