@@ -17,7 +17,7 @@ public class
 
     [HideInInspector]
     public float correctForceValue;
-
+    private float floatrelMag;
     [HideInInspector]
     public Vector3 uVec;
 
@@ -99,13 +99,13 @@ public class
         {
             if (beamPlacement.bIsViewer)
             {
-                relativeVec = GetComponent<VectorControlM3>().photonPos - beamPlacement.adjPOCPos;
+                relativeVec = GetComponent<VectorControlM3>().photonPos - beamPlacement.adjPOCPos; //BUGFIX?
             }
             else
             {
-                relativeVec = (GetComponent<VectorControlM3>()._head.position - GLOBALS.pocPos) - beamPlacement.adjPOCPos;
-                Console.WriteLine("my relhead= " + (GetComponent<VectorControlM3>()._head.position - GLOBALS.pocPos).ToString(GLOBALS.format));
-                Console.WriteLine("RELHEAD FROM VC  " + GetComponent<VectorControlM3>().relHeadPos.ToString("F2"));
+                relativeVec = GetComponent<VectorControlM3>().relHeadPos - beamPlacement.adjPOCPos;
+               // Console.WriteLine("my relhead= " + (GetComponent<VectorControlM3>()._head.position - GLOBALS.pocPos).ToString(GLOBALS.format));
+               // Console.WriteLine("RELHEAD FROM VC  " + GetComponent<VectorControlM3>().relHeadPos.ToString("F2"));
 
                 //Console.WriteLine("relative vec is " + GetComponent<VectorControlM3>().relHeadPos.ToString(GLOBALS.format) + " - " + beamPlacement.adjPOCPos.ToString("F2"));
             }
@@ -115,18 +115,20 @@ public class
             if (beamPlacement.bIsViewer)
             {
                 relativeVec = beamPlacement.adjPOCPos - GetComponent<VectorControlM3>().photonPos;
+              //  Console.WriteLine("my relative vec as a viewer for " + gameObject.name + " is " + beamPlacement.adjPOCPos.ToString(GLOBALS.format) + " - " + GetComponent<VectorControlM3>().photonPos.ToString(GLOBALS.format)); 
             }
             else
             {
                 relativeVec = beamPlacement.adjPOCPos - GetComponent<VectorControlM3>().relTailPos;
-                Console.WriteLine("relative vec is " + beamPlacement.adjPOCPos.ToString(GLOBALS.format) + " - " + GetComponent<VectorControlM3>().relTailPos.ToString(GLOBALS.format));
+               // Console.WriteLine("relative vec is " + beamPlacement.adjPOCPos.ToString(GLOBALS.format) + " - " + GetComponent<VectorControlM3>().relTailPos.ToString(GLOBALS.format));
             }
         }
 
-        Console.WriteLine("relativevec: " + relativeVec.ToString(GLOBALS.format));
-        float floatrelMag = relativeVec.magnitude;
+       // Console.WriteLine("relativevec on " + gameObject.name + ": " + relativeVec.ToString(GLOBALS.format));
+         
+        floatrelMag = relativeVec.magnitude;
         uVec = new Vector3(relativeVec.x / floatrelMag, relativeVec.y / floatrelMag, -1 * relativeVec.z / floatrelMag);
-
+        
         if (isGivenForceValue)
         {
             forceVec = forceValue * uVec;
@@ -135,7 +137,9 @@ public class
         }
         else
         {
+            
             GLOBALS.unknownUVecs.Add(uVec); //unknownUVecs holds a list of unit vectors that dont have given force vals
+            Console.WriteLine("I am a viewer: " + beamPlacement.bIsViewer + ".\nVector Name: " + gameObject.name + "\nRel vec: " + relativeVec.ToString(GLOBALS.format) + ".\nUVEC: " + uVec.ToString(GLOBALS.format));
             GLOBALS.unknownVecs.Add(gameObject);
         }
     }

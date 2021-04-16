@@ -63,7 +63,8 @@ public class RPCReceiverM3 : MonoBehaviour
         if(GLOBALS.forceVal != -1 && setVal)
         {
           //  Console.WriteLine("")
-            PV.RPC("SetForceVal", RpcTarget.OthersBuffered, GLOBALS.forceVal, GLOBALS.chosenVecInt);
+            PV.RPC("SetForceVal", RpcTarget.OthersBuffered, GLOBALS.forceVal, GLOBALS.chosenVecInt, GLOBALS.SelectedVec.GetComponent<VectorControlM3>().canPlaceHead);
+
             setVal = false;
             Console.WriteLine("setval is set to " + setVal);
         }
@@ -126,19 +127,19 @@ public class RPCReceiverM3 : MonoBehaviour
     {
         if(vectorMath.bCanPlaceVec1)
         {
-            PV.RPC("SpawnHeadAndTail", RpcTarget.OthersBuffered, 0, vectorMath.vec1Pos);
+            PV.RPC("SpawnHeadAndTail", RpcTarget.OthersBuffered, 0, vectorMath.vec1Pos, vectors[0].canPlaceHead);
         }
         else if (vectorMath.bCanPlaceVec2)
         {
-            PV.RPC("SpawnHeadAndTail", RpcTarget.OthersBuffered, 1, vectorMath.vec2Pos);
+            PV.RPC("SpawnHeadAndTail", RpcTarget.OthersBuffered, 1, vectorMath.vec2Pos, vectors[0].canPlaceHead);
         }
         else if (vectorMath.bCanPlaceVec3)
         {
-            PV.RPC("SpawnHeadAndTail", RpcTarget.OthersBuffered, 2, vectorMath.vec3Pos);
+            PV.RPC("SpawnHeadAndTail", RpcTarget.OthersBuffered, 2, vectorMath.vec3Pos, vectors[0].canPlaceHead);
         }
         else if (vectorMath.bCanPlaceVec4)
         {
-            PV.RPC("SpawnHeadAndTail", RpcTarget.OthersBuffered, 3, vectorMath.vec4Pos);
+            PV.RPC("SpawnHeadAndTail", RpcTarget.OthersBuffered, 3, vectorMath.vec4Pos, vectors[0].canPlaceHead);
         }
         else
         {
@@ -167,6 +168,7 @@ public class RPCReceiverM3 : MonoBehaviour
         {
          //   PV.RPC("SpawnHeadAndTail", RpcTarget.OthersBuffered, 1, vectorMath.vec2Pos);
             Console.WriteLine("place vector labels v2");
+           
             PV.RPC("PlaceVectorLabels", RpcTarget.AllBuffered, 1, vectorMath.vec2Pos, vectorMath.localVec2Pos, myPlayerRef.myPlayerActorNumber);
           //  Console.WriteLine("after place vector labels v2");
             vectorMath.bCanPlaceVec2 = false; // reset
@@ -275,15 +277,18 @@ public class RPCReceiverM3 : MonoBehaviour
 
 
     [PunRPC] 
-    public void SetForceVal(int val, int v)
+    public void SetForceVal(int val, int v, bool t)
     {
         GLOBALS.chosenVecInt = v;
         GLOBALS.forceVal = val;
+        
        // keypadPanel.forceVal = val;
-        if(val != -1 && v >= 0)
+        if (val != -1 && v >= 0)
         {
+
                 vectors[v].GetComponent<VectorPropertiesM3>().SetForceVal(val);
                 GLOBALS.SelectedVec = vectors[v].gameObject;
+                GLOBALS.SelectedVec.GetComponent<VectorControlM3>().canPlaceHead = t;
                 GLOBALS.GivenForceVec = vectors[v].gameObject;
                 UpdateNameLabel();
               //  Console.WriteLine("updated name label w " + val);
@@ -313,9 +318,10 @@ public class RPCReceiverM3 : MonoBehaviour
     }
 
     [PunRPC] 
-    public void SpawnHeadAndTail(int vec, Vector3 pos)
+    public void SpawnHeadAndTail(int vec, Vector3 pos, bool t)
     {
         //vectors[vec].SpawnHeadAndTail(); 
+        vectors[vec].canPlaceHead = t;
         vectorMath.PlaceVector3Point(vec, pos);
       //  Debug.Log("spawning Head and tail of vector " + vec + " of sbe " + beamPlacement.storedBeamEnd);
        // Console.WriteLine("Point Value Vector " + vec + " has value " + pos);

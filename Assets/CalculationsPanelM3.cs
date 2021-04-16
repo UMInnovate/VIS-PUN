@@ -60,11 +60,13 @@ public class CalculationsPanelM3 : MonoBehaviour
     //make smaller font
     public void ComponentCalcs()
     {
+        Console.WriteLine("in comp calc - cph is " + GLOBALS.SelectedVec.GetComponent<VectorControlM3>().canPlaceHead);
         if (GLOBALS.SelectedVec.GetComponent<VectorControlM3>().canPlaceHead)
         {
             Console.WriteLine("can place head");
              if (bp3.bIsViewer)
             {
+                //the issue is here, the photonpos is actually the poc here. and adjpocpos is the
                 textLine[0].text = "$$" +
                         "r_" + GLOBALS.SelectedVec.GetComponent<VectorPropertiesM3>().gameObject.name.Substring(12) + " = (" +
                         GLOBALS.SelectedVec.GetComponent<VectorControlM3>().photonPos.x.ToString(GLOBALS.format) + addSignComponent(bp3.adjPOCPos.x) + Math.Abs(bp3.adjPOCPos.x).ToString(GLOBALS.format) + @")i + \par(" +
@@ -94,6 +96,7 @@ public class CalculationsPanelM3 : MonoBehaviour
             }
             else
             {
+
                 textLine[0].text = "$$" +
                         "r_" + GLOBALS.SelectedVec.GetComponent<VectorPropertiesM3>().gameObject.name.Substring(12) + " = (" +
                         bp3.adjPOCPos.x.ToString(GLOBALS.format) + addSignComponent(GLOBALS.SelectedVec.GetComponent<VectorControlM3>().relTailPos.x) + Math.Abs(GLOBALS.SelectedVec.GetComponent<VectorControlM3>().relTailPos.x).ToString(GLOBALS.format) + @")i + \par(" +
@@ -165,7 +168,7 @@ public class CalculationsPanelM3 : MonoBehaviour
             textLine[1].text = @"$$\Sigma F_y = ";
             textLine[2].text = @"$$\Sigma F_z = ";
 
-        Vector3 relVec = GLOBALS.pocPos - GLOBALS.GivenForceVec.GetComponent<VectorControlM3>().transform.position;
+        Vector3 relVec = GLOBALS.SelectedVec.GetComponent<VectorPropertiesM3>().relativeVec;
         textLine[0].text += (relVec.x * GLOBALS.GivenForceVec.GetComponent<VectorPropertiesM3>().forceValue).ToString(GLOBALS.format); 
         textLine[1].text += (relVec.y * GLOBALS.GivenForceVec.GetComponent<VectorPropertiesM3>().forceValue).ToString(GLOBALS.format);
         textLine[2].text += (relVec.z * GLOBALS.GivenForceVec.GetComponent<VectorPropertiesM3>().forceValue).ToString(GLOBALS.format);
