@@ -60,40 +60,64 @@ public class CalculationsPanelM3 : MonoBehaviour
     //make smaller font
     public void ComponentCalcs()
     {
-        if (bp3.bIsViewer)
+        if (GLOBALS.SelectedVec.GetComponent<VectorControlM3>().canPlaceHead)
         {
-            textLine[0].text = "$$" +
-                    "r_" + GLOBALS.SelectedVec.GetComponent<VectorPropertiesM3>().gameObject.name.Substring(12) + " = (" +
-                    bp3.adjPOCPos.x.ToString(GLOBALS.format) + addSignComponent(GLOBALS.SelectedVec.GetComponent<VectorControlM3>().photonPos.x) + Math.Abs(GLOBALS.SelectedVec.GetComponent<VectorControlM3>().photonPos.x).ToString(GLOBALS.format) + @")i + \par(" +
-                   bp3.adjPOCPos.y.ToString(GLOBALS.format) + addSignComponent(GLOBALS.SelectedVec.GetComponent<VectorControlM3>().photonPos.y) + Math.Abs(GLOBALS.SelectedVec.GetComponent<VectorControlM3>().photonPos.y).ToString(GLOBALS.format) + @")j + \par(" +
-                   (-1*bp3.adjPOCPos.z).ToString(GLOBALS.format) + addSignComponent(-1*GLOBALS.SelectedVec.GetComponent<VectorControlM3>().photonPos.z) + Math.Abs(GLOBALS.SelectedVec.GetComponent<VectorControlM3>().photonPos.z).ToString(GLOBALS.format) + @")k $$";
+            Console.WriteLine("can place head");
+             if (bp3.bIsViewer)
+            {
+                textLine[0].text = "$$" +
+                        "r_" + GLOBALS.SelectedVec.GetComponent<VectorPropertiesM3>().gameObject.name.Substring(12) + " = (" +
+                        GLOBALS.SelectedVec.GetComponent<VectorControlM3>().photonPos.x.ToString(GLOBALS.format) + addSignComponent(bp3.adjPOCPos.x) + Math.Abs(bp3.adjPOCPos.x).ToString(GLOBALS.format) + @")i + \par(" +
+                      GLOBALS.SelectedVec.GetComponent<VectorControlM3>().photonPos.y.ToString(GLOBALS.format) + addSignComponent(bp3.adjPOCPos.y) + Math.Abs(bp3.adjPOCPos.y).ToString(GLOBALS.format) + @")j + \par(" +
+                       (-1 * GLOBALS.SelectedVec.GetComponent<VectorControlM3>().photonPos.z).ToString(GLOBALS.format) + addSignComponent(-1 * bp3.adjPOCPos.z) + Math.Abs(bp3.adjPOCPos.z).ToString(GLOBALS.format) + @")k $$";
+            }
+            else
+            {
+                textLine[0].text = "$$" +
+                        "r_" + GLOBALS.SelectedVec.GetComponent<VectorPropertiesM3>().gameObject.name.Substring(12) + " = (" +
+                        (GLOBALS.SelectedVec.GetComponent<VectorControlM3>().relHeadPos).x.ToString(GLOBALS.format) + addSignComponent(bp3.adjPOCPos.x) + Math.Abs(bp3.adjPOCPos.x).ToString(GLOBALS.format) + @")i + \par(" +
+                        (GLOBALS.SelectedVec.GetComponent<VectorControlM3>().relHeadPos.y).ToString(GLOBALS.format) + addSignComponent(bp3.adjPOCPos.y) + Math.Abs(bp3.adjPOCPos.y).ToString(GLOBALS.format) + @")j + \par(" +
+                        (-1 * GLOBALS.SelectedVec.GetComponent<VectorControlM3>().relHeadPos.z).ToString(GLOBALS.format) + addSignComponent(-1 * bp3.adjPOCPos.z) + Math.Abs(bp3.adjPOCPos.z).ToString(GLOBALS.format) + @")k $$";
+                // Console.WriteLine("relhead pos = " + GetComponent<VectorControlM3>().relHeadPos.ToString(GLOBALS.format) + " and reltail = " + GetComponent<VectorControlM3>().relTailPos.ToString(GLOBALS.format));
+            }
         }
         else
         {
-            textLine[0].text = "$$" +
-                    "r_" + GLOBALS.SelectedVec.GetComponent<VectorPropertiesM3>().gameObject.name.Substring(12) + " = (" +
-                    bp3.adjPOCPos.x.ToString(GLOBALS.format) + addSignComponent(GLOBALS.SelectedVec.GetComponent<VectorControlM3>().relTailPos.x) + Math.Abs(GLOBALS.SelectedVec.GetComponent<VectorControlM3>().relTailPos.x).ToString(GLOBALS.format) + @")i + \par(" +
-                    bp3.adjPOCPos.y.ToString(GLOBALS.format) + addSignComponent(GLOBALS.SelectedVec.GetComponent<VectorControlM3>().relTailPos.y) + Math.Abs(GLOBALS.SelectedVec.GetComponent<VectorControlM3>().relTailPos.y).ToString(GLOBALS.format) + @")j + \par(" +
-                    (-1*bp3.adjPOCPos.z).ToString(GLOBALS.format) + addSignComponent(-1*GLOBALS.SelectedVec.GetComponent<VectorControlM3>().relTailPos.z) + Math.Abs(GLOBALS.SelectedVec.GetComponent<VectorControlM3>().relTailPos.z).ToString(GLOBALS.format) + @")k $$";
+            Console.WriteLine("cannot place head");
+            if (bp3.bIsViewer)
+            {
+                textLine[0].text = "$$" +
+                        "r_" + GLOBALS.SelectedVec.GetComponent<VectorPropertiesM3>().gameObject.name.Substring(12) + " = (" +
+                        bp3.adjPOCPos.x.ToString(GLOBALS.format) + addSignComponent(GLOBALS.SelectedVec.GetComponent<VectorControlM3>().photonPos.x) + Math.Abs(GLOBALS.SelectedVec.GetComponent<VectorControlM3>().photonPos.x).ToString(GLOBALS.format) + @")i + \par(" +
+                       bp3.adjPOCPos.y.ToString(GLOBALS.format) + addSignComponent(GLOBALS.SelectedVec.GetComponent<VectorControlM3>().photonPos.y) + Math.Abs(GLOBALS.SelectedVec.GetComponent<VectorControlM3>().photonPos.y).ToString(GLOBALS.format) + @")j + \par(" +
+                       (-1 * bp3.adjPOCPos.z).ToString(GLOBALS.format) + addSignComponent(-1 * GLOBALS.SelectedVec.GetComponent<VectorControlM3>().photonPos.z) + Math.Abs(GLOBALS.SelectedVec.GetComponent<VectorControlM3>().photonPos.z).ToString(GLOBALS.format) + @")k $$";
+            }
+            else
+            {
+                textLine[0].text = "$$" +
+                        "r_" + GLOBALS.SelectedVec.GetComponent<VectorPropertiesM3>().gameObject.name.Substring(12) + " = (" +
+                        bp3.adjPOCPos.x.ToString(GLOBALS.format) + addSignComponent(GLOBALS.SelectedVec.GetComponent<VectorControlM3>().relTailPos.x) + Math.Abs(GLOBALS.SelectedVec.GetComponent<VectorControlM3>().relTailPos.x).ToString(GLOBALS.format) + @")i + \par(" +
+                        bp3.adjPOCPos.y.ToString(GLOBALS.format) + addSignComponent(GLOBALS.SelectedVec.GetComponent<VectorControlM3>().relTailPos.y) + Math.Abs(GLOBALS.SelectedVec.GetComponent<VectorControlM3>().relTailPos.y).ToString(GLOBALS.format) + @")j + \par(" +
+                        (-1 * bp3.adjPOCPos.z).ToString(GLOBALS.format) + addSignComponent(-1 * GLOBALS.SelectedVec.GetComponent<VectorControlM3>().relTailPos.z) + Math.Abs(GLOBALS.SelectedVec.GetComponent<VectorControlM3>().relTailPos.z).ToString(GLOBALS.format) + @")k $$";
+                // Console.WriteLine("relhead pos = " + GetComponent<VectorControlM3>().relHeadPos.ToString(GLOBALS.format) + " and reltail = " + GetComponent<VectorControlM3>().relTailPos.ToString(GLOBALS.format));
+            }
         }
+        
     }
 
 
     public void MagCalcs()
     {
-        Vector3 relVec;
-        if (bp3.bIsViewer) { relVec = bp3.adjPOCPos - GLOBALS.SelectedVec.GetComponent<VectorControlM3>().photonPos; }
-        else { relVec = bp3.adjPOCPos - GLOBALS.SelectedVec.GetComponent<VectorControlM3>().relTailPos;  }
+          
            textLine[1].text = @"$$ \begin{center} \par \par|" + GLOBALS.SelectedVec.GetComponent<VectorPropertiesM3>().gameObject.name.Substring(12) + "| = " +
-               @"\sqrt[2]{(" + relVec.x.ToString(GLOBALS.format) + ")^2 + (" + relVec.y.ToString(GLOBALS.format) + ")^2 + (" + (-1*relVec.z).ToString(GLOBALS.format) + ")^2 } " +
-               " = " + new Vector3(relVec.x, relVec.y, -1*relVec.z).magnitude.ToString(GLOBALS.format) + @"\end{center} $$";
+               @"\sqrt[2]{(" + GLOBALS.SelectedVec.GetComponent<VectorPropertiesM3>().relativeVec.x.ToString(GLOBALS.format) + ")^2 + (" + GLOBALS.SelectedVec.GetComponent<VectorPropertiesM3>().relativeVec.y.ToString(GLOBALS.format) + ")^2 + (" + (-1* GLOBALS.SelectedVec.GetComponent<VectorPropertiesM3>().relativeVec.z).ToString(GLOBALS.format) + ")^2 } " +
+               " = " + GLOBALS.SelectedVec.GetComponent<VectorPropertiesM3>().relativeVec.magnitude.ToString(GLOBALS.format) + @"\end{center} $$";
     }
 
     public void SystemOfEqs()
     {
         Vector3 relVec;
-        if (bp3.bIsViewer) { relVec = bp3.adjPOCPos - GLOBALS.SelectedVec.GetComponent<VectorControlM3>().photonPos; }
-        else { relVec = bp3.adjPOCPos - GLOBALS.SelectedVec.GetComponent<VectorControlM3>().relTailPos; }
+        relVec = GLOBALS.SelectedVec.GetComponent<VectorPropertiesM3>().relativeVec;
 
         textLine[0].gameObject.SetActive(false);
             textLine[1].gameObject.SetActive(false);
@@ -118,7 +142,7 @@ public class CalculationsPanelM3 : MonoBehaviour
             { 
                 textLine[2].text += @"\par \bf F_" + GLOBALS.unknownVecs[i].GetComponent<VectorPropertiesM3>().gameObject.name.Substring(12) + " = | "
                 + "F_" + GLOBALS.unknownVecs[i].GetComponent<VectorPropertiesM3>().gameObject.name.Substring(12) + " | * ( " //GLOBALS.unknownVecs[i].GetComponent<VectorPropertiesM3>().forceValue + " * ("
-                + GLOBALS.unknownVecs[i].x.ToString(GLOBALS.format) + "i " + addSign(GLOBALS.unknownUVecs[i].y)
+                + GLOBALS.unknownUVecs[i].x.ToString(GLOBALS.format) + "i " + addSign(GLOBALS.unknownUVecs[i].y)
                 + Math.Abs(GLOBALS.unknownUVecs[i].y).ToString(GLOBALS.format) + "j " + addSign(GLOBALS.unknownUVecs[i].z)
                 + Math.Abs(GLOBALS.unknownUVecs[i].z).ToString(GLOBALS.format) + "k"
                 + ")";

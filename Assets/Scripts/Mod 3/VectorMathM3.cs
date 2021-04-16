@@ -71,11 +71,12 @@ public class VectorMathM3 : MonoBehaviour
             //vectors[v].SetEnabledLabels(false, true, false, false);
             GLOBALS.headPos = loc;
             GLOBALS.tailPos = GetComponent<BeamPlacementM3>().pocPos;
-
+         //   GetComponent<VectorPropertiesM3>().relativeVec = loc - GLOBALS.pocPos; 
         }
         else //if inputting the tail, snap the head
         {
             vectors[v].transform.position = loc;
+
             Console.WriteLine("loc " + loc);
             switch (v) {
                 case 0:
@@ -98,7 +99,8 @@ public class VectorMathM3 : MonoBehaviour
             } 
 
             vectors[v].GetComponent<VectorControlM3>()._head.position = GetComponent<BeamPlacementM3>().pocPos;
-
+            //GetComponent<VectorPropertiesM3>().relativeVec = vectors[v].GetComponent<VectorControlM3>().relHeadPos - vectors[v].transform.localPosition;
+          //  Console.WriteLine("relative vec = " + vectors[v].GetComponent<VectorControlM3>().relHeadPos.ToString(GLOBALS.format) + " - " + vectors[v].transform.localPosition.ToString(GLOBALS);
             Console.WriteLine("raising flag for v" + v);
             RaiseFlagsForHeadTailLabels(v, true, loc);
             // vectors[v].SetEnabledLabels(true, false, false, false);
@@ -366,6 +368,7 @@ public class VectorMathM3 : MonoBehaviour
             { GLOBALS.unknownUVecs[0].z, GLOBALS.unknownUVecs[1].z, GLOBALS.unknownUVecs[2].z, GLOBALS.forceVector.z },
         };
 
+        Console.WriteLine("system solution: " + Fsystem.ToString());
         return Fsystem;
     }
 

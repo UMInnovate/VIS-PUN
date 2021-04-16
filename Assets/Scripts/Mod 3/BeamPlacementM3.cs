@@ -25,6 +25,7 @@ public class BeamPlacementM3 : MonoBehaviour
     #endregion
 
     #region Private member variables
+    
     [HideInInspector] public Vector3 pocPos;
     // Content root
     private GameObject _root;
@@ -238,12 +239,13 @@ public class BeamPlacementM3 : MonoBehaviour
              //       calcPanel.SetActive(true);
                     break;
                 case Stage.m3keypad:
+                    
+                    break;
+                case Stage.m3view:
                     calcPanel.SetActive(true);
                     bCalc1 = true;
                     calcPanel.GetComponent<CalculationsPanelM3>().ComponentCalcs();
                     calcPanel.GetComponent<CalculationsPanelM3>().MagCalcs();
-                    break;
-                case Stage.m3view:
                     switch (GLOBALS.chosenVecInt)
                     {
                         case 0: //a is chosen

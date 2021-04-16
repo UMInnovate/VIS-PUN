@@ -8,6 +8,7 @@ using UnityEngine.XR.MagicLeap;
 public class 
     VectorPropertiesM3 : MonoBehaviour
 {
+    public Vector3 relativeVec;
     [HideInInspector]
     public bool isValidPlacement; //is the head or tail component colliding?
 
@@ -89,29 +90,43 @@ public class
         MLInput.OnTriggerDown += OnTriggerDown;
     }
 
+    //relative vec is HEAD - TAIL
+
     public void BuildForceVector()
     {
-        Vector3 relVec; 
-        if (beamPlacement.bIsViewer)
+
+        if (GetComponent<VectorControlM3>().canPlaceHead) //head was placed, tail is POC, so we do reltailpos - adjpocpos
         {
-            relVec = beamPlacement.adjPOCPos - GetComponent<VectorControlM3>().photonPos;
-            Debug.Log(relVec.ToString(GLOBALS.format));
-            float floatrelMag = relVec.magnitude;
-            uVec = new Vector3(relVec.x / floatrelMag, relVec.y / floatrelMag, -1*relVec.z / floatrelMag);
+            if (beamPlacement.bIsViewer)
+            {
+                relativeVec = GetComponent<VectorControlM3>().photonPos - beamPlacement.adjPOCPos;
+            }
+            else
+            {
+                relativeVec = (GetComponent<VectorControlM3>()._head.position - GLOBALS.pocPos) - beamPlacement.adjPOCPos;
+                Console.WriteLine("my relhead= " + (GetComponent<VectorControlM3>()._head.position - GLOBALS.pocPos).ToString(GLOBALS.format));
+                Console.WriteLine("RELHEAD FROM VC  " + GetComponent<VectorControlM3>().relHeadPos.ToString("F2"));
 
-
-            GLOBALS.unknownUVecs.Add(uVec); //unknownUVecs holds a list of unit vectors that dont have given force vals
-            GLOBALS.unknownVecs.Add(gameObject);
+                //Console.WriteLine("relative vec is " + GetComponent<VectorControlM3>().relHeadPos.ToString(GLOBALS.format) + " - " + beamPlacement.adjPOCPos.ToString("F2"));
+            }
         }
         else
         {
-            relVec = beamPlacement.adjPOCPos - GetComponent<VectorControlM3>().relTailPos;
-            Debug.Log(relVec.ToString(GLOBALS.format));
-            float floatrelMag = relVec.magnitude;
-            uVec = new Vector3(relVec.x / floatrelMag, relVec.y / floatrelMag, -1*relVec.z / floatrelMag);
-            //GLOBALS.unknownUVecs.Add(uVec); //unknownUVecs holds a list of unit vectors that dont have given force vals
-           // GLOBALS.unknownVecs.Add(gameObject);
+            if (beamPlacement.bIsViewer)
+            {
+                relativeVec = beamPlacement.adjPOCPos - GetComponent<VectorControlM3>().photonPos;
+            }
+            else
+            {
+                relativeVec = beamPlacement.adjPOCPos - GetComponent<VectorControlM3>().relTailPos;
+                Console.WriteLine("relative vec is " + beamPlacement.adjPOCPos.ToString(GLOBALS.format) + " - " + GetComponent<VectorControlM3>().relTailPos.ToString(GLOBALS.format));
+            }
         }
+
+        Console.WriteLine("relativevec: " + relativeVec.ToString(GLOBALS.format));
+        float floatrelMag = relativeVec.magnitude;
+        uVec = new Vector3(relativeVec.x / floatrelMag, relativeVec.y / floatrelMag, -1 * relativeVec.z / floatrelMag);
+
         if (isGivenForceValue)
         {
             forceVec = forceValue * uVec;
@@ -120,7 +135,7 @@ public class
         }
         else
         {
-            GLOBALS.unknownUVecs.Add(relVec); //unknownUVecs holds a list of unit vectors that dont have given force vals
+            GLOBALS.unknownUVecs.Add(uVec); //unknownUVecs holds a list of unit vectors that dont have given force vals
             GLOBALS.unknownVecs.Add(gameObject);
         }
     }
