@@ -2,9 +2,9 @@
 // ---------------------------------------------------------------------
 // %COPYRIGHT_BEGIN%
 //
-// Copyright (c) 2018-present, Magic Leap, Inc. All Rights Reserved.
-// Use of this file is governed by the Creator Agreement, located
-// here: https://id.magicleap.com/creator-terms
+// Copyright (c) 2019-present, Magic Leap, Inc. All Rights Reserved.
+// Use of this file is governed by the Developer Agreement, located
+// here: https://auth.magicleap.com/terms/developer
 //
 // %COPYRIGHT_END%
 // ---------------------------------------------------------------------
@@ -13,37 +13,50 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.XR.MagicLeap;
+using System.Collections.Generic;
+using MagicLeap.Core;
 
 namespace MagicLeap
 {
     /// <summary>
     /// This class displays the current world scale information
-    /// and allows the user to adjust the distance of the marker
-    /// within the range of (0.25 Meters - 1.00 Meters).
+    /// and allows the user to adjust the position marker between
+    /// the different markers in the ruler.
     /// </summary>
     public class WorldScaleExample : MonoBehaviour
     {
-        #region Private Variables
+        [SerializeField, Tooltip("The world scale scene component attached to the main camera.")]
+        private MLWorldScaleBehavior _worldScale = null;
+
         [SerializeField, Tooltip("The reference to the controller connection handler in the scene.")]
-        private ControllerConnectionHandler _controllerConnectionHandler = null;
+        private MLControllerConnectionHandlerBehavior _controllerConnectionHandler = null;
 
         [SerializeField, Tooltip("Text to display the current distance and world scale.")]
-        private Text _statusLabel = null;
+        private Text _statusText = null;
 
-        [SerializeField, Tooltip("The Transform of the visual marker, which is attached to the end of the line.")]
-        private Transform _marker = null;
+        [SerializeField, Tooltip("Ruler object to get marker position data from.")]
+        private Ruler _ruler = null;
 
-        [SerializeField, Tooltip("The world scale scene component attached to the main camera.")]
-        private WorldScale _worldScale = null;
+        [SerializeField, Tooltip("The Transform of the position marker that indicates the current position in the ruler.")]
+        private Transform _positionMarker = null;
 
-        private const float ADJUSTMENT_DISTANCE_METERS = 0.25f;
-        private const float MINIMUM_DISTANCE_METERS = 0.25f;
-        private const float MAXIMUM_DISTANCE_METERS = 1;
-        #endregion
+        private float[] _marks = null;
+        private int _currentMarkIndex = 0;
 
-        #region Unity Methods
+        private const float POSITION_MARKER_Y_OFFSET = 0.03f;
+
+        /// <summary>
+        /// Register callbacks, assure all required variables are set and set position marker to start position.
+        /// </summary>
         void Start()
         {
+            if(_worldScale == null)
+            {
+                Debug.LogError("Error: WorldScaleExample._worldScale is not set, disabling script.");
+                enabled = false;
+                return;
+            }
+
             if (_controllerConnectionHandler == null)
             {
                 Debug.LogError("Error: WorldScaleExample._controllerConnectionHandler is not set, disabling script.");
@@ -51,60 +64,138 @@ namespace MagicLeap
                 return;
             }
 
-            if (_statusLabel == null)
+            if (_statusText == null)
             {
-                Debug.LogError("Error: WorldScaleExample._statusLabel is not set, disabling script.");
+                Debug.LogError("Error: WorldScaleExample._statusText is not set, disabling script.");
                 enabled = false;
                 return;
             }
 
-            if (_marker == null)
+            if (_ruler == null)
             {
-                Debug.LogError("Error: WorldScaleExample._marker is not set, disabling script.");
+                Debug.LogError("Error: WorldScaleExample._ruler is not set, disabling script.");
                 enabled = false;
                 return;
             }
 
+            if (_positionMarker == null)
+            {
+                Debug.LogError("Error: WorldScaleExample._positionMarker is not set, disabling script.");
+                enabled = false;
+                return;
+            }
+
+            _marks = _ruler.Marks;
+            if (_marks.Length > 0)
+            {
+                _currentMarkIndex = _marks.Length - 1;
+                _positionMarker.localPosition = new Vector3(0, POSITION_MARKER_Y_OFFSET, _marks[_currentMarkIndex]);
+            }
+
+            _worldScale.OnUpdateEvent += _ruler.OnWorldScaleUpdate;
+
+            #if PLATFORM_LUMIN
             // Register listeners.
+            MLInput.OnControllerButtonDown += HandleOnButtonDown;
             MLInput.OnControllerTouchpadGestureStart += HandleOnTouchpadGestureStart;
+            #endif
         }
 
+        /// <summary>
+        /// Unregister callbacks.
+        /// </summary>
         void OnDestroy()
         {
+            #if PLATFORM_LUMIN
             // Unregister listeners.
             MLInput.OnControllerTouchpadGestureStart -= HandleOnTouchpadGestureStart;
+            MLInput.OnControllerButtonDown -= HandleOnButtonDown;
+            #endif
+
+            _worldScale.OnUpdateEvent -= _ruler.OnWorldScaleUpdate;
         }
 
+        /// <summary>
+        /// Update status data with new information.
+        /// </summary>
         void Update()
         {
-            _statusLabel.text = string.Format(
-                "Scale:\t\t\t{0}\n" +
-                "Distance:\t{1} {2}", _worldScale.Scale, _marker.localPosition.z * _worldScale.Scale, _worldScale.Units);
-        }
-        #endregion
+            _statusText.text = string.Format("<color=#dbfb76><b>{0} {1}</b></color>\n{2}: {3}\n\n",
+                LocalizeManager.GetString("Controller"),
+                LocalizeManager.GetString("Data"),
+                LocalizeManager.GetString("Status"),
+                LocalizeManager.GetString(ControllerStatus.Text));
 
-        #region Event Handlers
-        private void HandleOnTouchpadGestureStart(byte controllerId, MLInputControllerTouchpadGesture gesture)
+            _statusText.text += string.Format(
+                "<color=#dbfb76><b>{0} {1} {2}</b></color>\n{3}: {4}\n{5}:{6}\n{7}:{8} {9}",
+                LocalizeManager.GetString("World"),
+                LocalizeManager.GetString("Scale"),
+                LocalizeManager.GetString("Data"),
+                LocalizeManager.GetString("Measurement"),
+                _worldScale.Measurement.ToString(),
+                LocalizeManager.GetString("Scale"),
+                _worldScale.Scale,
+                LocalizeManager.GetString("Distance"),
+                _positionMarker.localPosition.z * _worldScale.Scale,
+                _worldScale.Units);
+        }
+
+        /// <summary>
+        /// Handles the event for button down.
+        /// </summary>
+        /// <param name="controller_id">The id of the controller.</param>
+        /// <param name="button">The button that is being pressed.</param>
+        private void HandleOnButtonDown(byte controllerId, MLInput.Controller.Button button)
         {
-            if (_controllerConnectionHandler.IsControllerValid(controllerId) && gesture.Type == MLInputControllerTouchpadGestureType.Swipe)
+            if (_controllerConnectionHandler.IsControllerValid(controllerId) && button == MLInput.Controller.Button.Bumper)
+            {
+                switch (_worldScale.Measurement)
+                {
+                    case MLWorldScaleBehavior.ScaleMeasurement.Meters:
+                        _worldScale.Measurement = MLWorldScaleBehavior.ScaleMeasurement.Decimeters;
+                        break;
+                    case MLWorldScaleBehavior.ScaleMeasurement.Decimeters:
+                        _worldScale.Measurement = MLWorldScaleBehavior.ScaleMeasurement.Centimeters;
+                        break;
+                    case MLWorldScaleBehavior.ScaleMeasurement.Centimeters:
+                        _worldScale.Measurement = MLWorldScaleBehavior.ScaleMeasurement.CustomUnits;
+                        break;
+                    case MLWorldScaleBehavior.ScaleMeasurement.CustomUnits:
+                        _worldScale.Measurement = MLWorldScaleBehavior.ScaleMeasurement.Meters;
+                        break;
+                    default:
+                        Debug.LogError("Error: WorldScaleExample measurement type is an invalid value, disabling script.");
+                        enabled = false;
+                        return;
+                }
+
+                _worldScale.UpdateWorldScale();
+            }
+        }
+
+        /// <summary>
+        /// Handles the event for touchpad gesture start.
+        /// </summary>
+        /// <param name="controllerId">The id of the controller.</param>
+        /// <param name="gesture">The type of gesture that started.</param>
+        private void HandleOnTouchpadGestureStart(byte controllerId, MLInput.Controller.TouchpadGesture gesture)
+        {
+            #if PLATFORM_LUMIN
+            if (_controllerConnectionHandler.IsControllerValid(controllerId) && gesture.Type == MLInput.Controller.TouchpadGesture.GestureType.Swipe)
             {
                 // Increase / Decrease the marker distance based on the swipe gesture.
-                if (gesture.Direction == MLInputControllerTouchpadGestureDirection.Up)
+                if (gesture.Direction == MLInput.Controller.TouchpadGesture.GestureDirection.Up || gesture.Direction == MLInput.Controller.TouchpadGesture.GestureDirection.Down)
                 {
-                    if (_marker.localPosition.z < MAXIMUM_DISTANCE_METERS)
+                    if (_marks.Length > 0)
                     {
-                        _marker.localPosition = new Vector3(0, 0, _marker.localPosition.z + ADJUSTMENT_DISTANCE_METERS);
-                    }
-                }
-                else if (gesture.Direction == MLInputControllerTouchpadGestureDirection.Down)
-                {
-                    if (_marker.localPosition.z > MINIMUM_DISTANCE_METERS)
-                    {
-                        _marker.localPosition = new Vector3(0, 0, _marker.localPosition.z - ADJUSTMENT_DISTANCE_METERS);
+                        _currentMarkIndex = (gesture.Direction == MLInput.Controller.TouchpadGesture.GestureDirection.Up) ?
+                                            Mathf.Min(_currentMarkIndex + 1, _marks.Length - 1) :
+                                            Mathf.Max(_currentMarkIndex - 1, 0);
+                        _positionMarker.localPosition = new Vector3(0, POSITION_MARKER_Y_OFFSET, _marks[_currentMarkIndex]);
                     }
                 }
             }
+            #endif
         }
-        #endregion
     }
 }

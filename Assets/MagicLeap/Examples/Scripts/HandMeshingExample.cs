@@ -2,24 +2,23 @@
 // ---------------------------------------------------------------------
 // %COPYRIGHT_BEGIN%
 //
-// Copyright (c) 2018-present, Magic Leap, Inc. All Rights Reserved.
-// Use of this file is governed by the Creator Agreement, located
-// here: https://id.magicleap.com/creator-terms
+// Copyright (c) 2019-present, Magic Leap, Inc. All Rights Reserved.
+// Use of this file is governed by the Developer Agreement, located
+// here: https://auth.magicleap.com/terms/developer
 //
 // %COPYRIGHT_END%
 // ---------------------------------------------------------------------
 // %BANNER_END%
 
-using System;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.XR.MagicLeap;
+using MagicLeap.Core.StarterKit;
 
 namespace MagicLeap
 {
     public class HandMeshingExample : MonoBehaviour
     {
-        #region Public Enum
         /// <summary>
         /// Different Render Modes for the Hand Meshing Example
         /// </summary>
@@ -30,9 +29,7 @@ namespace MagicLeap
             Wireframe,
             Paused
         }
-        #endregion
 
-        #region Private Properties
         [SerializeField, Tooltip("The Hand Meshing Behavior to control")]
         private MLHandMeshingBehavior _behavior = null;
 
@@ -49,10 +46,10 @@ namespace MagicLeap
         private float _secondsBetweenModes = 2;
 
         [SerializeField, Tooltip("Key Pose to switch render modes")]
-        private MLHandKeyPose _keyposeToSwitch = MLHandKeyPose.Ok;
+        private MLHandTracking.HandKeyPose _keyposeToSwitch = MLHandTracking.HandKeyPose.Ok;
 
         [SerializeField, Tooltip("Status Text")]
-        private Text _status = null;
+        private Text _statusText = null;
 
         [SerializeField, Tooltip("Switching tooltip text")]
         private TextMesh _switchTooltip = null;
@@ -60,9 +57,7 @@ namespace MagicLeap
         private const float _minimumConfidence = 0.8f;
         private float _timer = 0;
         private RenderMode _mode = RenderMode.Occlusion;
-        #endregion
 
-        #region Unity Methods
         /// <summary>
         /// Validate and initialize properties
         /// </summary>
@@ -96,7 +91,7 @@ namespace MagicLeap
                 return;
             }
 
-            if (_status == null)
+            if (_statusText == null)
             {
                 Debug.LogError("Error: HandMeshingExample._status is not set, disabling script.");
                 enabled = false;
@@ -111,29 +106,29 @@ namespace MagicLeap
             }
             _switchTooltip.gameObject.SetActive(false);
 
-            // Note: MLHands is not necessary to use Hand Meshing.
+            // Note: MLHandTracking API is not necessary to use Hand Meshing.
             // It is only used for switching the render modes in this example.
-            MLResult result = MLHands.Start();
+            MLResult result = MLHandTrackingStarterKit.Start();
+
+            #if PLATFORM_LUMIN
             if (!result.IsOk)
             {
-                Debug.LogError("Error: HandMeshingExample failed to start MLHands, disabling script.");
+                Debug.LogError("Error: HandMeshingExample failed on MLHandTrackingStarterKit.Start, disabling script.");
                 enabled = false;
                 return;
             }
-            MLHands.KeyPoseManager.EnableKeyPoses(new [] { _keyposeToSwitch }, true, true);
-            MLHands.KeyPoseManager.SetPoseFilterLevel(MLPoseFilterLevel.ExtraRobust);
-            MLHands.KeyPoseManager.SetKeyPointsFilterLevel(MLKeyPointFilterLevel.ExtraSmoothed);
+            #endif
+
+            MLHandTrackingStarterKit.EnableKeyPoses(true, _keyposeToSwitch);
+            MLHandTrackingStarterKit.SetPoseFilterLevel(MLHandTracking.PoseFilterLevel.ExtraRobust);
+            MLHandTrackingStarterKit.SetKeyPointsFilterLevel(MLHandTracking.KeyPointFilterLevel.ExtraSmoothed);
 
             _timer = _secondsBetweenModes;
         }
 
         void OnDestroy()
         {
-            if (MLHands.IsStarted)
-            {
-                MLHands.KeyPoseManager.DisableAllKeyPoses();
-                MLHands.Stop();
-            }
+            MLHandTrackingStarterKit.Stop();
         }
 
         /// <summary>
@@ -141,6 +136,8 @@ namespace MagicLeap
         /// </summary>
         void Update()
         {
+            UpdateStatusText();
+
             if (!IsSwitchingModes())
             {
                 _timer = _secondsBetweenModes;
@@ -160,19 +157,25 @@ namespace MagicLeap
             _mode = GetNextRenderMode();
 
             UpdateHandMeshingBehavior();
-            UpdateStatusText();
         }
-        #endregion
 
-        #region Private Methods
         private bool IsSwitchingModes()
         {
-            return (MLHands.Right.KeyPose == _keyposeToSwitch && MLHands.Right.KeyPoseConfidence > _minimumConfidence);
+            #if PLATFORM_LUMIN
+            return (MLHandTrackingStarterKit.Right.KeyPose == _keyposeToSwitch && MLHandTrackingStarterKit.Right.HandKeyPoseConfidence > _minimumConfidence);
+            #else
+            return false;
+            #endif
         }
 
         private void UpdateStatusText()
         {
-            _status.text = string.Format("Current Render Mode: <color=green>{0}</color>", _mode);
+            _statusText.text = string.Format("<color=#dbfb76><b>{0} </b></color>\n{1}: {2}\n",
+                LocalizeManager.GetString("ControllerData"),
+                LocalizeManager.GetString("Status"),
+                LocalizeManager.GetString(ControllerStatus.Text));
+
+            _statusText.text += string.Format("\n<color=#dbfb76><b>{0} </b></color>\n {1}: <color=green>{2}</color>", LocalizeManager.GetString("HandMeshData"), LocalizeManager.GetString("CurrentRenderMode"), LocalizeManager.GetString(_mode.ToString()));
         }
 
         private RenderMode GetNextRenderMode()
@@ -182,9 +185,15 @@ namespace MagicLeap
 
         private void UpdateSwitchTooltip()
         {
-            _switchTooltip.transform.position = MLHands.Right.Thumb.KeyPoints[0].Position;
-            _switchTooltip.text = string.Format("Switching to <color=yellow>{0}</color> in {1} seconds",
-                GetNextRenderMode(), _timer.ToString("0.0"));
+            #if PLATFORM_LUMIN
+            _switchTooltip.transform.position = MLHandTrackingStarterKit.Right.Thumb.KeyPoints[0].Position;
+            #endif
+
+            _switchTooltip.text = string.Format("{0}<color=yellow>{1}</color> {2} {3} seconds",
+                LocalizeManager.GetString("Switchingto"),
+                GetNextRenderMode(),
+                LocalizeManager.GetString("In"),
+                _timer.ToString("0.0"));
         }
 
         private void UpdateHandMeshingBehavior()
@@ -206,6 +215,5 @@ namespace MagicLeap
                     break;
             }
         }
-        #endregion
     }
 }

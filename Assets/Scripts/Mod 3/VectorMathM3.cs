@@ -71,11 +71,12 @@ public class VectorMathM3 : MonoBehaviour
             //vectors[v].SetEnabledLabels(false, true, false, false);
             GLOBALS.headPos = loc;
             GLOBALS.tailPos = GetComponent<BeamPlacementM3>().pocPos;
-
+         //   GetComponent<VectorPropertiesM3>().relativeVec = loc - GLOBALS.pocPos; 
         }
         else //if inputting the tail, snap the head
         {
             vectors[v].transform.position = loc;
+
             Console.WriteLine("loc " + loc);
             switch (v) {
                 case 0:
@@ -98,7 +99,8 @@ public class VectorMathM3 : MonoBehaviour
             } 
 
             vectors[v].GetComponent<VectorControlM3>()._head.position = GetComponent<BeamPlacementM3>().pocPos;
-
+            //GetComponent<VectorPropertiesM3>().relativeVec = vectors[v].GetComponent<VectorControlM3>().relHeadPos - vectors[v].transform.localPosition;
+          //  Console.WriteLine("relative vec = " + vectors[v].GetComponent<VectorControlM3>().relHeadPos.ToString(GLOBALS.format) + " - " + vectors[v].transform.localPosition.ToString(GLOBALS);
             Console.WriteLine("raising flag for v" + v);
             RaiseFlagsForHeadTailLabels(v, true, loc);
             // vectors[v].SetEnabledLabels(true, false, false, false);
@@ -107,41 +109,7 @@ public class VectorMathM3 : MonoBehaviour
 
         }
 
-
         vectors[v].gameObject.SetActive(true);
-
-        //Building the relative vector
-        if (vectors[v].GetComponent<VectorPropertiesM3>().isHeadCollidingWithPOC)
-        {
-            if (GetComponent<BeamPlacementM3>().bIsViewer)
-            {
-                vectors[v].GetComponent<VectorPropertiesM3>().relativeVec = GetComponent<BeamPlacementM3>().adjPOCPos - GLOBALS.SelectedVec.GetComponent<VectorControlM3>().photonPos;
-                Console.WriteLine("REL VEC: " + GetComponent<BeamPlacementM3>().adjPOCPos + " - " + GLOBALS.SelectedVec.GetComponent<VectorControlM3>().photonPos + " = " + vectors[v].GetComponent<VectorPropertiesM3>().relativeVec);
-            }
-            else
-            {
-                vectors[v].GetComponent<VectorPropertiesM3>().relativeVec = GetComponent<BeamPlacementM3>().pocPos - vectors[v].GetComponent<VectorControlM3>().relTailPos;
-                Console.WriteLine("REL VEC: " + GetComponent<BeamPlacementM3>().pocPos + " - " + vectors[v].GetComponent<VectorControlM3>().relTailPos + " = " + vectors[v].GetComponent<VectorPropertiesM3>().relativeVec);
-            }
-
-        }
-        else
-        {
-            if (GetComponent<BeamPlacementM3>().bIsViewer)
-            {
-                vectors[v].GetComponent<VectorPropertiesM3>().relativeVec = GLOBALS.SelectedVec.GetComponent<VectorControlM3>().photonPos - GetComponent<BeamPlacementM3>().adjPOCPos;
-                Console.WriteLine("REL VEC: " + GLOBALS.SelectedVec.GetComponent<VectorControlM3>().photonPos + " - " + GetComponent<BeamPlacementM3>().adjPOCPos + " = " + vectors[v].GetComponent<VectorPropertiesM3>().relativeVec);
-            }
-            else
-            {
-                vectors[v].GetComponent<VectorPropertiesM3>().relativeVec = vectors[v].GetComponent<VectorControlM3>().relTailPos - GetComponent<BeamPlacementM3>().pocPos;
-                Console.WriteLine("REL VEC: " + vectors[v].GetComponent<VectorControlM3>().relTailPos + " - " + GetComponent<BeamPlacementM3>().pocPos + " = " + vectors[v].GetComponent<VectorPropertiesM3>().relativeVec);
-            }
-        }
-
-
-
-
     }
 
     /// <summary>
@@ -400,6 +368,7 @@ public class VectorMathM3 : MonoBehaviour
             { GLOBALS.unknownUVecs[0].z, GLOBALS.unknownUVecs[1].z, GLOBALS.unknownUVecs[2].z, GLOBALS.forceVector.z },
         };
 
+        Console.WriteLine("system solution: " + Fsystem.ToString());
         return Fsystem;
     }
 

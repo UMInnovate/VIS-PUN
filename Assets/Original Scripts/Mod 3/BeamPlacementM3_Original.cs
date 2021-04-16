@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.MagicLeap;
@@ -33,13 +33,13 @@ public class BeamPlacementM3_Original : MonoBehaviour
     // Origin of coordinate system
     private GameObject _origin;
     //Point of concurrency of system
-    private GameObject _poc; 
+    private GameObject _poc;
     // Input controller
-    private MLInputController _controller = null;
+    private MLInput.Controller _controller = null;
     // LineRenderer from controller
     private LineRenderer _beamline = null;
     // VectorMath handles vector positioning
-    private VectorMath_Original _vectorMath = null;
+    private VectorMathM3_Original _vectorMath = null;
     // Position of end of the beam
     private Vector3 beamEnd;
     // Sphere object at end of beam
@@ -61,6 +61,9 @@ public class BeamPlacementM3_Original : MonoBehaviour
     // Is a menu being displayed?
     private bool aMenuIsActive;
     private int debugCount;
+
+
+    private bool firstTimeInFSel;
     #endregion
 
     void Start()
@@ -73,7 +76,7 @@ public class BeamPlacementM3_Original : MonoBehaviour
         _controller = MLInput.GetController(MLInput.Hand.Left);
         _beamline = GetComponent<LineRenderer>();
         _beamSphere = GameObject.Find("BeamSphere");
-        _vectorMath = GetComponent<VectorMath_Original>();
+        _vectorMath = GetComponent<VectorMathM3_Original>();
         _giveInstructions = GetComponent<GiveInstructions>();
         vec = 0;
         GLOBALS.stage = Stage.m3orig;
@@ -92,26 +95,27 @@ public class BeamPlacementM3_Original : MonoBehaviour
         placingHead = false;
         _giveInstructions.DisplayText();
         debugCount = 0;
-
+        GLOBALS.count = 0;
     }
 
     void Update()
     {
-       // Debug.Log("STAGE: " + GLOBALS.stage);
+        // Debug.Log("STAGE: " + GLOBALS.stage);
         aMenuIsActive = (operationsPanel.activeSelf || menuPanel.activeSelf);
         if (GLOBALS.gridOn)
             SnapToGrid();
         HandleBeamPlacement();
         HandleTouchpadInput();
+        _giveInstructions.DisplayText();
 
         pocPos = _poc.transform.position;
-       // Debug.Log("POC POS: " + pocPos);
+        // Debug.Log("POC POS: " + pocPos);
         // if placingHead, have vector head follow beam
         if (placingHead && !aMenuIsActive)
         {
             _vectorMath.PlaceVector3(vec, true, beamEnd);
         }
-        
+
         // Debug.Log("Vector is valid: " + GLOBALS.isCorrectVectorPlacement);
     }
 
@@ -128,7 +132,7 @@ public class BeamPlacementM3_Original : MonoBehaviour
 
     public void DecrementStage()
     {
-            GLOBALS.stage--;
+        GLOBALS.stage--;
 
     }
 
@@ -156,7 +160,7 @@ public class BeamPlacementM3_Original : MonoBehaviour
     {
         if (!aMenuIsActive)
         {
-           
+
             switch (GLOBALS.stage)
             {
                 case Stage.m3orig:
@@ -222,35 +226,63 @@ public class BeamPlacementM3_Original : MonoBehaviour
                     IncrementStage();
                     break;
                 case Stage.m3forcesel:
-                    keypad.SetActive(true);
+                    calcPanel.GetComponent<CalculationsPanel>().StartCalculationsSequence();
+                    calcPanel.SetActive(true);
+                    //keypad.SetActive(true);
                     break;
                 case Stage.m3keypad:
+                    calcPanel.GetComponent<CalculationsPanel>().ComponentCalcs();
+                    calcPanel.GetComponent<CalculationsPanel>().MagCalcs();
                     break;
                 case Stage.m3view:
-                    Debug.Log("trigg in m3view");
-                   calcPanel.SetActive(true);
-                    calcPanel.GetComponent<CalculationsPanel>().StartCalculationsSequence();
+                    //  Debug.Log("trigg in m3view");
+                    //GLOBALS.firstVec = false;
+                    calcPanel.GetComponent<CalculationsPanel>().ComponentCalcs();
+                    calcPanel.GetComponent<CalculationsPanel>().MagCalcs();
+
+                    //Summary: Checks how many vectors have been given forces. If all forces have been entered increment stage
+                    //otherwise repeat force selection by decrementing stage twice
+                    Debug.Log("Globals.count is: " + GLOBALS.count);
+                    //Debug.Log("in m3view- our given force vector is: " + GLOBALS.GivenForceVec.gameObject.name);
+                    if (GLOBALS.count < 4)
+                    {
+                        DecrementStage();
+                        DecrementStage();
+                    }
+                    else
+                    {
+                        GLOBALS.stage++;
+                        GetComponent<VectorMathM3_Original>().SolveSystemOfEquations();
+                    }
+                    break;
+                case Stage.m3forceview:
+                    //calcPanel.GetComponent<CalculationsPanel>().SystemOfEqs();
+                    GetComponent<VectorMathM3_Original>().ValidateForceSystem();
+                    //  calcPanel.GetComponent<CalculationsPanel>().SystemOfEqs();
+                    //calcPanel.GetComponent<CalculationsPanel>().ShowCorrectFVecs();
                     GLOBALS.stage++;
                     break;
-                case Stage.m3highlight:
-                    Debug.Log("in m3highlight");
-                    if (!GetComponent<VectorMathM3_Original>().vectors[vec].GetComponent<VectorProperties>().isForceKnown)
-                            GetComponent<VectorMathM3_Original>().vectors[vec].GetComponent<VectorControlM3_Original>().vecColor = Color.white;
-                        else
-                            vec++;
+                case Stage.m3forcesys:
+                    calcPanel.GetComponent<CalculationsPanel>().LinearCalc();
+                    GLOBALS.stage++;
+                    break;
+                case Stage.m3validateview:
+                    calcPanel.GetComponent<CalculationsPanel>().isValid();
                     break;
                 default:
                     return;
             }
         }
+
+        Debug.Log("Current stage: " + GLOBALS.stage);
     }
 
 
 
-    // Home or Bumper clicks handled here
-    private void OnButtonUp(byte controllerId, MLInputControllerButton button)
+    // Home or Bumper click handled here
+    private void OnButtonUp(byte controllerId, MLInput.Controller.Button button)
     {
-        if (button == MLInputControllerButton.HomeTap)
+        if (button == MLInput.Controller.Button.HomeTap)
         {
             // if opening up the menu, make sure there is a beam and no instructions
             if (!menuPanel.activeSelf)
@@ -263,7 +295,7 @@ public class BeamPlacementM3_Original : MonoBehaviour
             // display instructions only when no menu
             _giveInstructions.EnableText(!menuPanel.activeSelf);
         }
-        else if (button == MLInputControllerButton.Bumper)
+        else if (button == MLInput.Controller.Button.Bumper)
         {
             // If we're viewing the completed operation, bumper will toggle the labels we are viewing
             if (GLOBALS.stage == Stage.m3view)
@@ -301,12 +333,12 @@ public class BeamPlacementM3_Original : MonoBehaviour
             // Touchpad handles rotating the origin
             if (GLOBALS.stage == Stage.m3rotate)
             {
-                switch (_controller.TouchpadGesture.Direction)
+                switch (_controller.CurrentTouchpadGesture.Direction)
                 {
-                    case MLInputControllerTouchpadGestureDirection.Clockwise:
+                    case MLInput.Controller.TouchpadGesture.GestureDirection.Clockwise:
                         _root.transform.RotateAround(_origin.transform.position, Vector3.up, 80f * Time.deltaTime);
                         break;
-                    case MLInputControllerTouchpadGestureDirection.CounterClockwise:
+                    case MLInput.Controller.TouchpadGesture.GestureDirection.CounterClockwise:
                         _root.transform.RotateAround(_origin.transform.position, Vector3.up, -80f * Time.deltaTime);
                         break;
                 }

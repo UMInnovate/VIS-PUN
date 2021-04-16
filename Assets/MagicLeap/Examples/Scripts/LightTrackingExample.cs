@@ -2,55 +2,45 @@
 // ---------------------------------------------------------------------
 // %COPYRIGHT_BEGIN%
 //
-// Copyright (c) 2018-present, Magic Leap, Inc. All Rights Reserved.
-// Use of this file is governed by the Creator Agreement, located
-// here: https://id.magicleap.com/creator-terms
+// Copyright (c) 2019-present, Magic Leap, Inc. All Rights Reserved.
+// Use of this file is governed by the Developer Agreement, located
+// here: https://auth.magicleap.com/terms/developer
 //
 // %COPYRIGHT_END%
 // ---------------------------------------------------------------------
 // %BANNER_END%
 
+using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
-
 using UnityEngine.XR.MagicLeap;
+using MagicLeap.Core.StarterKit;
 
 namespace MagicLeap
 {
     /// <summary>
-    /// This class handles the functionality of updating the scene based on the lighting conditions.
-    /// This includes the intensity, ambient intensity & color, and also updates the animation
-    /// of a plant model which react to the light intensity changes.
-    /// The UI also displays the detected light intensity level indicated in the top right.
+    /// The UI displays the detected light intensity level indicated.
     /// </summary>
-
-    [RequireComponent(typeof(PrivilegeRequester))]
     public class LightTrackingExample : MonoBehaviour
     {
-        #region Private Variables
         [SerializeField, Tooltip("The primary light that is used in the scene.")]
         private Light _light = null;
 
         [SerializeField, Tooltip("The image (filled) that is used to display the light intensity.")]
         private Image _lightIntensity = null;
 
-        [SerializeField, Tooltip("The model animator that will update based on the light intensity.")]
-        private Animator _animator = null;
+        [SerializeField, Tooltip("The text used to display status information for the example..")]
+        private Text _statusText = null;
 
-        [SerializeField, Tooltip("The cursor used to visualize the location of the plant.")]
-        private Transform _raycastCursor = null;
+        [SerializeField, Tooltip("The canvas used to diplay the light intensity meter.")]
+        private GameObject _lightTrackingCanvas = null;
 
-        [SerializeField, Tooltip("The transform of the plant model used in the scene.")]
-        private Transform _plantModel = null;
+        [SerializeField, Space, Tooltip("MLControllerConnectionHandlerBehavior reference.")]
+        private MLControllerConnectionHandlerBehavior _controllerConnectionHandler = null;
 
-        private Color _color = Color.clear;
-        private float _normalizedLuminance;
-        private float _maxLuminance = 0;
+        private Camera _camera = null;
 
-        private PrivilegeRequester _privilegeRequester = null;
-        #endregion
-
-        #region Unity Methods
         private void Start()
         {
             if (_light == null)
@@ -67,136 +57,110 @@ namespace MagicLeap
                 return;
             }
 
-            if (_animator == null)
+            if (_statusText == null)
             {
-                Debug.LogError("Error: LightTrackingExample._animator is not set, disabling script.");
+                Debug.LogError("Error: LightTrackingExample._statusText is not set, disabling script.");
                 enabled = false;
                 return;
             }
 
-            if (_plantModel == null)
+            if (_lightTrackingCanvas == null)
             {
-                Debug.LogError("Error: LightTrackingExample._plantModel is not set, disabling script.");
+                Debug.LogError("Error: LightTrackingExample._lightTrackingCanvas is not set, disabling script.");
                 enabled = false;
                 return;
             }
 
-            if (_raycastCursor == null)
+            if (_controllerConnectionHandler == null)
             {
-                Debug.LogError("Error: LightTrackingExample._raycastCursor is not set, disabling script.");
+                Debug.LogError("Error: LightTrackingExample._controllerConnectionHandler not set, disabling script.");
                 enabled = false;
                 return;
             }
 
-            _privilegeRequester = GetComponent<PrivilegeRequester>();
-
-            // Register Listeners
-            // Before enabling the camera, the scene must wait until the privileges have been granted.
-            _privilegeRequester.OnPrivilegesDone += HandleOnPrivilegesDone;
-            MLInput.OnControllerButtonDown += HandleOnButtonDown;
-        }
-
-        void OnDestroy()
-        {
-            // Unregister Listeners
-            _privilegeRequester.OnPrivilegesDone -= HandleOnPrivilegesDone;
-            MLInput.OnControllerButtonDown -= HandleOnButtonDown;
-
-            if (MLLightingTracker.IsStarted)
+            MLResult result = MLLightingTrackingStarterKit.Start();
+            #if PLATFORM_LUMIN
+            if (!result.IsOk)
             {
-                MLLightingTracker.Stop();
+                Debug.LogError("Error: LightTrackingExample failed to start MLLightingTrackingStarterKit, disabling script.");
+                enabled = false;
+                return;
             }
+            #endif
+
+            _camera = Camera.main;
+            UpdateStatus();
+
+            #if PLATFORM_LUMIN
+            MLInput.OnControllerButtonDown += OnButtonDown;
+            #endif
+
+            StartCoroutine(UpdateLightCanvas());
         }
 
         void Update()
         {
-            if (MLLightingTracker.IsStarted)
-            {
-                // Set the maximum observed luminance, so we can normalize it.
-                if (_maxLuminance < (MLLightingTracker.AverageLuminance / 3.0f))
-                {
-                    _maxLuminance = (MLLightingTracker.AverageLuminance / 3.0f);
-                }
-
-                _color = MLLightingTracker.GlobalTemperatureColor;
-                _normalizedLuminance = (float)(System.Math.Min(System.Math.Max((double)MLLightingTracker.AverageLuminance, 0.0), _maxLuminance) / _maxLuminance);
-
-                RenderSettings.ambientLight = _color;
-                RenderSettings.ambientIntensity = _normalizedLuminance;
-
-                // Adjust the light for the plant animation.
-                _animator.SetFloat("Sunlight", _normalizedLuminance);
+                UpdateStatus();
 
                 // Set the light intensity of the scene light.
-                if (_light != null)
-                {
-                    _light.intensity = _normalizedLuminance;
-                }
+                _light.intensity = MLLightingTrackingStarterKit.NormalizedLuminance;
 
                 // Set the light intensity meter.
-                if (_lightIntensity != null)
-                {
-                    _lightIntensity.fillAmount = _normalizedLuminance;
-                }
-            }
+                _lightIntensity.fillAmount = MLLightingTrackingStarterKit.NormalizedLuminance;
+
+                // Sets the color and intensity in the scene.
+                RenderSettings.ambientLight = MLLightingTrackingStarterKit.TemperatureColor;
+                RenderSettings.ambientIntensity = MLLightingTrackingStarterKit.NormalizedLuminance;
         }
-        #endregion
 
-        #region Event Handlers
-        /// <summary>
-        /// Responds to privilege requester result.
-        /// </summary>
-        /// <param name="result"/>
-        private void HandleOnPrivilegesDone(MLResult result)
+        private void OnDestroy()
         {
-            if (!result.IsOk)
-            {
-                if (result.Code == MLResultCode.PrivilegeDenied)
-                {
-                    Instantiate(Resources.Load("PrivilegeDeniedError"));
-                }
-
-                Debug.LogErrorFormat("Error: LightTrackingExample failed to get all requested privileges, disabling script. Reason: {0}", result);
-                enabled = false;
-                return;
-            }
-
-            Debug.Log("Succeeded in requesting all privileges");
-
-            result = MLLightingTracker.Start();
-            if (!result.IsOk)
-            {
-                Debug.LogErrorFormat("Error: LightTrackingExample failed starting MLLightingTracker, disabling script. Reason: {0}", result);
-                enabled = false;
-                return;
-            }
+            MLLightingTrackingStarterKit.Stop();
         }
 
         /// <summary>
-        /// Toggles the placement of the plant model.
+        /// Updates the status text.
         /// </summary>
-        /// <param name="controllerId"></param>
-        /// <param name="button"></param>
-        private void HandleOnButtonDown(byte controllerId, MLInputControllerButton button)
+        private void UpdateStatus()
         {
-            if (button == MLInputControllerButton.Bumper)
+            _statusText.text = string.Format("<color=#dbfb76><b>{0} {1}</b></color>\n{2}: {3}\n",
+                  LocalizeManager.GetString("Controller"),
+                  LocalizeManager.GetString("Data"),
+                  LocalizeManager.GetString("Status"),
+                  LocalizeManager.GetString(ControllerStatus.Text));
+
+            _statusText.text += string.Format(
+                "\n<color=#dbfb76><b> {0} {1}</b></color>\n {0} {2}: {3}",
+                 LocalizeManager.GetString("Light"),
+                 LocalizeManager.GetString("Data"),
+                 LocalizeManager.GetString("Intensity"),
+                 MLLightingTrackingStarterKit.NormalizedLuminance);
+        }
+
+        private void OnButtonDown(byte controller_id, MLInput.Controller.Button button)
+        {
+            if (_controllerConnectionHandler.IsControllerValid(controller_id) && button == MLInput.Controller.Button.Bumper)
             {
-                if(_plantModel.transform.parent == null)
-                {
-                    _raycastCursor.gameObject.SetActive(true);
-
-                    _plantModel.transform.SetParent(_raycastCursor);
-                    _plantModel.transform.localPosition = Vector3.zero;
-                    _plantModel.transform.localRotation = Quaternion.Euler(90, 0, 0);
-                }
-                else if (_plantModel.transform.parent == _raycastCursor)
-                {
-                    _raycastCursor.gameObject.SetActive(false);
-
-                    _plantModel.transform.SetParent(null);
-                }
+                TranslateLightingCanvas();
             }
         }
-        #endregion
+
+        /// <summary>
+        /// Translate light tracking canvas in camera view.
+        /// </summary>
+        private void TranslateLightingCanvas()
+        {
+            _lightTrackingCanvas.transform.position = _camera.transform.position + (_camera.transform.forward * 1.25f);
+            _lightTrackingCanvas.transform.rotation = Quaternion.LookRotation(_lightTrackingCanvas.transform.position - _camera.transform.position);
+        }
+
+        /// <summary>
+        /// Waits to the first frame to be rendered to get a valid camera transform.
+        /// </summary>
+        private IEnumerator UpdateLightCanvas()
+        {
+            yield return new WaitForEndOfFrame();
+            TranslateLightingCanvas();
+        }
     }
 }

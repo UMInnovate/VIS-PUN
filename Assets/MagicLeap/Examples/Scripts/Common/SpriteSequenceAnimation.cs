@@ -2,9 +2,9 @@
 // ---------------------------------------------------------------------
 // %COPYRIGHT_BEGIN%
 //
-// Copyright (c) 2018-present, Magic Leap, Inc. All Rights Reserved.
-// Use of this file is governed by the Creator Agreement, located
-// here: https://id.magicleap.com/creator-terms
+// Copyright (c) 2019-present, Magic Leap, Inc. All Rights Reserved.
+// Use of this file is governed by the Developer Agreement, located
+// here: https://auth.magicleap.com/terms/developer
 //
 // %COPYRIGHT_END%
 // ---------------------------------------------------------------------
@@ -19,7 +19,6 @@ namespace MagicLeap
     /// </summary>
     public class SpriteSequenceAnimation : MonoBehaviour
     {
-        #region Private Variables
         [SerializeField, Tooltip("Sprite Renderer")]
         private SpriteRenderer _spriteRenderer = null;
 
@@ -31,9 +30,7 @@ namespace MagicLeap
 
         private int _currIndex = 0;
         private float _currDuration = 0;
-        #endregion
 
-        #region Unity Methods
         void Awake()
         {
             if (_spriteRenderer == null)
@@ -63,6 +60,5 @@ namespace MagicLeap
                 _spriteRenderer.sprite = _sprites[_currIndex];
             }
         }
-        #endregion
     }
 }

@@ -2,9 +2,9 @@
 // ---------------------------------------------------------------------
 // %COPYRIGHT_BEGIN%
 //
-// Copyright (c) 2018-present, Magic Leap, Inc. All Rights Reserved.
-// Use of this file is governed by the Creator Agreement, located
-// here: https://id.magicleap.com/creator-terms
+// Copyright (c) 2019-present, Magic Leap, Inc. All Rights Reserved.
+// Use of this file is governed by the Developer Agreement, located
+// here: https://auth.magicleap.com/terms/developer
 //
 // %COPYRIGHT_END%
 // ---------------------------------------------------------------------
@@ -20,14 +20,11 @@ namespace MagicLeap
     /// </summary>
     public class DestroyAfterTime : MonoBehaviour
     {
-        #region Private Variables
         [SerializeField, Tooltip("Time delay before self-destruct")]
         private float _duration = 5;
 
         private float _timeStart;
-        #endregion
 
-        #region Public Properties
         public float Duration
         {
             set
@@ -36,9 +33,7 @@ namespace MagicLeap
                 _duration = value;
             }
         }
-        #endregion
 
-        #region Unity Methods
         /// <summary>
         /// Start the self-destruct countdown
         /// </summary>
@@ -57,6 +52,5 @@ namespace MagicLeap
                 Destroy(gameObject);
             }
         }
-        #endregion
     }
 }

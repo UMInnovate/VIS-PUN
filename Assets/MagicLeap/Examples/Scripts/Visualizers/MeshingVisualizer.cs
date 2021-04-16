@@ -2,9 +2,9 @@
 // ---------------------------------------------------------------------
 // %COPYRIGHT_BEGIN%
 //
-// Copyright (c) 2018-present, Magic Leap, Inc. All Rights Reserved.
-// Use of this file is governed by the Creator Agreement, located
-// here: https://id.magicleap.com/creator-terms
+// Copyright (c) 2019-present, Magic Leap, Inc. All Rights Reserved.
+// Use of this file is governed by the Developer Agreement, located
+// here: https://auth.magicleap.com/terms/developer
 //
 // %COPYRIGHT_END%
 // ---------------------------------------------------------------------
@@ -32,7 +32,6 @@ namespace MagicLeap
             Occlusion
         }
 
-        #region Private Variables
         [SerializeField, Tooltip("The MLSpatialMapper from which to get update on mesh types.")]
         private MLSpatialMapper _mlSpatialMapper = null;
 
@@ -46,9 +45,7 @@ namespace MagicLeap
         private Material _pointCloudMaterial = null;
 
         private RenderMode _renderMode = RenderMode.Wireframe;
-        #endregion
 
-        #region Unity Methods
         /// <summary>
         /// Start listening for MLSpatialMapper events.
         /// </summary>
@@ -98,9 +95,7 @@ namespace MagicLeap
             _mlSpatialMapper.meshAdded -= HandleOnMeshReady;
             _mlSpatialMapper.meshUpdated -= HandleOnMeshReady;
         }
-        #endregion
 
-        #region Public Methods
         /// <summary>
         /// Set the render material on the meshes.
         /// </summary>
@@ -134,9 +129,7 @@ namespace MagicLeap
                 _mlSpatialMapper.RefreshAllMeshes();
             }
         }
-        #endregion
 
-        #region Private Methods
         /// <summary>
         /// Updates the currently selected render material on the MeshRenderer.
         /// </summary>
@@ -167,9 +160,20 @@ namespace MagicLeap
                 }
             }
         }
-        #endregion
 
-        #region Event Handlers
+        #if UNITY_2019_3_OR_NEWER
+        /// <summary>
+        /// Handles the MeshReady event, which tracks and assigns the correct mesh renderer materials.
+        /// </summary>
+        /// <param name="meshId">Id of the mesh that got added / upated.</param>
+        private void HandleOnMeshReady(UnityEngine.XR.MeshId meshId)
+        {
+            if (_mlSpatialMapper.meshIdToGameObjectMap.ContainsKey(meshId))
+            {
+                UpdateRenderer(_mlSpatialMapper.meshIdToGameObjectMap[meshId].GetComponent<MeshRenderer>());
+            }
+        }
+        #else
         /// <summary>
         /// Handles the MeshReady event, which tracks and assigns the correct mesh renderer materials.
         /// </summary>
@@ -181,7 +185,7 @@ namespace MagicLeap
                 UpdateRenderer(_mlSpatialMapper.meshIdToGameObjectMap[meshId].GetComponent<MeshRenderer>());
             }
         }
-        #endregion
+        #endif
     }
 }
 

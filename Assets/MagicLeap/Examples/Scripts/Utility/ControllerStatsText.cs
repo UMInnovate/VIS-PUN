@@ -2,9 +2,9 @@
 // ---------------------------------------------------------------------
 // %COPYRIGHT_BEGIN%
 //
-// Copyright (c) 2018-present, Magic Leap, Inc. All Rights Reserved.
-// Use of this file is governed by the Creator Agreement, located
-// here: https://id.magicleap.com/creator-terms
+// Copyright (c) 2019-present, Magic Leap, Inc. All Rights Reserved.
+// Use of this file is governed by the Developer Agreement, located
+// here: https://auth.magicleap.com/terms/developer
 //
 // %COPYRIGHT_END%
 // ---------------------------------------------------------------------
@@ -25,14 +25,11 @@ namespace MagicLeap
     [RequireComponent(typeof(Text))]
     public class ControllerStatsText : MonoBehaviour
     {
-        #region Private Variables
-        [SerializeField, Tooltip("ControllerConnectionHandler reference.")]
-        private ControllerConnectionHandler _controllerConnectionHandler = null;
+        [SerializeField, Tooltip("MLControllerConnectionHandlerBehavior reference.")]
+        private MLControllerConnectionHandlerBehavior _controllerConnectionHandler = null;
 
         private Text _controllerStatsText = null;
-        #endregion
 
-        #region Unity Methods
         /// <summary>
         /// Initializes component data and starts MLInput.
         /// </summary>
@@ -56,8 +53,9 @@ namespace MagicLeap
         {
             if (_controllerConnectionHandler.IsControllerValid())
             {
-                MLInputController controller = _controllerConnectionHandler.ConnectedController;
-                if (controller.Type == MLInputControllerType.Control)
+                #if PLATFORM_LUMIN
+                MLInput.Controller controller = _controllerConnectionHandler.ConnectedController;
+                if (controller.Type == MLInput.Controller.ControlType.Control)
                 {
                     _controllerStatsText.text =
                     string.Format("" +
@@ -79,10 +77,10 @@ namespace MagicLeap
                         controller.Touch1Active ? controller.Touch1PosAndForce.x.ToString("n2") : "0.00",
                         controller.Touch1Active ? controller.Touch1PosAndForce.y.ToString("n2") : "0.00",
                         controller.Touch1Active ? controller.Touch1PosAndForce.z.ToString("n2") : "0.00",
-                        controller.TouchpadGesture.Type.ToString(),
+                        controller.CurrentTouchpadGesture.Type.ToString(),
                         controller.TouchpadGestureState.ToString());
                 }
-                else if (controller.Type == MLInputControllerType.MobileApp)
+                else if (controller.Type == MLInput.Controller.ControlType.MobileApp)
                 {
                     _controllerStatsText.text =
                     string.Format("" +
@@ -105,19 +103,21 @@ namespace MagicLeap
                         controller.Touch1Active ? controller.Touch1PosAndForce.y.ToString("n2") : "0.00",
                         controller.Touch2Active ? controller.Touch2PosAndForce.x.ToString("n2") : "0.00",
                         controller.Touch2Active ? controller.Touch2PosAndForce.y.ToString("n2") : "0.00",
-                        controller.TouchpadGesture.Type.ToString(),
+                        controller.CurrentTouchpadGesture.Type.ToString(),
                         controller.TouchpadGestureState.ToString());
                 }
                 else
                 {
                     _controllerStatsText.text = "Invalid Controller!";
                 }
+                #else
+                _controllerStatsText.text = "Invalid Controller!";
+                #endif
             }
             else
             {
                 _controllerStatsText.text = "";
             }
         }
-        #endregion
     }
 }

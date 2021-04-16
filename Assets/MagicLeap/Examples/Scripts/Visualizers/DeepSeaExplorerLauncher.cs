@@ -2,9 +2,9 @@
 // ---------------------------------------------------------------------
 // %COPYRIGHT_BEGIN%
 //
-// Copyright (c) 2018-present, Magic Leap, Inc. All Rights Reserved.
-// Use of this file is governed by the Creator Agreement, located
-// here: https://id.magicleap.com/creator-terms
+// Copyright (c) 2019-present, Magic Leap, Inc. All Rights Reserved.
+// Use of this file is governed by the Developer Agreement, located
+// here: https://auth.magicleap.com/terms/developer
 //
 // %COPYRIGHT_END%
 // ---------------------------------------------------------------------
@@ -12,46 +12,56 @@
 
 using UnityEngine;
 using UnityEngine.XR.MagicLeap;
+using MagicLeap.Core;
 
 namespace MagicLeap
 {
     /// <summary>
-    /// Updates followers to face this object
+    /// Updates followers to face this object.
     /// </summary>
     public class DeepSeaExplorerLauncher : MonoBehaviour
     {
-        #region Private Variables
-        [SerializeField, Tooltip("Position offset of the explorer's target relative to Reference Transform")]
+        #pragma warning disable 414
+        [SerializeField, Tooltip("The MLImageTrackerBehavior that will be subscribed to.")]
+        private MLImageTrackerBehavior _imageTracker = null;
+        #pragma warning restore 414
+
+        [SerializeField, Tooltip("Position offset of the explorer's target relative to this transform.")]
         private Vector3 _positionOffset = Vector3.zero;
 
-        [SerializeField, Tooltip("Prefab of the Deep Sea Explorer")]
+        [SerializeField, Tooltip("Prefab of the Deep Sea Explorer.")]
         private GameObject _explorerPrefab = null;
         private FaceTargetPosition[] _followers = null;
 
-        [SerializeField, Tooltip("Desired number of explorers. Each explorer will have a different mass and turning speed combination")]
+        [SerializeField, Tooltip("Desired number of explorers. Each explorer will have a different mass and turning speed combination.")]
         private int _numExplorers = 3;
         private float _minMass = 4;
         private float _maxMass = 16;
         private float _minTurningSpeed = 30;
         private float _maxTurningSpeed = 90;
-        #endregion
 
-        #region Unity Methods
         /// <summary>
-        /// Validates variables and creates the deep sea explorers
+        /// Validates fields and creates the deep sea explorers.
         /// </summary>
         void Awake ()
         {
-            if (null == _explorerPrefab)
+            if (_explorerPrefab == null)
             {
                 Debug.LogError("Error: DeepSeaExplorerLauncher._deepSeaExplorer is not set, disabling script.");
                 enabled = false;
                 return;
             }
+
+            #if PLATFORM_LUMIN
+            _imageTracker.OnTargetFound += (MLImageTracker.Target target, MLImageTracker.Target.Result result) => { gameObject.SetActive(true); };
+            _imageTracker.OnTargetLost += (MLImageTracker.Target target, MLImageTracker.Target.Result result) => { gameObject.SetActive(false); };
+            #endif
+
+            gameObject.SetActive(false);
         }
 
         /// <summary>
-        /// Recreate explorers if we are reenabled while a target is found
+        /// Recreates explorers if we are reenabled while a target is found.
         /// </summary>
         void OnEnable()
         {
@@ -59,15 +69,18 @@ namespace MagicLeap
         }
 
         /// <summary>
-        /// Destroy all explorers immediately
+        /// Destroys all explorers immediately.
         /// </summary>
         void OnDisable()
         {
-            DestroyExplorers();
+            if(_followers != null)
+            {
+                DestroyExplorers();
+            }
         }
 
         /// <summary>
-        /// Update followers of the new position
+        /// Updates followers of the new position.
         /// </summary>
         void Update()
         {
@@ -80,15 +93,13 @@ namespace MagicLeap
                 }
             }
         }
-        #endregion
 
-        #region Private Methods
         /// <summary>
-        /// Create the Deep Sea Explorers with unique parameters
+        /// Creates the Deep Sea Explorers with unique parameters.
         /// </summary>
         private void CreateExplorers()
         {
-            if (null == _followers)
+            if (_followers == null)
             {
                 _followers = new FaceTargetPosition[_numExplorers];
             }
@@ -108,7 +119,7 @@ namespace MagicLeap
                 _followers[i] = explorer.AddComponent<FaceTargetPosition>();
                 _followers[i].TurningSpeed = _minTurningSpeed + (i * turningSpeedInc);
 
-                // Mass would be inversely proportional to turning speed (lower mass leads to lower acceleration -> needs higher turning rate)
+                // Mass would be inversely proportional to turning speed (lower mass leads to lower acceleration -> needs higher turning rate).
                 Rigidbody body = explorer.GetComponent<Rigidbody>();
                 if (body)
                 {
@@ -118,7 +129,7 @@ namespace MagicLeap
         }
 
         /// <summary>
-        /// Destroy all explorers
+        /// Destroys all explorers.
         /// </summary>
         private void DestroyExplorers()
         {
@@ -132,13 +143,12 @@ namespace MagicLeap
         }
 
         /// <summary>
-        /// Calculate and return the position which the explorers should look at
+        /// Calculates and return the position which the explorers should look at.
         /// </summary>
-        /// <returns>The absolute position of the new target</returns>
         private Vector3 GetPosition()
         {
+            // The absolute position of the new target.
             return transform.position + transform.TransformDirection(_positionOffset);
         }
-        #endregion
     }
 }

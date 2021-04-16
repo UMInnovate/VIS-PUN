@@ -2,9 +2,9 @@
 // ---------------------------------------------------------------------
 // %COPYRIGHT_BEGIN%
 //
-// Copyright (c) 2018-present, Magic Leap, Inc. All Rights Reserved.
-// Use of this file is governed by the Creator Agreement, located
-// here: https://id.magicleap.com/creator-terms
+// Copyright (c) 2019-present, Magic Leap, Inc. All Rights Reserved.
+// Use of this file is governed by the Developer Agreement, located
+// here: https://auth.magicleap.com/terms/developer
 //
 // %COPYRIGHT_END%
 // ---------------------------------------------------------------------
@@ -22,12 +22,9 @@ namespace MagicLeap
     [RequireComponent(typeof(Rigidbody))]
     public class PathAroundObject : MonoBehaviour
     {
-        #region Public Variables
         [Tooltip("Transform of the object to path around.")]
         public Transform TargetObject;
-        #endregion
 
-        #region Private Variables
         [SerializeField, Tooltip("Maximum distance from target to go to. (Min Value: 2)")]
         private float _maxDistance = 2.0f;
 
@@ -40,9 +37,7 @@ namespace MagicLeap
         private const float _maxTime = 3.0f;
         private float _timer;
         private Rigidbody _rigid;
-        #endregion
 
-        #region Unity Methods
         /// <summary>
         /// Validate that _maxDistance is not less than minimium required.
         /// </summary>
@@ -112,5 +107,4 @@ namespace MagicLeap
             _rigid.velocity = transform.forward * _maxSpeed;
         }
     }
-    #endregion
 }

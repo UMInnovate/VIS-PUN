@@ -2,9 +2,9 @@
 // ---------------------------------------------------------------------
 // %COPYRIGHT_BEGIN%
 //
-// Copyright (c) 2018-present, Magic Leap, Inc. All Rights Reserved.
-// Use of this file is governed by the Creator Agreement, located
-// here: https://id.magicleap.com/creator-terms
+// Copyright (c) 2019-present, Magic Leap, Inc. All Rights Reserved.
+// Use of this file is governed by the Developer Agreement, located
+// here: https://auth.magicleap.com/terms/developer
 //
 // %COPYRIGHT_END%
 // ---------------------------------------------------------------------
@@ -20,15 +20,12 @@ namespace MagicLeap
     /// </summary>
     public class TransformFollower : MonoBehaviour
     {
-        #region Public Variables
         [Tooltip("The object that should be followed.")]
         public Transform ObjectToFollow;
 
         [Tooltip("Following should respect(local) or ignore(world) hierarchy.")]
         public bool UseLocalTransform = true;
-        #endregion
 
-        #region Unity Methods
         /// <summary>
         /// Updates the transform of the object.
         /// </summary>
@@ -48,6 +45,5 @@ namespace MagicLeap
                 }
             }
         }
-        #endregion
     }
 }

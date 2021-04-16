@@ -2,9 +2,9 @@
 // ---------------------------------------------------------------------
 // %COPYRIGHT_BEGIN%
 //
-// Copyright (c) 2018-present, Magic Leap, Inc. All Rights Reserved.
-// Use of this file is governed by the Creator Agreement, located
-// here: https://id.magicleap.com/creator-terms
+// Copyright (c) 2019-present, Magic Leap, Inc. All Rights Reserved.
+// Use of this file is governed by the Developer Agreement, located
+// here: https://auth.magicleap.com/terms/developer
 //
 // %COPYRIGHT_END%
 // ---------------------------------------------------------------------
@@ -13,6 +13,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.XR.MagicLeap;
+using MagicLeap.Core;
 
 namespace MagicLeap
 {
@@ -21,60 +22,59 @@ namespace MagicLeap
     /// for the planes query params through input. This class also updates
     /// the UI text containing the latest useful info on the planes queries.
     /// </summary>
-    [RequireComponent(typeof(Planes))]
     public class PlanesExample : MonoBehaviour
     {
-        #region Private Variables
+        [SerializeField, Tooltip("The MLPlanesBehavior to subscribe to.")]
+        private MLPlanesBehavior _planes = null;
+
+        [SerializeField, Tooltip("The PlanesVisualizer to cycle visuals with.")]
+        private PlanesVisualizer _planesVisualizer = null;
+
         [SerializeField, Tooltip("Flag specifying if plane extents are bounded.")]
         private bool _bounded = false;
 
         [SerializeField, Space, Tooltip("Wireframe cube to represent bounds.")]
         private GameObject _boundsWireframeCube = null;
 
-        [SerializeField, Space, Tooltip("Text to display number of planes.")]
-        private Text _numberOfPlanesText = null;
+        [SerializeField, Space, Tooltip("Text to display content status.")]
+        private Text _statusText = null;
 
-        [SerializeField, Tooltip("Text to display number of boundaries.")]
-        private Text _numberOfBoundariesText = null;
-
-        [SerializeField, Tooltip("Text to display if planes extents are bounded or boundless.")]
-        private Text _boundedExtentsText = null;
-
-        [Space, SerializeField, Tooltip("ControllerConnectionHandler reference.")]
-        private ControllerConnectionHandler _controllerConnectionHandler = null;
-
-        private Planes _planesComponent;
+        [Space, SerializeField, Tooltip("MLControllerConnectionHandlerBehavior reference.")]
+        private MLControllerConnectionHandlerBehavior _controllerConnectionHandler = null;
 
         private static readonly Vector3 _boundedExtentsSize = new Vector3(5.0f, 5.0f, 5.0f);
         // Distance close to sensor's maximum recognition distance.
         private static readonly Vector3 _boundlessExtentsSize = new Vector3(10.0f, 10.0f, 10.0f);
 
         private Camera _camera;
-        #endregion
 
-        #region Unity Methods
+        private string _renderModeTextString = string.Empty;
+        private string _boundsExtentsTextString = string.Empty;
+        private string _numBoundariesTextString = string.Empty;
+        private string _numPlanesTextString = string.Empty;
+
         /// <summary>
         /// Check editor set variables for null references.
         /// </summary>
         void Awake()
         {
-            if (_numberOfPlanesText == null)
+            if (_planes == null)
             {
-                Debug.LogError("Error: PlanesExample._numberOfPlanesText is not set, disabling script.");
+                Debug.LogError("Error: PlanesExample._planes is not set, disabling script.");
                 enabled = false;
                 return;
             }
 
-            if (_numberOfBoundariesText == null)
+            if (_planesVisualizer == null)
             {
-                Debug.LogError("Error: PlanesExample._numberOfBoundariesText is not set, disabling script.");
+                Debug.LogError("Error: PlanesExample._planesVisualizer is not set, disabling script.");
                 enabled = false;
                 return;
             }
 
-            if (_boundedExtentsText == null)
+            if (_statusText == null)
             {
-                Debug.LogError("Error: PlanesExample._boundedExtentsText is not set, disabling script.");
+                Debug.LogError("Error: PlanesExample._statusText is not set, disabling script.");
                 enabled = false;
                 return;
             }
@@ -93,11 +93,15 @@ namespace MagicLeap
                 return;
             }
 
+            #if PLATFORM_LUMIN
             MLInput.OnControllerButtonDown += OnButtonDown;
-            MagicLeapDevice.RegisterOnHeadTrackingMapEvent(OnHeadTrackingMapEvent);
+            #endif
 
-            _planesComponent = GetComponent<Planes>();
             _camera = Camera.main;
+
+            #if PLATFORM_LUMIN
+            _planes.OnQueryPlanesResult += OnQueriedPlanes;
+            #endif
         }
 
         /// <summary>
@@ -105,6 +109,18 @@ namespace MagicLeap
         /// </summary>
         void Start()
         {
+            #if PLATFORM_LUMIN
+
+            MLResult result = MLHeadTracking.Start();
+            if (result.IsOk)
+            {
+                MLHeadTracking.RegisterOnHeadTrackingMapEvent(OnHeadTrackingMapEvent);
+            }
+            else
+            {
+                Debug.LogError("PlanesExample could not register to head tracking events because MLHeadTracking could not be started.");
+            }
+            #endif
             UpdateBounds();
         }
 
@@ -114,7 +130,7 @@ namespace MagicLeap
         /// </summary>
         void Update()
         {
-            _planesComponent.gameObject.transform.position = _camera.transform.position;
+            _planes.gameObject.transform.position = _camera.transform.position;
         }
 
         /// <summary>
@@ -122,39 +138,69 @@ namespace MagicLeap
         /// </summary>
         void OnDestroy()
         {
-            MagicLeapDevice.UnregisterOnHeadTrackingMapEvent(OnHeadTrackingMapEvent);
+            #if PLATFORM_LUMIN
+            MLHeadTracking.UnregisterOnHeadTrackingMapEvent(OnHeadTrackingMapEvent);
+            MLHeadTracking.Stop();
             MLInput.OnControllerButtonDown -= OnButtonDown;
+            #endif
         }
-        #endregion
 
-        #region Private Methods
         /// <summary>
         /// Update plane query bounds extents based on if the current _bounded status is true(bounded)
         /// or false(boundless).
         /// </summary>
         private void UpdateBounds()
         {
-            _planesComponent.transform.localScale = _bounded ? _boundedExtentsSize : _boundlessExtentsSize;
+            _planes.transform.localScale = _bounded ? _boundedExtentsSize : _boundlessExtentsSize;
             _boundsWireframeCube.SetActive(_bounded);
 
-            _boundedExtentsText.text = string.Format("Bounded Extents: ({0},{1},{2})",
-                _planesComponent.transform.localScale.x,
-                _planesComponent.transform.localScale.y,
-                _planesComponent.transform.localScale.z);
-        }
-        #endregion
+            _statusText.text = string.Format("<color=#dbfb76><b>{0}</b></color>\n{1}: {2}\n\n",
+                LocalizeManager.GetString("Controller Data"),
+                LocalizeManager.GetString("Status"),
+                LocalizeManager.GetString(ControllerStatus.Text));
 
-        #region Event Handlers
+            _renderModeTextString = string.Format("<color=#dbfb76><b>{0}</b></color>\n{1}\n\n",
+                LocalizeManager.GetString("Render Mode"),
+                LocalizeManager.GetString(_planesVisualizer.RenderMode.ToString()));
+
+            _boundsExtentsTextString = string.Format("<color=#dbfb76><b>{0}</b></color>\n ({1},{2},{3})\n\n",
+                 LocalizeManager.GetString("Bounds Extents"),
+                _planes.transform.localScale.x,
+                _planes.transform.localScale.y,
+                _planes.transform.localScale.z);
+
+            _statusText.text += _renderModeTextString + _boundsExtentsTextString + _numPlanesTextString + _numBoundariesTextString;
+        }
+
+        #if PLATFORM_LUMIN
         /// <summary>
         /// Callback handler, changes text when new planes are received.
         /// </summary>
         /// <param name="planes"> Array of new planes. </param>
-        /// <param name="planes"> Array of new boundaries. </param>
-        public void OnPlanesUpdate(MLWorldPlane[] planes, MLWorldPlaneBoundaries[] boundaries)
+        /// <param name="boundaries"> Array of new boundaries. </param>
+        private void OnQueriedPlanes(MLPlanes.Plane[] planes, MLPlanes.Boundaries[] boundaries)
         {
-            _numberOfPlanesText.text = string.Format("Number of Planes: {0}/{1}", planes.Length, _planesComponent.MaxPlaneCount);
-            _numberOfBoundariesText.text = string.Format("Number of Boundaries: {0}/{1}", boundaries.Length, _planesComponent.MaxPlaneCount);
+            _statusText.text = string.Format("<color=#dbfb76><b>{0}</b></color>\n{1}: {2}\n\n",
+                LocalizeManager.GetString("Controller Data"),
+                LocalizeManager.GetString("Status"),
+                LocalizeManager.GetString(ControllerStatus.Text));
+
+            _renderModeTextString = string.Format("<color=#dbfb76><b>{0}</b></color>\n{1}\n\n",
+                LocalizeManager.GetString("Render Mode"),
+                LocalizeManager.GetString(_planesVisualizer.RenderMode.ToString()));
+
+            _boundsExtentsTextString = string.Format("<color=#dbfb76><b>{0}</b></color>\n ({1},{2},{3})\n\n",
+                 LocalizeManager.GetString("Bounds Extents"),
+                _planes.transform.localScale.x,
+                _planes.transform.localScale.y,
+                _planes.transform.localScale.z);
+
+            _numPlanesTextString = string.Format("<color=#dbfb76><b>{0}</b></color>\n {1} / {2}\n\n", LocalizeManager.GetString("Planes"), planes.Length, _planes.MaxPlaneCount);
+            _numBoundariesTextString = string.Format("<color=#dbfb76><b>{0}</b></color>\n {1} / {2}\n\n", LocalizeManager.GetString("Boundaries"), boundaries.Length, _planes.MaxPlaneCount);
+
+            _statusText.text += _renderModeTextString + _boundsExtentsTextString + _numPlanesTextString + _numBoundariesTextString;
         }
+        #endif
 
         /// <summary>
         /// Handles the event for button down. Changes from bounded to boundless and viceversa
@@ -162,26 +208,36 @@ namespace MagicLeap
         /// </summary>
         /// <param name="controllerId">The id of the controller.</param>
         /// <param name="button">The button that is being released.</param>
-        private void OnButtonDown(byte controllerId, MLInputControllerButton button)
+        private void OnButtonDown(byte controllerId, MLInput.Controller.Button button)
         {
-            if (_controllerConnectionHandler.IsControllerValid(controllerId) && button == MLInputControllerButton.HomeTap)
+            if (_controllerConnectionHandler.IsControllerValid(controllerId))
             {
-                _bounded = !_bounded;
-                UpdateBounds();
+                switch (button)
+                {
+                    case MLInput.Controller.Button.HomeTap:
+                        _bounded = !_bounded;
+                        UpdateBounds();
+                        break;
+
+                    case MLInput.Controller.Button.Bumper:
+                        _planesVisualizer.CycleMode();
+                        break;
+                }
             }
         }
 
         /// <summary>
-        /// Handle in charge of clearing all planes if map gets lost.
+        /// Handle if a new session occurs
         /// </summary>
         /// <param name="mapEvents"> Map Events that happened. </param>
-        private void OnHeadTrackingMapEvent(MLHeadTrackingMapEvent mapEvents)
+        private void OnHeadTrackingMapEvent(MLHeadTracking.MapEvents mapEvents)
         {
-            if (mapEvents.IsLost())
+            #if PLATFORM_LUMIN
+            if (mapEvents.IsNewSession())
             {
-                _numberOfPlanesText.text = string.Format("Number of Planes: 0/{0}", _planesComponent.MaxPlaneCount);
+                _statusText.text = LocalizeManager.GetString("New map session");
             }
+            #endif
         }
-        #endregion
     }
 }

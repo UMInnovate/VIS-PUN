@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: PhotonServerSettings
   m_EditorClassIdentifier: 
   AppSettings:
-    AppIdRealtime: 8222e22d-15cb-4e8f-a3df-5747634e8b84
+    AppIdRealtime: 81745385-a9ba-4970-92bf-738dd40e1e2c
     AppIdChat: 
     AppIdVoice: 
-    AppVersion: 0
+    AppVersion: 
     UseNameServer: 1
     FixedRegion: us
     Server: 
@@ -36,29 +36,37 @@ MonoBehaviour:
   - ClickRpc
   - DestroyRpc
   - DestroySpaceship
-  - Fire
-  - RespawnSpaceship
-  - RPC_CreatePlayer
-  - InitLabels_RPC
-  - SpawnOriginLabelsRPC
-  - UpdateOriginLabels_RPC
-  - SpawnOriginSphere_RPC
-  - InstantiateParticles
-  - InitVectorNames
-  - UpdateVectorNames_RPC
-  - UpdateBLabelPos
-  - V2AnimationHappening
   - DisplayAngle
-  - InitDotProduct
+  - Fire
   - HideLabels
+  - InitDotProduct
+  - InitLabels
+  - InitVectorNames
+  - InstantiateParticles
   - PlaceComponentLabel
   - PlaceHeadandTailLabels
-  - HideVec2ComponentLabel
-  - RespawnVec2ComponentLabel
-  - SpawnHeadLabel
-  - UpdateHeadLabel
+  - RespawnSpaceship
+  - RotateLabelsTowardUser
+  - RPC_CreatePlayer
+  - SpawnOriginLabelsRPC
+  - SpawnOriginSphere_RPC
   - SpawnResultantVec_ComponentLabel
-  - RemoveStorableObject_RPC
+  - UpdateOriginLabels_RPC
+  - V2AnimationHappening
+  - InitVectorName
+  - SpawnHeadAndTail
+  - SetViewerPriviledges
+  - PlacePOCLabel
+  - PlaceVectorLabels
+  - UpdateNameLabel
+  - SetForceVal
+  - StartCalcSequence
+  - MagCompSequence
+  - SetText
+  - EnableCanv
+  - LinearSys
+  - SystemOfEquations
+  - ValidateSys
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

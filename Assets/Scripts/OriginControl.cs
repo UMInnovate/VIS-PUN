@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SceneManagement;
 using Photon.Pun;
 using Photon.Realtime;
 
@@ -44,7 +45,9 @@ public class OriginControl : MonoBehaviour
         {
             // transform might have changed due to user placement or rotation
             SetAxesPositions();
-            rpcReceiverReference.SetUp_UpdateOriginLabel_RPC(); //***PUN
+            if (SceneManager.GetActiveScene().buildIndex > 1 && SceneManager.GetActiveScene().buildIndex < 13)
+                rpcReceiverReference.SetUp_UpdateOriginLabel_RPC(); //***PUN
+            
         }
     }
 
@@ -88,8 +91,11 @@ public class OriginControl : MonoBehaviour
         zAxisText.transform.localScale = scale;
 
         //***PUN
-        rpcReceiverReference.SetUp_OriginLabel_RPC();
-        rpcReceiverReference.SpawnOriginSphere(transform.position);
+        if (SceneManager.GetActiveScene().buildIndex > 1 && SceneManager.GetActiveScene().buildIndex < 13)
+        {
+            rpcReceiverReference.SetUp_OriginLabel_RPC();
+            rpcReceiverReference.SpawnOriginSphere(transform.position);
+        }
     }
 
     //private void InitializeAxes()

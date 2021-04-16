@@ -72,6 +72,7 @@ public class PhotonRoom : MonoBehaviourPunCallbacks, IInRoomCallbacks
     {
         base.OnJoinedRoom();
         Debug.Log("We are now in a room");
+        Debug.Log(PhotonNetwork.CurrentRoom.Name);
         photonPlayers = PhotonNetwork.PlayerList;
         myNumberInRoom = playersInRoom;
         PhotonNetwork.NickName = myNumberInRoom.ToString();
@@ -105,9 +106,6 @@ public class PhotonRoom : MonoBehaviourPunCallbacks, IInRoomCallbacks
 
 
         storableObjectRef.RemoveStorableObject_RPC(_uniqueID); //@@@ sends the ID of the player who left & clears their stuff
-
-        
-
 
     }
 

@@ -2,6 +2,8 @@
 using UnityEngine.SceneManagement;
 using UnityEngine.XR.MagicLeap;
 using UnityEngine.UI;
+using Photon.Realtime;
+using Photon.Pun;
 
 /* MenuPanel.cs handles the main menu buttons for both module 1 and module 2
 * Each button has a field for which function runs upon click - these are listed below
@@ -11,6 +13,8 @@ using UnityEngine.UI;
 public class MenuPanel : MonoBehaviour
 {
     // these text items live inside the Button of MainMenuPanel
+
+    [SerializeField] private PhotonRoom room; 
 
     // module 2 only
     [SerializeField, Tooltip("Text field of button for Handedness selection")]
@@ -54,6 +58,14 @@ public class MenuPanel : MonoBehaviour
             soundText.text = "Sound: Off";
     }
 
+
+
+    //general scene reload
+    public void ResetModClicked()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex, LoadSceneMode.Single);
+    }
+
     //Button:Reset.OnClick() in Module 1
     public void ResetMod1Clicked()
     {
@@ -70,15 +82,21 @@ public class MenuPanel : MonoBehaviour
     {
         SceneManager.LoadScene(12, LoadSceneMode.Single);
     }
+
+
     //Button:BackToStart.OnClick()
     public void BackToStartClicked()
     {
-        SceneManager.LoadScene(0, LoadSceneMode.Single);
-    }
+        if (SceneManager.GetActiveScene().buildIndex == 9 || SceneManager.GetActiveScene().buildIndex == 9 || SceneManager.GetActiveScene().buildIndex == 14) //pun scenes are 9,11,14
+            room.OnPlayerLeftRoom(PhotonNetwork.LocalPlayer); //clean up user's items
+        else
+            SceneManager.LoadScene(0, LoadSceneMode.Single);
+     }
 
     //Button:Exit.OnClick()
     public void Exit()
     {
         Application.Quit();
     }
+
 }

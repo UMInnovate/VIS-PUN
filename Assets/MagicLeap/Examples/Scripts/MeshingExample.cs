@@ -2,9 +2,9 @@
 // ---------------------------------------------------------------------
 // %COPYRIGHT_BEGIN%
 //
-// Copyright (c) 2018-present, Magic Leap, Inc. All Rights Reserved.
-// Use of this file is governed by the Creator Agreement, located
-// here: https://id.magicleap.com/creator-terms
+// Copyright (c) 2019-present, Magic Leap, Inc. All Rights Reserved.
+// Use of this file is governed by the Developer Agreement, located
+// here: https://auth.magicleap.com/terms/developer
 //
 // %COPYRIGHT_END%
 // ---------------------------------------------------------------------
@@ -16,6 +16,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.XR.MagicLeap;
 using System.Collections;
+using MagicLeap.Core.StarterKit;
 
 namespace MagicLeap
 {
@@ -25,7 +26,6 @@ namespace MagicLeap
     /// </summary>
     public class MeshingExample : MonoBehaviour
     {
-        #region Private Variables
         [SerializeField, Tooltip("The spatial mapper from which to update mesh params.")]
         private MLSpatialMapper _mlSpatialMapper = null;
 
@@ -44,8 +44,8 @@ namespace MagicLeap
         [SerializeField, Space, Tooltip("Prefab to shoot into the scene.")]
         private GameObject _shootingPrefab = null;
 
-        [SerializeField, Space, Tooltip("ControllerConnectionHandler reference.")]
-        private ControllerConnectionHandler _controllerConnectionHandler = null;
+        [SerializeField, Space, Tooltip("MLControllerConnectionHandlerBehavior reference.")]
+        private MLControllerConnectionHandlerBehavior _controllerConnectionHandler = null;
 
         private MeshingVisualizer.RenderMode _renderMode = MeshingVisualizer.RenderMode.Wireframe;
         private int _renderModeCount;
@@ -59,9 +59,7 @@ namespace MagicLeap
         private const int BALL_LIFE_TIME = 10;
 
         private Camera _camera = null;
-        #endregion
 
-        #region Unity Methods
         /// <summary>
         /// Initializes component data and starts MLInput.
         /// </summary>
@@ -108,10 +106,11 @@ namespace MagicLeap
 
             _camera = Camera.main;
 
+            #if PLATFORM_LUMIN
             MLInput.OnControllerButtonDown += OnButtonDown;
             MLInput.OnTriggerDown += OnTriggerDown;
             MLInput.OnControllerTouchpadGestureStart += OnTouchpadGestureStart;
-            MagicLeapDevice.RegisterOnHeadTrackingMapEvent(OnHeadTrackingMapEvent);
+            #endif
         }
 
         /// <summary>
@@ -119,41 +118,44 @@ namespace MagicLeap
         /// </summary>
         void Start()
         {
-            StartCoroutine(LogWorldReconstructionMissingPrivilege());
+            #if PLATFORM_LUMIN
+            // Assure that if the 'WorldReconstruction' privilege is missing, then it is logged for all users.
+            MLResult result = MLPrivilegesStarterKit.Start();
+            if (result.IsOk)
+            {
+                result = MLPrivilegesStarterKit.CheckPrivilege(MLPrivileges.Id.WorldReconstruction);
+                if (result.Result != MLResult.Code.PrivilegeGranted)
+                {
+                    Debug.LogErrorFormat("Error: MeshingExample failed to create Mesh Subsystem due to missing 'WorldReconstruction' privilege. Please add to manifest. Disabling script.");
+                    enabled = false;
+                    return;
+                }
+                MLPrivilegesStarterKit.Stop();
+            }
+            else
+            {
+                Debug.LogErrorFormat("Error: MeshingExample failed starting MLPrivileges, disabling script. Reason: {0}", result);
+                enabled = false;
+                return;
+            }
+
+            result = MLHeadTracking.Start();
+            if (result.IsOk)
+            {
+                MLHeadTracking.RegisterOnHeadTrackingMapEvent(OnHeadTrackingMapEvent);
+            }
+            else
+            {
+                Debug.LogError("MeshingExample could not register to head tracking events because MLHeadTracking could not be started.");
+            }
+            #endif
+
             _meshingVisualizer.SetRenderers(_renderMode);
 
             _mlSpatialMapper.gameObject.transform.position = _camera.gameObject.transform.position;
             _mlSpatialMapper.gameObject.transform.localScale = _bounded ? _boundedExtentsSize : _boundlessExtentsSize;
+
             _visualBounds.SetActive(_bounded);
-
-            UpdateStatusText();
-        }
-
-        /// <summary>
-        /// Assure that if the 'WorldReconstruction' privilege is missing, then it is logged for all users
-        /// </summary>
-        private IEnumerator LogWorldReconstructionMissingPrivilege()
-        {
-            yield return new WaitUntil(() => MagicLeapDevice.IsReady());
-
-            MLResult result = MLPrivileges.Start();
-            if (result.IsOk)
-            {
-                result = MLPrivileges.CheckPrivilege(MLPrivilegeId.WorldReconstruction);
-                if (result.Code != MLResultCode.PrivilegeGranted)
-                {
-                    Debug.LogErrorFormat("Error: Unable to create Mesh Subsystem due to missing 'WorldReconstruction' privilege. Please add to manifest. Disabling script.");
-                    enabled = false;
-                }
-                MLPrivileges.Stop();
-            }
-
-            else
-            {
-                Debug.LogErrorFormat("Error: MeshingExample failed starting MLPrivileges. Reason: {0}", result);
-            }
-
-            yield return null;
         }
 
         /// <summary>
@@ -162,6 +164,8 @@ namespace MagicLeap
         void Update()
         {
             _mlSpatialMapper.gameObject.transform.position = _camera.gameObject.transform.position;
+
+            UpdateStatusText();
         }
 
         /// <summary>
@@ -169,50 +173,67 @@ namespace MagicLeap
         /// </summary>
         void OnDestroy()
         {
-            MagicLeapDevice.UnregisterOnHeadTrackingMapEvent(OnHeadTrackingMapEvent);
+            #if PLATFORM_LUMIN
             MLInput.OnControllerTouchpadGestureStart -= OnTouchpadGestureStart;
             MLInput.OnTriggerDown -= OnTriggerDown;
             MLInput.OnControllerButtonDown -= OnButtonDown;
+            MLHeadTracking.UnregisterOnHeadTrackingMapEvent(OnHeadTrackingMapEvent);
+            MLHeadTracking.Stop();
+            #endif
         }
-        #endregion
 
-        #region Private Methods
         /// <summary>
         /// Updates examples status text.
         /// </summary>
         private void UpdateStatusText()
         {
-            _statusLabel.text = string.Format("Render Mode: {0}\nBounded Extents: {1}\nLOD: {2}", _renderMode.ToString(),
-                                                                                                  _bounded.ToString(),
-                                                                                                  _mlSpatialMapper.levelOfDetail);
-        }
-        #endregion
+            _statusLabel.text = string.Format("<color=#dbfb76><b>{0} {1}</b></color>\n{2}: {3}\n",
+                LocalizeManager.GetString("Controller"),
+                LocalizeManager.GetString("Data"),
+                LocalizeManager.GetString("Status"),
+                LocalizeManager.GetString(ControllerStatus.Text));
 
-        #region Event Handlers
+            _statusLabel.text += string.Format(
+                "\n<color=#dbfb76><b>{0} {1}</b></color>\n{2} {3}: {4}\n{5} {6}: {7}\n{8}: {9}",
+                LocalizeManager.GetString("Meshing"),
+                LocalizeManager.GetString("Data"),
+                LocalizeManager.GetString("Render"),
+                LocalizeManager.GetString("Mode"),
+                LocalizeManager.GetString(_renderMode.ToString()),
+                LocalizeManager.GetString("Bounded"),
+                LocalizeManager.GetString("Extents"),
+                LocalizeManager.GetString(_bounded.ToString()),
+                LocalizeManager.GetString("LOD"),
+                #if UNITY_2019_3_OR_NEWER
+                LocalizeManager.GetString(MLSpatialMapper.DensityToLevelOfDetail(_mlSpatialMapper.density).ToString())
+                #else
+                LocalizeManager.GetString(_mlSpatialMapper.levelOfDetail.ToString())
+                #endif
+                );
+        }
+
         /// <summary>
         /// Handles the event for button down. Changes render mode if bumper is pressed or
         /// changes from bounded to boundless and viceversa if home button is pressed.
         /// </summary>
         /// <param name="controllerId">The id of the controller.</param>
         /// <param name="button">The button that is being released.</param>
-        private void OnButtonDown(byte controllerId, MLInputControllerButton button)
+        private void OnButtonDown(byte controllerId, MLInput.Controller.Button button)
         {
             if (_controllerConnectionHandler.IsControllerValid(controllerId))
             {
-                if (button == MLInputControllerButton.Bumper)
+                if (button == MLInput.Controller.Button.Bumper)
                 {
                     _renderMode = (MeshingVisualizer.RenderMode)((int)(_renderMode + 1) % _renderModeCount);
                     _meshingVisualizer.SetRenderers(_renderMode);
                 }
-                else if (button == MLInputControllerButton.HomeTap)
+                else if (button == MLInput.Controller.Button.HomeTap)
                 {
                     _bounded = !_bounded;
 
                     _visualBounds.SetActive(_bounded);
                     _mlSpatialMapper.gameObject.transform.localScale = _bounded ? _boundedExtentsSize : _boundlessExtentsSize;
                 }
-
-                UpdateStatusText();
             }
         }
 
@@ -252,29 +273,35 @@ namespace MagicLeap
         /// </summary>
         /// <param name="controllerId">The id of the controller.</param>
         /// <param name="gesture">The gesture getting started.</param>
-        private void OnTouchpadGestureStart(byte controllerId, MLInputControllerTouchpadGesture gesture)
+        private void OnTouchpadGestureStart(byte controllerId, MLInput.Controller.TouchpadGesture gesture)
         {
+            #if PLATFORM_LUMIN
             if (_controllerConnectionHandler.IsControllerValid(controllerId) &&
-                gesture.Type == MLInputControllerTouchpadGestureType.Swipe && gesture.Direction == MLInputControllerTouchpadGestureDirection.Up)
+                gesture.Type == MLInput.Controller.TouchpadGesture.GestureType.Swipe && gesture.Direction == MLInput.Controller.TouchpadGesture.GestureDirection.Up)
             {
+                #if UNITY_2019_3_OR_NEWER
+                _mlSpatialMapper.density = MLSpatialMapper.LevelOfDetailToDensity((MLSpatialMapper.DensityToLevelOfDetail(_mlSpatialMapper.density) == MLSpatialMapper.LevelOfDetail.Maximum) ? MLSpatialMapper.LevelOfDetail.Minimum : (MLSpatialMapper.DensityToLevelOfDetail(_mlSpatialMapper.density) + 1));
+                #else
                 _mlSpatialMapper.levelOfDetail = ((_mlSpatialMapper.levelOfDetail == MLSpatialMapper.LevelOfDetail.Maximum) ? MLSpatialMapper.LevelOfDetail.Minimum : (_mlSpatialMapper.levelOfDetail + 1));
-                UpdateStatusText();
+                #endif
             }
+            #endif
         }
 
         /// <summary>
-        /// Handle in charge of refreshing all meshes if map gets lost.
+        /// Handle in charge of refreshing all meshes if a new session occurs
         /// </summary>
         /// <param name="mapEvents"> Map Events that happened. </param>
-        private void OnHeadTrackingMapEvent(MLHeadTrackingMapEvent mapEvents)
+        private void OnHeadTrackingMapEvent(MLHeadTracking.MapEvents mapEvents)
         {
-            if (mapEvents.IsLost())
+            #if PLATFORM_LUMIN
+            if (mapEvents.IsNewSession())
             {
                 _mlSpatialMapper.DestroyAllMeshes();
                 _mlSpatialMapper.RefreshAllMeshes();
             }
+            #endif
         }
-        #endregion
     }
 }
 

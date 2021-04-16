@@ -2,9 +2,9 @@
 // ---------------------------------------------------------------------
 // %COPYRIGHT_BEGIN%
 //
-// Copyright (c) 2018-present, Magic Leap, Inc. All Rights Reserved.
-// Use of this file is governed by the Creator Agreement, located
-// here: https://id.magicleap.com/creator-terms
+// Copyright (c) 2019-present, Magic Leap, Inc. All Rights Reserved.
+// Use of this file is governed by the Developer Agreement, located
+// here: https://auth.magicleap.com/terms/developer
 //
 // %COPYRIGHT_END%
 // ---------------------------------------------------------------------
@@ -13,201 +13,158 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.XR.MagicLeap;
 
 namespace MagicLeap
 {
     /// <summary>
-    /// Visualizes PCFs in Debug Mode
+    /// This class helps visualize all the PCFs that are associated with the current localized map.
     /// </summary>
     public class PCFVisualizer : MonoBehaviour
     {
-        #region Private Variables
-        [SerializeField, Tooltip("Prefab to represent a PCF visually")]
-        private GameObject _prefab = null;
-        private List<GameObject> _pcfObjs = new List<GameObject>();
+        #pragma warning disable 414
+        [SerializeField, Tooltip("The PCF visual prefab")]
+        private GameObject pcfVisualPrefab = null;
+        #pragma warning restore 414
 
-        [SerializeField, Tooltip("UI Text to show PCF Stored Count")]
-        private Text _pcfCountText = null;
-        private uint _pcfCount = 0;
-        private const string PCF_COUNT_TEXT_FORMAT = "PCF Count: {0}";
+        private List<GameObject> _pcfVisuals = new List<GameObject>();
 
-        private IEnumerator _findAllPCFs = null;
-        private float _secondsBetweenFindAllPCFs = 3.0f;
+        private float _secondsToRequeue = 3;
 
-        #endregion
-
-        #region Public Properties
-        /// <summary>
-        /// Flag to indicate debug mode
-        /// </summary>
-        public static bool IsDebugMode
+        public static bool IsVisualizing
         {
-            get; private set;
+            get;
+            private set;
         }
-        #endregion
 
-        #region Unity Methods
+        #if PLATFORM_LUMIN
+        public delegate void OnFindAllPCFsDelegate(List<MLPersistentCoordinateFrames.PCF> allPCFs);
+        public static event OnFindAllPCFsDelegate OnFindAllPCFs;
+        #endif
+
         /// <summary>
-        /// Validates variables, initializes systems, and prepares to show PCFs
+        /// Starts up MLPersistentCoordinateFrames and registers to events.
+        /// Defaults to visualizing pcfs (will contiously find and queue PCFs for updates).
         /// </summary>
         void Start()
         {
-            if (_prefab == null)
-            {
-                Debug.LogError("Error: PCFVisualizer._representativePrefab is not set, disabling script.");
-                enabled = false;
-                return;
-            }
-
-            if (_pcfCountText == null)
-            {
-                Debug.LogError("Error: PCFVisualizer._pcfCountText is not set, disabling script.");
-                enabled = false;
-                return;
-            }
-            _pcfCountText.gameObject.SetActive(false);
-
-            MLResult result = MLPersistentStore.Start();
+            #if PLATFORM_LUMIN
+            MLResult result = MLPersistentCoordinateFrames.Start();
             if (!result.IsOk)
             {
-                Debug.LogErrorFormat("Error: PCFVisualizer failed starting MLPersistentStore, disabling script. Reason: {0}", result);
-                enabled = false;
-                return;
-            }
-
-            result = MLPersistentCoordinateFrames.Start();
-            if (!result.IsOk)
-            {
-                MLPersistentStore.Stop();
                 Debug.LogErrorFormat("Error: PCFVisualizer failed starting MLPersistentCoordinateFrames, disabling script. Reason: {0}", result);
                 enabled = false;
                 return;
             }
 
-            MLPCF.OnCreate += HandleCreate;
-            _findAllPCFs = FindAllPCFs();
+            MLPersistentCoordinateFrames.PCF.OnStatusChange += HandlePCFStatusChange;
+            MLPersistentCoordinateFrames.OnLocalized += HandleOnLocalized;
+
+            IsVisualizing = true;
+            #endif
         }
 
         /// <summary>
-        /// Clean up
+        /// Stops the MLPersistentCoordinateFrames api and unregisters from events.
         /// </summary>
         void OnDestroy()
         {
-            StopCoroutine(_findAllPCFs);
-            foreach (GameObject go in _pcfObjs)
-            {
-                if (go != null)
-                {
-                    Destroy(go);
-                }
-            }
-
-            MLPCF.OnCreate -= HandleCreate;
-            if (MLPersistentStore.IsStarted)
-            {
-                MLPersistentStore.Stop();
-            }
-            if (MLPersistentCoordinateFrames.IsStarted)
-            {
-                MLPersistentCoordinateFrames.Stop();
-            }
-        }
-        #endregion // Unity Methods
-
-        #region Event Handlers
-        /// <summary>
-        /// Called once for every MLPCF successfully created.
-        /// </summary>
-        /// <param name="pcf">The PCF</param>
-        private void HandleCreate(MLPCF pcf)
-        {
-            _pcfCount++;
-            _pcfCountText.text = string.Format(PCF_COUNT_TEXT_FORMAT, _pcfCount);
-
-            AddPCFObject(pcf);
-        }
-        #endregion // Event Handlers
-
-        #region Private Methods
-        /// <summary>
-        /// Creates the PCF game object.
-        /// </summary>
-        /// <param name="pcf">Pcf.</param>
-        void AddPCFObject(MLPCF pcf)
-        {
-            GameObject repObj = Instantiate(_prefab, Vector3.zero, Quaternion.identity);
-            repObj.name = pcf.CFUID.ToString();
-            repObj.transform.position = pcf.Position;
-            repObj.transform.rotation = pcf.Orientation;
-
-            PCFStatusText statusTextBehavior = repObj.GetComponent<PCFStatusText>();
-            if (statusTextBehavior != null)
-            {
-                statusTextBehavior.PCF = pcf;
-            }
-
-            repObj.SetActive(IsDebugMode);
-            _pcfObjs.Add(repObj);
+            #if PLATFORM_LUMIN
+            MLPersistentCoordinateFrames.Stop();
+            MLPersistentCoordinateFrames.OnLocalized -= HandleOnLocalized;
+            MLPersistentCoordinateFrames.PCF.OnStatusChange -= HandlePCFStatusChange;
+            #endif
         }
 
         /// <summary>
-        /// Coroutine to query for all PCFs and queue them for updates.
-        /// Note: Getting all PCFs is highly inefficient and ill-advised. We are only
-        /// doing this for demonstration/debug purposes. Do NOT do this on production code!
+        /// Toggles IsVisualizing and all the pcf visuals.
         /// </summary>
-        IEnumerator FindAllPCFs()
+        public void Toggle()
         {
+            IsVisualizing = !IsVisualizing;
+
+            foreach (GameObject pcfVisual in _pcfVisuals)
+            {
+                pcfVisual.SetActive(IsVisualizing);
+            }
+        }
+
+        /// <summary>
+        /// Every _secondsToRequeue, this coroutine will attempt to find all pcfs and queue them all for updates.
+        /// </summary>
+        private IEnumerator ContinuouslyFindAllPCFs()
+        {
+            // Uses a while loop so that we can catch PCFs being created during runtime.
             while (true)
             {
-                yield return new WaitForSeconds(_secondsBetweenFindAllPCFs);
-                List<MLPCF> allPCFs;
-                MLResult result = MLPersistentCoordinateFrames.GetAllPCFs(out allPCFs);
-                if (!result.IsOk)
-                {
-                    Debug.LogErrorFormat("Error: MLPersistentCoordinateFrames failed to get all PCFs. Reason: {0}", result);
-                    yield break;
-                }
+                yield return new WaitForEndOfFrame();
 
-                // MLPersistentCoordinateFrames.GetAllPCFs() returns the PCFs stored in the device.
-                // We don't have their positions yet. In fact, we don't even know if they're in the
-                // same landscape as the user is loaded into so we must queue the pcfs for any status updates.
-
-                foreach (MLPCF pcf in allPCFs)
+                if (IsVisualizing)
                 {
-                    MLPersistentCoordinateFrames.QueueForUpdates(pcf);
-                    yield return null;
+                    #if PLATFORM_LUMIN
+                    // MLPersistentCoordinateFrames.FindAllPCFs() returns the PCFs found in the current map.
+                    // Calling this function is expensive and is only called repeatedly for demonstration purposes.
+                    // This function will create new pcfs during a new headpose session.
+                    MLResult result = MLPersistentCoordinateFrames.FindAllPCFs(out List<MLPersistentCoordinateFrames.PCF> allPCFs);
+                    if (!result.IsOk)
+                    {
+                        if (result.Result == MLResult.Code.PassableWorldLowMapQuality || result.Result == MLResult.Code.PassableWorldUnableToLocalize)
+                        {
+                            Debug.LogWarningFormat("Map quality not sufficient enough for PCFVisualizer to find all pcfs. Reason: {0}", result);
+                        }
+                        else
+                        {
+                            Debug.LogErrorFormat("Error: PCFVisualizer failed to find all PCFs because MLPersistentCoordinateFrames failed to get all PCFs. Reason: {0}", result);
+                        }
+                    }
+                    else
+                    {
+                        OnFindAllPCFs?.Invoke(allPCFs);
+                    }
+                    #endif
+
+                   yield return new WaitForSeconds(_secondsToRequeue);
                 }
             }
-
         }
-        #endregion // Private Methods
 
-        #region Public Methods
         /// <summary>
-        /// Toggle Debug Mode
+        /// Handler for PCF status changes.
         /// </summary>
-        public void ToggleDebug()
+        /// <param name="pcfStatus">The PCF status.</param>
+        /// <param name="pcf">The PCF.</param>
+        private void HandlePCFStatusChange(MLPersistentCoordinateFrames.PCF.Status pcfStatus, MLPersistentCoordinateFrames.PCF pcf)
         {
-            IsDebugMode = !IsDebugMode;
-
-            _pcfCountText.gameObject.SetActive(IsDebugMode);
-
-            foreach (GameObject pcfGO in _pcfObjs)
+            switch (pcfStatus)
             {
-                pcfGO.SetActive(IsDebugMode);
+                // Creates a new gameobject to represent the newly created pcf.
+                case MLPersistentCoordinateFrames.PCF.Status.Created:
+                {
+                    #if PLATFORM_LUMIN
+                    GameObject pcfVisual = Instantiate(pcfVisualPrefab, pcf.Position, pcf.Rotation, transform);
+                    _pcfVisuals.Add(pcfVisual);
+                     pcfVisual.SetActive(IsVisualizing);
+                    #endif
+                   break;
+                }
             }
+        }
 
-            if (IsDebugMode)
+        /// <summary>
+        /// Handler for when localization is gained or lost.
+        /// Starts and stops the ContinuouslyFindAllPCFs coroutine.
+        /// </summary>
+        /// <param name="localized"> Map Events that happened. </param>
+        private void HandleOnLocalized(bool localized)
+        {
+            if (localized)
             {
-                StartCoroutine(_findAllPCFs);
+                StartCoroutine("ContinuouslyFindAllPCFs");
             }
             else
             {
-                StopCoroutine(_findAllPCFs);
+                StopCoroutine("ContinuouslyFindAllPCFs");
             }
         }
-        #endregion
     }
 }

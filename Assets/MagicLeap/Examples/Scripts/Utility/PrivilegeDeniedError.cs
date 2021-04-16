@@ -2,9 +2,9 @@
 // ---------------------------------------------------------------------
 // %COPYRIGHT_BEGIN%
 //
-// Copyright (c) 2018-present, Magic Leap, Inc. All Rights Reserved.
-// Use of this file is governed by the Creator Agreement, located
-// here: https://id.magicleap.com/creator-terms
+// Copyright (c) 2019-present, Magic Leap, Inc. All Rights Reserved.
+// Use of this file is governed by the Developer Agreement, located
+// here: https://auth.magicleap.com/terms/developer
 //
 // %COPYRIGHT_END%
 // ---------------------------------------------------------------------
@@ -22,14 +22,11 @@ namespace UnityEngine.XR.MagicLeap
     [RequireComponent(typeof(Canvas))]
     public class PrivilegeDeniedError : MonoBehaviour
     {
-        #region Public Variables
         /// <summary>
         /// The time the error popup will display before it destroys itself
         /// </summary>
         public float TimeToDisplay = 10.0f;
-        #endregion
 
-        #region Unity Methods
         /// <summary>
         /// Starts the coroutine that will ultimately destroy this game object and creates the headpose canvas tracker
         /// </summary>
@@ -37,21 +34,17 @@ namespace UnityEngine.XR.MagicLeap
         {
             StartCoroutine(DestroyAfterTime(TimeToDisplay));
             GetComponent<Canvas>().worldCamera = Camera.main;
-            HeadposeCanvas headposeCanvas = gameObject.AddComponent<HeadposeCanvas>();
+            MLHeadposeCanvasBehavior headposeCanvas = gameObject.AddComponent<MLHeadposeCanvasBehavior>();
             headposeCanvas.CanvasDistanceForwards = 1.0f;
             headposeCanvas.CanvasDistanceUpwards = 0.0f;
             headposeCanvas.PositionLerpSpeed = 1.0f;
             headposeCanvas.RotationLerpSpeed = 1.0f;
         }
-        #endregion
 
-        #region Private Methods
         IEnumerator DestroyAfterTime(float timeInSeconds)
         {
             yield return new WaitForSeconds(timeInSeconds);
             Destroy(gameObject);
         }
-        #endregion
-
     }
 }

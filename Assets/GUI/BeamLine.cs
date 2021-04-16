@@ -3,34 +3,34 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.MagicLeap;
 
-public class BeamLine : MonoBehaviour
-{
-    private MLInputController controller = null;
-
-    private LineRenderer beamLine; // lr
-    public Vector3 beamEnd;
-    private float beamLength = 1.5f; // depth of controller beam   
-
-    void Start()
+    public class BeamLine : MonoBehaviour
     {
-        MLInput.Start();
-        controller = MLInput.GetController(MLInput.Hand.Left);
+        private MLInput.Controller controller = null;
 
-        beamLine = GetComponent<LineRenderer>();
-        beamLine.enabled = true;
-        beamLine.startWidth = 0.007f;
-        beamLine.endWidth = 0.007f;
-    }
+        private LineRenderer beamLine; // lr
+        public Vector3 beamEnd;
+        private float beamLength = 1.5f; // depth of controller beam   
 
-    void Update()
-    {
-        HandleBeamPlacement();
-    }
+        void Start()
+        {
+            MLInput.Start();
+            controller = MLInput.GetController(MLInput.Hand.Left);
 
-    private void HandleBeamPlacement()
-    {
-        beamEnd = transform.position + (transform.forward * beamLength);
-        beamLine.SetPosition(0, transform.position);
-        beamLine.SetPosition(1, beamEnd);
+            beamLine = GetComponent<LineRenderer>();
+            beamLine.enabled = true;
+            beamLine.startWidth = 0.007f;
+            beamLine.endWidth = 0.007f;
+        }
+
+        void Update()
+        {
+            HandleBeamPlacement();
+        }
+
+        private void HandleBeamPlacement()
+        {
+            beamEnd = transform.position + (transform.forward * beamLength);
+            beamLine.SetPosition(0, transform.position);
+            beamLine.SetPosition(1, beamEnd);
+        }
     }
-}

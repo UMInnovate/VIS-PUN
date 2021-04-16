@@ -11,7 +11,7 @@ public class StorableObjectBin : MonoBehaviour
     private PhotonRoom photonRoomRef;
 
     [SerializeField]
-    private myPlayer myPlayerRef;
+    public myPlayer myPlayerRef;
 
     public void AddStorableObject(StorableObject _object)
     {
@@ -20,6 +20,7 @@ public class StorableObjectBin : MonoBehaviour
         Debug.Log("Label name: " + _object.label.name + " ID: " + _object.actorNumber);
     }
 
+    
     public void RemoveStorableObject_RPC(string _actorNumber) // check, clear, destroy
     {
         Debug.Log("Going to remove " + _actorNumber + " objects");

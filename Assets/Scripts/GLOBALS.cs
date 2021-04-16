@@ -1,12 +1,11 @@
-﻿
-
-/*  GLOBALS contains the global variables, constants, and enums for VIS2
+﻿/*  GLOBALS contains the global variables, constants, and enums for VIS2
  *  
  *  GLOBALS.cs does not need to be attached to any GameObject
  *  and is automatically accessible in all scenes and all scripts
  */
 
 using UnityEngine;
+using System.Collections.Generic;
 
 // for module 2: incremented by helper function in BeamPlacement.cs
 public enum Stage
@@ -27,7 +26,6 @@ public enum Stage
     opView,     // watch the app animate/show the operation
     m3orig,     //MODULE 3 Begins HERE:
     m3rotate,   //rotate origin
-   // m3pin,
     m3poc,      //point of concurrency
     m3v1p1,     //place a vector tail
     m3v1p2,     //place a vector head
@@ -39,8 +37,10 @@ public enum Stage
     m3v4p2,     //place a vector head
     m3forcesel,
     m3keypad,      //validate vector
-    m3view,      //popup for user interaction, "is this a correct vector?"
-    m3highlight,
+    m3view,      
+    m3forceview,
+    m3forcesys, //TO DO -- ADD CHECK STAGE COMPARING REAL VALS TO USER INPUT VALUES
+    m3validateview,
 };
 
 public enum VecOp
@@ -64,11 +64,11 @@ public enum DispMode
 public static class GLOBALS
 {
     // default units are meters
-    public static bool inFeet = true; 
+    public static bool inFeet = false;
     // add audio settings
     public static bool soundOn = true;
     // is the vector correctly placed?
-    public static bool isCorrectVectorPlacement; 
+    public static bool isCorrectVectorPlacement;
     // conversion value
     public const float m2ft = 3.28084f;
     // Unity is lefthanded, typical math is righthanded
@@ -91,20 +91,32 @@ public static class GLOBALS
     public const float animTime = 2.2f;
     // precision of digits
     public const string format = "F2";
+    
 
     public static bool didCross = false;
     // temporary flag in case need to switch cross product
     public static bool invertCross = false;
     public static GameObject SelectedVec;
+    //public static GameObject GivenForceVec; //the given force vec 
     public static bool showingCoords = false;
 
     public static bool isInCoroutine = false;
-
+    public static bool isHost = false;
 
     /* DEBUG GLOBALS */
+    //public static bool firstVec;
     public static Vector3 headPos;
     public static Vector3 tailPos;
     public static Vector3 pocPos;
+
+    //Module 3 force calc stuff
+    public static Vector3 forceVector;
+    public static List<Vector3> unknownUVecs = new List<Vector3>();
+    public static List<GameObject> unknownVecs = new List<GameObject>();
+    public static int count; //to det which vec is given
+    public static GameObject GivenForceVec; //gameobject of first-selected vector
+    public static bool isValidSystem = false;
+
     #region premade colors
     public static Color visCyan = new Color(0.4f, 1, 1, 0.5f);
     public static Color visOrange = new Color(1, 0.7f, 0, 0.5f);
@@ -113,5 +125,8 @@ public static class GLOBALS
     public static Color visValid = new Color(207, 255, 212);
     public static Color visInvalid = new Color(237, 0, 24);
     public static Color visHovered = new Color(222, 248, 255);
+
+    public static int chosenVecInt { get; internal set; }
+    public static int forceVal { get; internal set; }
     #endregion
 }

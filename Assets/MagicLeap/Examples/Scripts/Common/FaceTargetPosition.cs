@@ -2,9 +2,9 @@
 // ---------------------------------------------------------------------
 // %COPYRIGHT_BEGIN%
 //
-// Copyright (c) 2018-present, Magic Leap, Inc. All Rights Reserved.
-// Use of this file is governed by the Creator Agreement, located
-// here: https://id.magicleap.com/creator-terms
+// Copyright (c) 2019-present, Magic Leap, Inc. All Rights Reserved.
+// Use of this file is governed by the Developer Agreement, located
+// here: https://auth.magicleap.com/terms/developer
 //
 // %COPYRIGHT_END%
 // ---------------------------------------------------------------------
@@ -19,14 +19,11 @@ namespace MagicLeap
     /// </summary>
     public class FaceTargetPosition : MonoBehaviour
     {
-        #region Private Variables
         private Vector3 _targetPosition;
 
         [SerializeField, Tooltip("Turning Speed (degrees per sec)")]
         private float _turningSpeed = 45.0f;
-        #endregion
 
-        #region Public Properties
         public Vector3 TargetPosition
         {
             set
@@ -42,9 +39,7 @@ namespace MagicLeap
                 _turningSpeed = value;
             }
         }
-        #endregion
 
-        #region Unity Methods
         /// <summary>
         /// Face towards target position while maintaining global up
         /// </summary>
@@ -58,6 +53,5 @@ namespace MagicLeap
             Quaternion desiredOrientation = Quaternion.LookRotation(desiredForward, Vector3.up);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, desiredOrientation, _turningSpeed * Time.deltaTime);
         }
-        #endregion
     }
 }

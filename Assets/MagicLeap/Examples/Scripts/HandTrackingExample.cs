@@ -2,9 +2,9 @@
 // ---------------------------------------------------------------------
 // %COPYRIGHT_BEGIN%
 //
-// Copyright (c) 2018-present, Magic Leap, Inc. All Rights Reserved.
-// Use of this file is governed by the Creator Agreement, located
-// here: https://id.magicleap.com/creator-terms
+// Copyright (c) 2019-present, Magic Leap, Inc. All Rights Reserved.
+// Use of this file is governed by the Developer Agreement, located
+// here: https://auth.magicleap.com/terms/developer
 //
 // %COPYRIGHT_END%
 // ---------------------------------------------------------------------
@@ -13,6 +13,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.XR.MagicLeap;
+using MagicLeap.Core.StarterKit;
 
 namespace MagicLeap
 {
@@ -20,17 +21,13 @@ namespace MagicLeap
     /// Class outputs to input UI.Text the most up to date gestures
     /// and confidence values for each of the hands.
     /// </summary>
-    [RequireComponent(typeof(HandTracking))]
     public class HandTrackingExample : MonoBehaviour
     {
-        #region Private Variables
         [SerializeField, Tooltip("Text to display gesture status to.")]
         private Text _statusText = null;
-        #endregion
 
-        #region Unity Methods
         /// <summary>
-        /// Check editor set variables for null references.
+        /// Validates fields.
         /// </summary>
         void Awake()
         {
@@ -43,20 +40,52 @@ namespace MagicLeap
         }
 
         /// <summary>
+        /// Calls Start on MLHandTrackingStarterKit.
+        /// </summary>
+        void Start()
+        {
+            #if PLATFORM_LUMIN
+            MLResult result = MLHandTrackingStarterKit.Start();
+            if (!result.IsOk)
+            {
+                Debug.LogErrorFormat("Error: HandTrackingExample failed on MLHandTrackingStarterKit.Start, disabling script. Reason: {0}", result);
+                enabled = false;
+                return;
+            }
+            #endif
+        }
+
+        /// <summary>
+        /// Stop the hand tracking API.
+        /// </summary>
+        void OnDestroy()
+        {
+            MLHandTrackingStarterKit.Stop();
+        }
+
+        /// <summary>
         ///  Polls the Gestures API for up to date confidence values.
         /// </summary>
         void Update()
         {
-            if (MLHands.IsStarted)
-            {
-                _statusText.text = string.Format(
-                    "Current Hand Gestures\nLeft: {0}, {2}% confidence\nRight: {1}, {3}% confidence",
-                    MLHands.Left.KeyPose.ToString(),
-                    MLHands.Right.KeyPose.ToString(),
-                    (MLHands.Left.KeyPoseConfidence * 100.0f).ToString("n0"),
-                    (MLHands.Right.KeyPoseConfidence * 100.0f).ToString("n0"));
-            }
+            _statusText.text = string.Format("<color=#dbfb76><b>{0}</b></color>\n{1}: {2}\n\n",
+                LocalizeManager.GetString("ControllerData"),
+                LocalizeManager.GetString("Status"),
+                LocalizeManager.GetString(ControllerStatus.Text));
+
+            #if PLATFORM_LUMIN
+            _statusText.text += string.Format(
+                "<color=#dbfb76><b>{0}</b></color>\n<color=#dbfb76>{1}</color>: {2}\n{3}% {4}\n\n<color=#dbfb76>{5}</color>: {6}\n{7}% {8}",
+                LocalizeManager.GetString("HandsData"),
+                LocalizeManager.GetString("Left"),
+                MLHandTrackingStarterKit.Left.KeyPose.ToString(),
+                (MLHandTrackingStarterKit.Left.HandKeyPoseConfidence * 100.0f).ToString("n0"),
+                LocalizeManager.GetString("Confidence"),
+                LocalizeManager.GetString("Right"),
+                MLHandTrackingStarterKit.Right.KeyPose.ToString(),
+                (MLHandTrackingStarterKit.Right.HandKeyPoseConfidence * 100.0f).ToString("n0"),
+                LocalizeManager.GetString("Confidence"));
+            #endif
         }
-        #endregion
     }
 }

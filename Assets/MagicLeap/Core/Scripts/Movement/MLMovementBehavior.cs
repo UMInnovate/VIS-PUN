@@ -2,9 +2,9 @@
 // ---------------------------------------------------------------------
 // %COPYRIGHT_BEGIN%
 //
-// Copyright (c) 2018-present, Magic Leap, Inc. All Rights Reserved.
-// Use of this file is governed by the Creator Agreement, located
-// here: https://id.magicleap.com/creator-terms
+// Copyright (c) 2019-present, Magic Leap, Inc. All Rights Reserved.
+// Use of this file is governed by the Developer Agreement, located
+// here: https://auth.magicleap.com/terms/developer
 //
 // %COPYRIGHT_END%
 // ---------------------------------------------------------------------
@@ -13,7 +13,10 @@
 using System;
 using System.Collections.Generic;
 
-namespace UnityEngine.XR.MagicLeap
+using UnityEngine;
+using UnityEngine.XR.MagicLeap;
+
+namespace MagicLeap.Core
 {
     /// <summary>
     /// MLMovementBehavior encapsulates the functionality to move objects
@@ -22,7 +25,6 @@ namespace UnityEngine.XR.MagicLeap
     [AddComponentMenu("XR/MagicLeap/Movement/MLMovementBehavior")]
     public class MLMovementBehavior : MonoBehaviour
     {
-        #region Public Enums
         /// <summary>
         /// Enum to specify type of iteration for movement session.
         /// </summary>
@@ -50,9 +52,7 @@ namespace UnityEngine.XR.MagicLeap
             PendingShutDown,
             ShutDown
         }
-        #endregion
 
-        #region Private Enums
         /// <summary>
         /// Helper private enum to help determine which collisions to end.
         /// </summary>
@@ -63,24 +63,28 @@ namespace UnityEngine.XR.MagicLeap
             Soft = 2,
             All = Hard | Soft
         }
-        #endregion
 
-        #region Private Variables
         private Camera mainCamera;
 
         // Variables with information about current movement session.
         private MovementSessionState movementSessionState = MovementSessionState.ShutDown;
         private MovementInteractionMode sessionInteractionMode;
         private MovementInputDriverType sessionInputDriverType;
-        private MLMovement3DofControls session3DofControls;
-        private MLMovement6DofControls session6DofControls;
-        private MLMovementObject sessionObject;
+
+        #if PLATFORM_LUMIN
+        private MLMovement.Controls3Dof session3DofControls;
+        private MLMovement.Controls6Dof session6DofControls;
+        private MLMovement.MovementObject sessionObject;
+        #endif
+
         private ulong sessionHandle;
 
+        #pragma warning disable 414
         /// <summary>
         /// Holds the touchpad position of the previous frame.
         /// </summary>
         private Vector2 previousTouchPosition = new Vector2();
+        #pragma warning restore 414
 
         private Quaternion originalOrientation = new Quaternion();
 
@@ -97,20 +101,18 @@ namespace UnityEngine.XR.MagicLeap
         /// Holds all the different hard collision sessions for this movement.
         /// </summary>
         private Dictionary<int, ulong> hardCollisionMap = new Dictionary<int, ulong>();
-        #endregion
-
-        #region Public Variables
-        /// <summary>
-        /// Reference to ControllerConnectionHandler that will deal with the object
-        /// movement.
-        /// </summary>
-        public ControllerConnectionHandler ControllerHandler = null;
 
         /// <summary>
-        /// Reference to MLMovementSettingsManager containing the movement session settings.
+        /// Reference to MLControllerConnectionHandlerBehavior that will deal with the object
         /// movement.
         /// </summary>
-        public MLMovementSettingsManager SettingsManager = null;
+        public MLControllerConnectionHandlerBehavior ControllerHandler = null;
+
+        /// <summary>
+        /// Reference to MLMovementSettingsManagerBehavior containing the movement session settings.
+        /// movement.
+        /// </summary>
+        public MLMovementSettingsManagerBehavior SettingsManager = null;
 
         /// <summary>
         /// Holds if movement session will be automatically started or not at Start.
@@ -159,9 +161,7 @@ namespace UnityEngine.XR.MagicLeap
         /// Holds the type of pointer for the movement session.
         /// </summary>
         public MovementInputDriverType InputDriverType = MovementInputDriverType.Controller;
-        #endregion
 
-        #region Public Properties
         /// <summary>
         /// Stores the state of the current movement session.
         /// </summary>
@@ -172,9 +172,7 @@ namespace UnityEngine.XR.MagicLeap
                 return movementSessionState;
             }
         }
-        #endregion
 
-        #region Unity Methods
         /// <summary>
         /// Verifies all components being in place and starts movement if RunOnStart is enabled.
         /// </summary>
@@ -229,16 +227,17 @@ namespace UnityEngine.XR.MagicLeap
         {
             if (movementSessionState == MovementSessionState.Running)
             {
+                #if PLATFORM_LUMIN
                 MLResult result;
 
                 if (UseTouchForRotation &&
                    ControllerHandler.ConnectedController != null &&
-                   ControllerHandler.ConnectedController.TouchpadGesture.Type == MLInputControllerTouchpadGestureType.RadialScroll)
+                   ControllerHandler.ConnectedController.CurrentTouchpadGesture.Type == MLInput.Controller.TouchpadGesture.GestureType.RadialScroll)
                 {
                     float deltaRadians = 0.0f;
                     Vector2 newPos = new Vector2(ControllerHandler.ConnectedController.Touch1PosAndForce.x, ControllerHandler.ConnectedController.Touch1PosAndForce.y);
 
-                    if (ControllerHandler.ConnectedController.TouchpadGesture.Direction == MLInputControllerTouchpadGestureDirection.Clockwise)
+                    if (ControllerHandler.ConnectedController.CurrentTouchpadGesture.Direction == MLInput.Controller.TouchpadGesture.GestureDirection.Clockwise)
                     {
                         deltaRadians = Mathf.Min(Vector2.SignedAngle(previousTouchPosition, newPos), MaxRotationDelta) * Mathf.Deg2Rad;
                     }
@@ -273,11 +272,13 @@ namespace UnityEngine.XR.MagicLeap
                         return;
                     }
                 }
+                #endif
 
                 switch (sessionInteractionMode)
                 {
                     case MovementInteractionMode.ThreeDof:
                     {
+                        #if PLATFORM_LUMIN
                         session3DofControls.HeadposePosition = mainCamera.transform.position;
                         if (sessionInputDriverType == MovementInputDriverType.Controller)
                         {
@@ -295,12 +296,14 @@ namespace UnityEngine.XR.MagicLeap
                             enabled = false;
                             return;
                         }
+                        #endif
 
                         break;
                     }
 
                     case MovementInteractionMode.SixDof:
                     {
+                        #if PLATFORM_LUMIN
                         session6DofControls.HeadposePosition = mainCamera.transform.position;
                         session6DofControls.HeadposeRotation = mainCamera.transform.rotation.normalized;
                         if (sessionInputDriverType == MovementInputDriverType.Controller)
@@ -321,6 +324,7 @@ namespace UnityEngine.XR.MagicLeap
                             enabled = false;
                             return;
                         }
+                        #endif
 
                         break;
                     }
@@ -335,15 +339,20 @@ namespace UnityEngine.XR.MagicLeap
 
                 if (AllowCollision)
                 {
+                    #if PLATFORM_LUMIN
                     objectRigidbody.position = sessionObject.ObjectPosition;
                     objectRigidbody.rotation = sessionObject.ObjectRotation.normalized;
+                    #endif
+
                     objectRigidbody.velocity = Vector3.zero;
                     objectRigidbody.angularVelocity = Vector3.zero;
                 }
                 else
                 {
+                    #if PLATFORM_LUMIN
                     transform.position = sessionObject.ObjectPosition;
                     transform.rotation = sessionObject.ObjectRotation.normalized;
+                    #endif
                 }
             }
 
@@ -372,7 +381,7 @@ namespace UnityEngine.XR.MagicLeap
         {
             if (movementSessionState != MovementSessionState.ShutDown &&
                 AllowCollision == true && collision != null &&
-                collision.gameObject.GetComponent<MLMovementCollider>() != null)
+                collision.gameObject.GetComponent<MLMovementColliderBehavior>() != null)
             {
                 if (!hardCollisionMap.ContainsKey(collision.gameObject.GetInstanceID()))
                 {
@@ -421,7 +430,7 @@ namespace UnityEngine.XR.MagicLeap
         {
             if (movementSessionState != MovementSessionState.ShutDown &&
                 AllowCollision == true && other != null &&
-                other.gameObject.GetComponent<MLMovementCollider>() != null)
+                other.gameObject.GetComponent<MLMovementColliderBehavior>() != null)
             {
                 if (!softCollisionMap.ContainsKey(other.gameObject.GetInstanceID()))
                 {
@@ -448,16 +457,15 @@ namespace UnityEngine.XR.MagicLeap
                 EndCollision(CollisionType.Soft, objId, softCollisionMap[objId]);
             }
         }
-        #endregion
 
-        #region PrivateMethods
         /// <summary>
         /// Starts a new hard collision session given some collision data.
         /// </summary>
         /// <param name="collision">The collision data.</param>
         void StartHardCollision(ref Collision collision)
         {
-            ulong collisionHandle = MagicLeapInternal.MagicLeapNativeBindings.InvalidHandle;
+            #if PLATFORM_LUMIN
+            ulong collisionHandle = UnityEngine.XR.MagicLeap.Native.MagicLeapNativeBindings.InvalidHandle;
             Vector3 collisionNormal = collision.contacts[0].normal;
 
             MLResult result = MLMovement.StartHardCollision(sessionHandle, in collisionNormal, out collisionHandle);
@@ -469,6 +477,7 @@ namespace UnityEngine.XR.MagicLeap
             }
 
             hardCollisionMap.Add(collision.gameObject.GetInstanceID(), collisionHandle);
+            #endif
         }
 
         /// <summary>
@@ -477,12 +486,13 @@ namespace UnityEngine.XR.MagicLeap
         /// <param name="other">The collider data.</param>
         void StartSoftCollision(ref Collider other)
         {
-            ulong collisionHandle = MagicLeapInternal.MagicLeapNativeBindings.InvalidHandle;
+            #if PLATFORM_LUMIN
+            ulong collisionHandle = UnityEngine.XR.MagicLeap.Native.MagicLeapNativeBindings.InvalidHandle;
 
             Vector3 thisCenter = objectCollider.bounds.center;
             Vector3 otherCenter = other.bounds.center;
             float maxDistance = Vector3.Distance(thisCenter, otherCenter);
-            float closesetDistance = maxDistance * (other.gameObject.GetComponent<MLMovementCollider>().MaxDepth / 100.0f);
+            float closesetDistance = maxDistance * (other.gameObject.GetComponent<MLMovementColliderBehavior>().MaxDepth / 100.0f);
 
             MLResult result = MLMovement.StartSoftCollision(sessionHandle, otherCenter, closesetDistance, maxDistance, out collisionHandle);
             if (!result.IsOk)
@@ -493,6 +503,7 @@ namespace UnityEngine.XR.MagicLeap
             }
 
             softCollisionMap.Add(other.gameObject.GetInstanceID(), collisionHandle);
+            #endif
         }
 
         /// <summary>
@@ -501,6 +512,7 @@ namespace UnityEngine.XR.MagicLeap
         /// <param name="collision">The latest collision data.</param>
         void UpdateHardCollision(ref Collision collision)
         {
+            #if PLATFORM_LUMIN
             int objId = collision.gameObject.GetInstanceID();
 
             MLResult result = MLMovement.UpdateHardCollision(sessionHandle, hardCollisionMap[objId], collision.contacts[0].normal);
@@ -510,6 +522,7 @@ namespace UnityEngine.XR.MagicLeap
                 enabled = false;
                 return;
             }
+            #endif
         }
 
         /// <summary>
@@ -517,12 +530,15 @@ namespace UnityEngine.XR.MagicLeap
         /// </summary>
         void EndAllCollisions(CollisionType type)
         {
+            #if PLATFORM_LUMIN
             MLResult result;
+            #endif
 
             if (type.HasFlag(CollisionType.Hard))
             {
                 foreach (KeyValuePair<int, ulong> collision in hardCollisionMap)
                 {
+                    #if PLATFORM_LUMIN
                     result = MLMovement.EndCollision(sessionHandle, collision.Value);
                     if (!result.IsOk)
                     {
@@ -530,6 +546,7 @@ namespace UnityEngine.XR.MagicLeap
                         enabled = false;
                         return;
                     }
+                    #endif
                 }
                 hardCollisionMap.Clear();
             }
@@ -538,6 +555,7 @@ namespace UnityEngine.XR.MagicLeap
             {
                 foreach (KeyValuePair<int, ulong> collision in softCollisionMap)
                 {
+                    #if PLATFORM_LUMIN
                     result = MLMovement.EndCollision(sessionHandle, collision.Value);
                     if (!result.IsOk)
                     {
@@ -545,6 +563,7 @@ namespace UnityEngine.XR.MagicLeap
                         enabled = false;
                         return;
                     }
+                    #endif
                 }
                 softCollisionMap.Clear();
             }
@@ -557,8 +576,6 @@ namespace UnityEngine.XR.MagicLeap
         /// <param name="collisionHandle">The handle for the collision session.</param>
         void EndCollision(CollisionType type, int collisionId, ulong collisionHandle)
         {
-            MLResult result = MLMovement.EndCollision(sessionHandle, collisionHandle);
-
             if (type == CollisionType.Hard)
             {
                 hardCollisionMap.Remove(collisionId);
@@ -568,16 +585,17 @@ namespace UnityEngine.XR.MagicLeap
                 softCollisionMap.Remove(collisionId);
             }
 
+            #if PLATFORM_LUMIN
+            MLResult result = MLMovement.EndCollision(sessionHandle, collisionHandle);
+
             if (!result.IsOk)
             {
                 Debug.LogErrorFormat("MLMovementBehavior.EndCollision failed to end collision session, disabling script. Reason: {0}", result);
                 enabled = false;
-                return;
             }
+            #endif
         }
-        #endregion
 
-        #region Public Methods
         /// <summary>
         /// Starts a new movement session if a session was not already active.
         /// </summary>
@@ -589,29 +607,34 @@ namespace UnityEngine.XR.MagicLeap
                 return;
             }
 
+            #if PLATFORM_LUMIN
             MLResult result;
+            #endif
 
             sessionInteractionMode = InteractionMode;
             sessionInputDriverType = InputDriverType;
 
             originalOrientation = (transform.up.normalized == Vector3.up) ? Quaternion.identity : transform.rotation.normalized;
 
-            sessionObject = new MLMovementObject()
+            #if PLATFORM_LUMIN
+            sessionObject = new MLMovement.MovementObject()
             {
                 ObjectPosition = transform.position,
                 ObjectRotation = (transform.up.normalized == Vector3.up) ? transform.rotation.normalized : Quaternion.identity
             };
+            #endif
 
             switch (sessionInteractionMode)
             {
                 case MovementInteractionMode.ThreeDof:
                 {
-                    MLMovement3DofSettings dofSettings = new MLMovement3DofSettings()
+                    #if PLATFORM_LUMIN
+                    MLMovement.Settings3Dof dofSettings = new MLMovement.Settings3Dof()
                     {
                         AutoCenter = this.AutoCenter
                     };
 
-                    session3DofControls = new MLMovement3DofControls()
+                    session3DofControls = new MLMovement.Controls3Dof()
                     {
                         HeadposePosition = Camera.main.transform.position
                     };
@@ -633,18 +656,20 @@ namespace UnityEngine.XR.MagicLeap
                         enabled = false;
                         return;
                     }
+                    #endif
 
                     break;
                 }
 
                 case MovementInteractionMode.SixDof:
                 {
-                    MLMovement6DofSettings dofSettings = new MLMovement6DofSettings()
+                    #if PLATFORM_LUMIN
+                    MLMovement.Settings6Dof dofSettings = new MLMovement.Settings6Dof()
                     {
                         AutoCenter = this.AutoCenter
                     };
 
-                    session6DofControls = new MLMovement6DofControls()
+                    session6DofControls = new MLMovement.Controls6Dof()
                     {
                         HeadposePosition = Camera.main.transform.position,
                         HeadposeRotation = Camera.main.transform.rotation.normalized,
@@ -668,6 +693,7 @@ namespace UnityEngine.XR.MagicLeap
                         enabled = false;
                         return;
                     }
+                    #endif
 
                     break;
                 }
@@ -704,9 +730,10 @@ namespace UnityEngine.XR.MagicLeap
                 EndAllCollisions(CollisionType.Hard);
             }
 
+            #if PLATFORM_LUMIN
             // Passing float.MaxValue if forceEnd is true to ensure movement ends with a Timeout result.
             MLResult result = MLMovement.End(sessionHandle, forceEnd ? float.MaxValue : Time.deltaTime, out sessionObject);
-            if (result.IsOk || result.Code == MLResultCode.Pending)
+            if (result.IsOk || result.Result == MLResult.Code.Pending)
             {
                 if (AllowCollision)
                 {
@@ -723,7 +750,7 @@ namespace UnityEngine.XR.MagicLeap
 
                 if (result.IsOk)
                 {
-                    sessionHandle = MagicLeapInternal.MagicLeapNativeBindings.InvalidHandle;
+                    sessionHandle = UnityEngine.XR.MagicLeap.Native.MagicLeapNativeBindings.InvalidHandle;
                     movementSessionState = MovementSessionState.ShutDown;
                 }
                 else
@@ -731,11 +758,11 @@ namespace UnityEngine.XR.MagicLeap
                     movementSessionState = MovementSessionState.PendingShutDown;
                 }
             }
-            else if(result.Code == MLResultCode.Timeout)
+            else if(result.Result == MLResult.Code.Timeout)
             {
                 hardCollisionMap.Clear();
                 softCollisionMap.Clear();
-                sessionHandle = MagicLeapInternal.MagicLeapNativeBindings.InvalidHandle;
+                sessionHandle = UnityEngine.XR.MagicLeap.Native.MagicLeapNativeBindings.InvalidHandle;
                 movementSessionState = MovementSessionState.ShutDown;
             }
             else
@@ -744,7 +771,7 @@ namespace UnityEngine.XR.MagicLeap
                 enabled = false;
                 return;
             }
+            #endif
         }
-        #endregion
     }
 }

@@ -2,9 +2,9 @@
 // ---------------------------------------------------------------------
 // %COPYRIGHT_BEGIN%
 //
-// Copyright (c) 2018-present, Magic Leap, Inc. All Rights Reserved.
-// Use of this file is governed by the Creator Agreement, located
-// here: https://id.magicleap.com/creator-terms
+// Copyright (c) 2019-present, Magic Leap, Inc. All Rights Reserved.
+// Use of this file is governed by the Developer Agreement, located
+// here: https://auth.magicleap.com/terms/developer
 //
 // %COPYRIGHT_END%
 // ---------------------------------------------------------------------
@@ -15,6 +15,7 @@ using UnityEngine.UI;
 using UnityEngine.XR.MagicLeap;
 using System;
 using System.Collections;
+using MagicLeap.Core.StarterKit;
 
 namespace MagicLeap
 {
@@ -22,10 +23,9 @@ namespace MagicLeap
     /// This example uses the Location API obtain a latitude and longitude, based on the zip code.
     /// The globe is rotated and a pin placed at the geographic location.
     /// </summary>
-    [RequireComponent(typeof(PrivilegeRequester))]
     public class LocationExample : MonoBehaviour
     {
-        private PrivilegeRequester _privilegeRequester;
+        private MLPrivilegeRequesterBehavior _privilegeRequester;
 
         [SerializeField, Tooltip("The text used to display status messages.")]
         private Text _statusText = null;
@@ -57,6 +57,9 @@ namespace MagicLeap
         private bool _placedPin = false;
         private bool _placedGlobe = false;
 
+        private string locationErrorText = "";
+
+        private const float LOCATION_SYNC_RATE = 20f;
         private void Awake()
         {
             if (_statusText == null)
@@ -98,27 +101,16 @@ namespace MagicLeap
 
             _globe.SetActive(false);
             _pin.gameObject.SetActive(false);
-
-            _privilegeRequester = GetComponent<PrivilegeRequester>();
-            if (_privilegeRequester)
-            {
-                // Register event listener.
-                _privilegeRequester.OnPrivilegesDone += HandlePrivilegesDone;
-            }
         }
 
         void OnDestroy()
         {
-            if (MLLocation.IsStarted)
-            {
-                MLLocation.Stop();
-            }
+            MLLocationStarterKit.Stop();
+        }
 
-            if (_privilegeRequester != null)
-            {
-                // Unregister event listener.
-                _privilegeRequester.OnPrivilegesDone -= HandlePrivilegesDone;
-            }
+        void Start()
+        {
+            StartupAPI();
         }
 
         void Update()
@@ -127,27 +119,22 @@ namespace MagicLeap
             {
                 RotateGlobe(Time.deltaTime / _rotationSmoothTime);
             }
+
+            UpdateStatus();
         }
 
-        /// <summary>
-        /// Handler when privileges have been requested.
-        /// </summary>
-        /// <param name="result">Result of the operation</param>
-        private void HandlePrivilegesDone(MLResult result)
+        private void OnApplicationPause(bool pause)
         {
-            if (!result.IsOk)
+            if (pause)
             {
-                if (result.Code == MLResultCode.PrivilegeDenied)
-                {
-                    Instantiate(Resources.Load("PrivilegeDeniedError"));
-                }
-
-                Debug.LogErrorFormat("Error: LocationExample failed to get requested privileges, disabling script. Reason: {0}", result);
-                enabled = false;
-                return;
+                MLLocationStarterKit.Stop();
             }
-
-            StartupAPI();
+            else
+            {
+                #if PLATFORM_LUMIN
+                MLLocationStarterKit.Start();
+                #endif
+            }
         }
 
         /// <summary>
@@ -155,13 +142,22 @@ namespace MagicLeap
         /// </summary>
         private void StartupAPI()
         {
-            MLLocation.Start();
+            #if PLATFORM_LUMIN
+            MLResult result = MLLocationStarterKit.Start();
+            if (!result.IsOk)
+            {
+                Debug.LogError("Error: LocationExample failed to start MLLocation, disabling script.");
+                enabled = false;
+                return;
+            }
+            #endif
+
             GetLocation();
             StartCoroutine(GetFineLocationLoop());
         }
 
         /// <summary>
-        /// Coroutine for continous polling for fine location
+        /// Coroutine for continous polling for fine location.
         /// </summary>
         private IEnumerator GetFineLocationLoop()
         {
@@ -175,79 +171,68 @@ namespace MagicLeap
         /// <summary>
         /// Polls current location data.
         /// </summary>
-        private void GetLocation(bool fineLocation = false)
+        private void GetLocation(bool useFineLocation = false)
         {
-            MLLocationData newData;
-            MLResult result = fineLocation ? MLLocation.GetLastFineLocation(out newData) : MLLocation.GetLastCoarseLocation(out newData);
+            #if PLATFORM_LUMIN
+            MLResult result = MLLocationStarterKit.GetLocation(out MLLocation.Location newLocation, useFineLocation);
+
             if (result.IsOk)
             {
                 string formattedString =
-                    "Latitude:\t<i>{0}</i>\n" +
-                    "Longitude:\t<i>{1}</i>\n" +
-                    "Postal Code:\t<i>{2}</i>\n" +
-                    "Timestamp:\t<i>{3}</i>\n" +
-                    (fineLocation ? "Accuracy:\t<i>{4}</i>" : "");
+                    "{0}:\t<i>{1}</i>\n" +
+                    "{2}:\t<i>{3}</i>\n" +
+                    "{4}:\t<i>{5}</i>\n" +
+                    "{6}:\t<i>{7}</i>\n" +
+                    (useFineLocation ? "{8}:\t<i>{9}</i>" : "");
 
-
-                Text locationText = fineLocation ? _fineLocationText : _coarseLocationText;
+                Text locationText = useFineLocation ? _fineLocationText : _coarseLocationText;
 
                 locationText.text = String.Format(formattedString,
-                    newData.Latitude,
-                    newData.Longitude,
-                    newData.HasPostalCode ? newData.PostalCode : "(unknown)",
-                    newData.Timestamp,
-                    newData.Accuracy
+                    LocalizeManager.GetString("Latitude"), newLocation.Latitude,
+                    LocalizeManager.GetString("Longitude"),  newLocation.Longitude,
+                    LocalizeManager.GetString("PostalCode"),  newLocation.HasPostalCode ? newLocation.PostalCode : "(unknown)",
+                    LocalizeManager.GetString("Timestamp"), newLocation.Timestamp,
+                    LocalizeManager.GetString("Accuracy"), newLocation.Accuracy
                 );
 
                 if (!_placedGlobe && !_placedPin)
                 {
                     StartCoroutine(PlaceGlobe());
-                    PlacePin(GetWorldCartesianCoords(newData.Latitude, newData.Longitude));
+                    PlacePin(MLLocationStarterKit.GetWorldCartesianCoords(newLocation.Latitude, newLocation.Longitude, _globe.GetComponent<SphereCollider>().radius));
                 }
             }
             else
             {
-                if (result.Code == MLResultCode.LocationNetworkConnection)
+                if (result.Result == MLResult.Code.LocationNetworkConnection)
                 {
-                    _statusText.text = "<color=red>Received network error, please check the network connection and relaunch the application.</color>";
+                    locationErrorText = "<color=red>Received network error, please check the network connection and relaunch the application.</color>";
                 }
                 else
                 {
-                    _statusText.text = "<color=red>Failed to retrieve location with result: " + result.Code + "</color>";
+                    locationErrorText = "<color=red>Failed to retrieve location with result: " + result.Result + "</color>";
                 }
 
+                MLLocationStarterKit.Stop();
                 enabled = false;
                 return;
             }
+            #endif
+
         }
 
-        /// <summary>
-        /// Convert the given latitude and longitude to a Vector3
-        /// This converts spherical coordinates to cartesian coordinates
-        /// </summary>
-        /// <param name="lat">Latitude of the given spherical coordinates</param>
-        /// <param name="lon">Longitude of the given spherical coordinates</param>
-        /// <returns>Vector3 of cartesian coordinates</returns>
-        public Vector3 GetWorldCartesianCoords(float lat, float lon)
-        {
-            // Convert Latitude and Longitude to radians
-            float latitude = Mathf.Deg2Rad * lat;
-            float longitude = Mathf.Deg2Rad * lon;
-            // adjust position by radians
-            latitude -= 1.570795765134f; // subtract 90 degrees (in radians)
+       private void UpdateStatus()
+       {
+           _statusText.text = string.Format("<color=#dbfb76><b>{0} </b></color>\n{1}: {2}\n",
+                LocalizeManager.GetString("ControllerData"),
+                LocalizeManager.GetString("Status"),
+                LocalizeManager.GetString(ControllerStatus.Text)) + locationErrorText;
 
-            var radius = _globe.GetComponent<SphereCollider>().radius;
-
-            // and switch z and y (since z is forward)
-            float xPos = (radius) * Mathf.Sin(latitude) * Mathf.Cos(longitude);
-            float zPos = (radius) * Mathf.Sin(latitude) * Mathf.Sin(longitude);
-            float yPos = (radius) * Mathf.Cos(latitude);
-
-            return new Vector3(xPos, yPos, zPos);
-        }
+            _statusText.text += string.Format("\n<color=#dbfb76><b>{0} </b></color>:\n",
+                LocalizeManager.GetString("LocationData")) +  _fineLocationText.text;
+       }
 
         /// <summary>
-        /// Create our pin and place it at the proper location
+        /// Create our pin and place it at the proper location.
         /// </summary>
         /// <param name="position">Vector3 of cartesian coordinates</param>
         /// <returns>The created pin's GameObject</returns>

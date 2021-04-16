@@ -24,7 +24,7 @@ public class BeamPlacementM2_Original : MonoBehaviour
     // Origin of coordinate system
     private GameObject _origin;
     // Input controller
-    private MLInputController _controller = null;
+    private MLInput.Controller _controller = null;
     // LineRenderer from controller
     private LineRenderer _beamline = null;
     // VectorMath handles vector positioning
@@ -94,6 +94,7 @@ public class BeamPlacementM2_Original : MonoBehaviour
         {
             Debug.Log("Handling coroutine");
         }
+
 
         aMenuIsActive = (operationsPanel.activeSelf || menuPanel.activeSelf);
         if (GLOBALS.gridOn)
@@ -199,6 +200,9 @@ public class BeamPlacementM2_Original : MonoBehaviour
         Debug.Log("Current stage: " + GLOBALS.stage);
     }
 
+    //Controller Input is disabled while a coroutine is running
+    //Required when calculations are being displayed so the unknown state error doesn't occur
+    //Unknown state error is when the user spams the trigger while being shown the component calculations
     private void disableControllerInput()
     {
         GLOBALS.isInCoroutine = true;
@@ -213,9 +217,9 @@ public class BeamPlacementM2_Original : MonoBehaviour
     }
 
     // Home or Bumper clicks handled here
-    private void OnButtonUp(byte controllerId, MLInputControllerButton button)
+    private void OnButtonUp(byte controllerId, MLInput.Controller.Button button)
     {
-        if (button == MLInputControllerButton.HomeTap)
+        if (button == MLInput.Controller.Button.HomeTap)
         {
             // if opening up the menu, make sure there is a beam and no instructions
             if (!menuPanel.activeSelf)
@@ -228,7 +232,7 @@ public class BeamPlacementM2_Original : MonoBehaviour
             // display instructions only when no menu
             _giveInstructions.EnableText(!menuPanel.activeSelf);
         }
-        else if (button == MLInputControllerButton.Bumper)
+        else if (button == MLInput.Controller.Button.Bumper)
         {
             // If we're viewing the completed operation, bumper will toggle the labels we are viewing
             if (GLOBALS.stage == Stage.opView)
@@ -279,13 +283,30 @@ public class BeamPlacementM2_Original : MonoBehaviour
             // Touchpad handles rotating the origin
             if (GLOBALS.stage == Stage.m2rotate)
             {
-                switch (_controller.TouchpadGesture.Direction)
+                //   MagicLeapTouchpadGestureDirection MagicLeapTouchpadGestureDirection = MagicLeapTouchpadGestureDirection.;
+                switch (_controller.CurrentTouchpadGesture.Direction)
                 {
-                    case MLInputControllerTouchpadGestureDirection.Clockwise:
+                    case MLInput.Controller.TouchpadGesture.GestureDirection.Clockwise:
                         _root.transform.RotateAround(_origin.transform.position, Vector3.up, 80f * Time.deltaTime);
                         break;
-                    case MLInputControllerTouchpadGestureDirection.CounterClockwise:
+                    case MLInput.Controller.TouchpadGesture.GestureDirection.CounterClockwise:
                         _root.transform.RotateAround(_origin.transform.position, Vector3.up, -80f * Time.deltaTime);
+                        break;
+                    case MLInput.Controller.TouchpadGesture.GestureDirection.None:
+                        break;
+                    case MLInput.Controller.TouchpadGesture.GestureDirection.Up:
+                        break;
+                    case MLInput.Controller.TouchpadGesture.GestureDirection.Down:
+                        break;
+                    case MLInput.Controller.TouchpadGesture.GestureDirection.Left:
+                        break;
+                    case MLInput.Controller.TouchpadGesture.GestureDirection.Right:
+                        break;
+                    case MLInput.Controller.TouchpadGesture.GestureDirection.In:
+                        break;
+                    case MLInput.Controller.TouchpadGesture.GestureDirection.Out:
+                        break;
+                    default:
                         break;
                 }
             }

@@ -2,9 +2,9 @@
 // ---------------------------------------------------------------------
 // %COPYRIGHT_BEGIN%
 //
-// Copyright (c) 2018-present, Magic Leap, Inc. All Rights Reserved.
-// Use of this file is governed by the Creator Agreement, located
-// here: https://id.magicleap.com/creator-terms
+// Copyright (c) 2019-present, Magic Leap, Inc. All Rights Reserved.
+// Use of this file is governed by the Developer Agreement, located
+// here: https://auth.magicleap.com/terms/developer
 //
 // %COPYRIGHT_END%
 // ---------------------------------------------------------------------
@@ -19,10 +19,9 @@ namespace MagicLeap
     /// <summary>
     /// Class to visualize controller inputs
     /// </summary>
-    [RequireComponent(typeof(ControllerConnectionHandler))]
+    [RequireComponent(typeof(MLControllerConnectionHandlerBehavior))]
     public class ControllerVisualizer : MonoBehaviour
     {
-        #region Public Enum
         [System.Flags]
         public enum DeviceTypesAllowed : byte
         {
@@ -30,9 +29,7 @@ namespace MagicLeap
             MobileApp = 2,
             All = Controller | MobileApp,
         }
-        #endregion
 
-        #region Private Variables
         [SerializeField, Tooltip("The controller model.")]
         private GameObject _controllerModel = null;
 
@@ -64,19 +61,17 @@ namespace MagicLeap
 
         private float _touchpadRadius;
 
-        private ControllerConnectionHandler _controllerConnectionHandler = null;
+        private MLControllerConnectionHandlerBehavior _controllerConnectionHandler = null;
         private bool _wasControllerValid = true;
 
         private const float MAX_TRIGGER_ROTATION = 35.0f;
-        #endregion
 
-        #region Unity Methods
         /// <summary>
         /// Initialize variables, callbacks and check null references.
         /// </summary>
         void Start()
         {
-            _controllerConnectionHandler = GetComponent<ControllerConnectionHandler>();
+            _controllerConnectionHandler = GetComponent<MLControllerConnectionHandlerBehavior>();
 
             if (!_controllerModel)
             {
@@ -117,8 +112,10 @@ namespace MagicLeap
 
             SetVisibility(_controllerConnectionHandler.IsControllerValid());
 
+            #if PLATFORM_LUMIN
             MLInput.OnControllerButtonUp += HandleOnButtonUp;
             MLInput.OnControllerButtonDown += HandleOnButtonDown;
+            #endif
 
             _triggerMaterial = FindMaterial(_trigger);
             _touchpadMaterial = FindMaterial(_touchpad);
@@ -145,12 +142,12 @@ namespace MagicLeap
         /// </summary>
         void OnDestroy()
         {
+            #if PLATFORM_LUMIN
             MLInput.OnControllerButtonDown -= HandleOnButtonDown;
             MLInput.OnControllerButtonUp -= HandleOnButtonUp;
+            #endif
         }
-        #endregion
 
-        #region Private Methods
         /// <summary>
         /// Sets the visual pressure indicator for the appropriate button MeshRenderers.
         /// <param name="renderer">The meshrenderer to modify.</param>
@@ -174,10 +171,13 @@ namespace MagicLeap
             {
                 return;
             }
-            MLInputController controller = _controllerConnectionHandler.ConnectedController;
+
+            #if PLATFORM_LUMIN
+            MLInput.Controller controller = _controllerConnectionHandler.ConnectedController;
             Vector3 updatePosition = new Vector3(controller.Touch1PosAndForce.x, 0.0f, controller.Touch1PosAndForce.y);
+
             float touchY = _touchIndicatorTransform.localPosition.y;
-            _touchIndicatorTransform.localPosition = new Vector3(updatePosition.x * _touchpadRadius / MagicLeapDevice.WorldScale, touchY, updatePosition.z * _touchpadRadius / MagicLeapDevice.WorldScale);
+            _touchIndicatorTransform.localPosition = new Vector3(updatePosition.x * _touchpadRadius / MLDevice.WorldScale, touchY, updatePosition.z * _touchpadRadius / MLDevice.WorldScale);
 
             if (controller.Touch1Active)
             {
@@ -192,6 +192,7 @@ namespace MagicLeap
 
             float force = controller.Touch1PosAndForce.z;
             _touchpadMaterial.color = Color.Lerp(_defaultColor, _activeColor, force);
+            #endif
         }
 
         /// <summary>
@@ -203,14 +204,21 @@ namespace MagicLeap
             {
                 return;
             }
-            MLInputController controller = _controllerConnectionHandler.ConnectedController;
 
+            MLInput.Controller controller = _controllerConnectionHandler.ConnectedController;
+
+            #if PLATFORM_LUMIN
             // Change the color of the trigger
             _triggerMaterial.color = Color.Lerp(_defaultColor, _activeColor, controller.TriggerValue);
+            #endif
 
             // Set the rotation of the trigger
             Vector3 eulerRot = _trigger.transform.localRotation.eulerAngles;
+
+            #if PLATFORM_LUMIN
             eulerRot.x = Mathf.Lerp(0, MAX_TRIGGER_ROTATION, controller.TriggerValue);
+            #endif
+
             _trigger.transform.localRotation = Quaternion.Euler(eulerRot);
         }
 
@@ -265,22 +273,22 @@ namespace MagicLeap
 
             _wasControllerValid = value;
         }
-        #endregion
 
-        #region Event Handlers
         /// <summary>
         /// Handles the event for button down.
         /// </summary>
         /// <param name="controllerId">The id of the controller.</param>
         /// <param name="button">The button that is being pressed.</param>
-        private void HandleOnButtonDown(byte controllerId, MLInputControllerButton button)
+        private void HandleOnButtonDown(byte controllerId, MLInput.Controller.Button button)
         {
+            #if PLATFORM_LUMIN
             if (_controllerConnectionHandler.IsControllerValid() && _controllerConnectionHandler.ConnectedController.Id == controllerId &&
-                button == MLInputControllerButton.Bumper)
+                button == MLInput.Controller.Button.Bumper)
             {
                 // Sets the color of the Bumper to the active color.
                 _bumperButtonMaterial.color = _activeColor;
             }
+            #endif
         }
 
         /// <summary>
@@ -288,17 +296,18 @@ namespace MagicLeap
         /// </summary>
         /// <param name="controllerId">The id of the controller.</param>
         /// <param name="button">The button that is being released.</param>
-        private void HandleOnButtonUp(byte controllerId, MLInputControllerButton button)
+        private void HandleOnButtonUp(byte controllerId, MLInput.Controller.Button button)
         {
+            #if PLATFORM_LUMIN
             if (_controllerConnectionHandler.IsControllerValid() && _controllerConnectionHandler.ConnectedController.Id == controllerId)
             {
-                if (button == MLInputControllerButton.Bumper)
+                if (button == MLInput.Controller.Button.Bumper)
                 {
                     // Sets the color of the Bumper to the default color.
                     _bumperButtonMaterial.color = _defaultColor;
                 }
 
-                else if (button == MLInputControllerButton.HomeTap)
+                else if (button == MLInput.Controller.Button.HomeTap)
                 {
                     // Note: HomeTap is NOT a button. It's a physical button on the controller.
                     // But in the application side, the tap registers as a ButtonUp event and there is NO
@@ -308,7 +317,7 @@ namespace MagicLeap
                     StartCoroutine(RestoreHomeColor());
                 }
             }
+            #endif
         }
-        #endregion
     }
 }

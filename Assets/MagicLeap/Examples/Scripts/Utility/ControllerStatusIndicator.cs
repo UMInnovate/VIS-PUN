@@ -2,9 +2,9 @@
 // ---------------------------------------------------------------------
 // %COPYRIGHT_BEGIN%
 //
-// Copyright (c) 2018-present, Magic Leap, Inc. All Rights Reserved.
-// Use of this file is governed by the Creator Agreement, located
-// here: https://id.magicleap.com/creator-terms
+// Copyright (c) 2019-present, Magic Leap, Inc. All Rights Reserved.
+// Use of this file is governed by the Developer Agreement, located
+// here: https://auth.magicleap.com/terms/developer
 //
 // %COPYRIGHT_END%
 // ---------------------------------------------------------------------
@@ -24,20 +24,17 @@ namespace MagicLeap
     [RequireComponent(typeof(SpriteRenderer))]
     public class ControllerStatusIndicator : MonoBehaviour
     {
-        #region Private Variables
         [SerializeField, Tooltip("Controller Icon")]
         private Sprite _controllerIcon = null;
 
         [SerializeField, Tooltip("Mobile App Icon")]
         private Sprite _mobileAppIcon = null;
 
-        [SerializeField, Tooltip("ControllerConnectionHandler reference.")]
-        private ControllerConnectionHandler _controllerConnectionHandler = null;
+        [SerializeField, Tooltip("MLControllerConnectionHandlerBehavior reference.")]
+        private MLControllerConnectionHandlerBehavior _controllerConnectionHandler = null;
 
         private SpriteRenderer _spriteRenderer;
-        #endregion
 
-        #region Unity Methods
         /// <summary>
         /// Initializes component data and starts MLInput.
         /// </summary>
@@ -90,9 +87,7 @@ namespace MagicLeap
                 UpdateIcon();
             }
         }
-        #endregion
 
-        #region Private Methods
         /// <summary>
         /// Update the color depending on the controller connection.
         /// </summary>
@@ -120,23 +115,25 @@ namespace MagicLeap
         /// </summary>
         private void UpdateIcon()
         {
+            #if PLATFORM_LUMIN
             if (_controllerConnectionHandler.enabled &&
                 _controllerConnectionHandler.IsControllerValid())
             {
                 switch (_controllerConnectionHandler.ConnectedController.Type)
                 {
-                    case MLInputControllerType.Control:
+                    case MLInput.Controller.ControlType.Control:
                         {
                             _spriteRenderer.sprite = _controllerIcon;
                             break;
                         }
-                    case MLInputControllerType.MobileApp:
+                    case MLInput.Controller.ControlType.MobileApp:
                         {
                             _spriteRenderer.sprite = _mobileAppIcon;
                             break;
                         }
                 }
             }
+            #endif
         }
 
         /// <summary>
@@ -145,8 +142,9 @@ namespace MagicLeap
         /// </summary>
         private void SetDefaultIcon()
         {
-            if ((_controllerConnectionHandler.DevicesAllowed & ControllerConnectionHandler.DeviceTypesAllowed.ControllerLeft) != 0 ||
-                (_controllerConnectionHandler.DevicesAllowed & ControllerConnectionHandler.DeviceTypesAllowed.ControllerRight) != 0)
+            #if PLATFORM_LUMIN
+            if ((_controllerConnectionHandler.DevicesAllowed & MLControllerConnectionHandlerBehavior.DeviceTypesAllowed.ControllerLeft) != 0 ||
+                (_controllerConnectionHandler.DevicesAllowed & MLControllerConnectionHandlerBehavior.DeviceTypesAllowed.ControllerRight) != 0)
             {
                 _spriteRenderer.sprite = _controllerIcon;
             }
@@ -154,15 +152,13 @@ namespace MagicLeap
             {
                 _spriteRenderer.sprite = _mobileAppIcon;
             }
+            #endif
         }
-        #endregion
 
-        #region Event Handlers
         private void HandleOnControllerChanged(byte controllerId)
         {
             UpdateColor();
             UpdateIcon();
         }
-        #endregion
     }
 }

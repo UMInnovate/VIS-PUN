@@ -11,6 +11,7 @@ using TMPro;
 
 public class VectorControlM1_Original : MonoBehaviour
 {
+    public BeamPlacementM1_Original BeamPlacementM1_Original;
     public Camera _camera;
     public Transform _head;
     public Color vecColor;
@@ -28,7 +29,7 @@ public class VectorControlM1_Original : MonoBehaviour
     [SerializeField] private Material beamMaterial;
     [SerializeField] private TextMeshPro _headLabel;
     [SerializeField, Tooltip("The origin sphere at the tail of the vector")]
-    private GameObject _origin;
+    public GameObject _origin;
 
     void Start()
     {
@@ -94,7 +95,9 @@ public class VectorControlM1_Original : MonoBehaviour
         _head.transform.rotation = Quaternion.LookRotation(_head.transform.position - transform.position);
 
         // local positions are needed because Vectors must be childed to Origin
-        vectorComponents = _head.transform.localPosition;
+        //vectorComponents = _head.transform.localPosition;
+        vectorComponents = _head.transform.position - BeamPlacementM1_Original._origin.transform.position;
+       // vectorComponents = Vector3.Distance(, _origin.transform.position); testing out a dif way of getting rel head, not successful
         mag = _head.transform.localPosition.magnitude;
     }
 

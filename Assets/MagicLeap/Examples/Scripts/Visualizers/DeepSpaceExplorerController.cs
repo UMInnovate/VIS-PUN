@@ -2,9 +2,9 @@
 // ---------------------------------------------------------------------
 // %COPYRIGHT_BEGIN%
 //
-// Copyright (c) 2018-present, Magic Leap, Inc. All Rights Reserved.
-// Use of this file is governed by the Creator Agreement, located
-// here: https://id.magicleap.com/creator-terms
+// Copyright (c) 2019-present, Magic Leap, Inc. All Rights Reserved.
+// Use of this file is governed by the Developer Agreement, located
+// here: https://auth.magicleap.com/terms/developer
 //
 // %COPYRIGHT_END%
 // ---------------------------------------------------------------------
@@ -15,16 +15,13 @@ using UnityEngine;
 namespace MagicLeap
 {
     /// <summary>
-    /// This class makes it easier to set the radius of the orbit of the Deep Space Explorer
+    /// This class makes it easier to set the radius of the orbit of the Deep Space Explorer.
     /// </summary>
     public class DeepSpaceExplorerController : MonoBehaviour
     {
-        #region Private Variables
         [SerializeField, Tooltip("Radius of the orbit of the rockets")]
         private Transform _xOffset = null;
-        #endregion
 
-        #region Properties
         public float OrbitRadius
         {
             set
@@ -32,11 +29,9 @@ namespace MagicLeap
                 _xOffset.localPosition = new Vector3(value, 0, 0);
             }
         }
-        #endregion
 
-        #region Unity Methods
         /// <summary>
-        /// Validate input variables
+        /// Validate input variables.
         /// </summary>
         void Start ()
         {
@@ -47,6 +42,5 @@ namespace MagicLeap
                 return;
             }
         }
-        #endregion
     }
 }

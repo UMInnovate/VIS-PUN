@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.XR.MagicLeap;
 using UnityEngine.SceneManagement;
+using Photon.Pun;
+using Photon.Realtime;
 
 /*  ModuleSelect is on the Canvas in Scene 1ModSelection
  *  Buttons launch the instruction scene for selected module
@@ -8,7 +10,8 @@ using UnityEngine.SceneManagement;
 
 public class ModuleSelect : MonoBehaviour
 {
-    private MLInputController _controller = null;
+    private MLInput.Controller _controller = null;
+    public PhotonLobby PhotonLobby;
 
     private void Start()
     {
@@ -20,26 +23,42 @@ public class ModuleSelect : MonoBehaviour
 
     private void Update()
     {
-        switch (_controller.TouchpadGesture.Direction)
+        switch (_controller.CurrentTouchpadGesture.Direction)
         {
-            case MLInputControllerTouchpadGestureDirection.Left:
-                LaunchMod1Single();
+            case MLInput.Controller.TouchpadGesture.GestureDirection.Left:
+                switch (SceneManager.GetActiveScene().buildIndex)
+                {
+                    case 2:
+                        SceneManager.LoadScene(4, LoadSceneMode.Single);
+                        break;
+                    case 3:
+                        SceneManager.LoadScene(7, LoadSceneMode.Single);
+                        break;
+                    case 13:
+                        SceneManager.LoadScene(12, LoadSceneMode.Single);
+                        break;
+                }
+
                 break;
-            case MLInputControllerTouchpadGestureDirection.Right:
-                LaunchMod1Multi();
+            case MLInput.Controller.TouchpadGesture.GestureDirection.Right:
+                switch (SceneManager.GetActiveScene().buildIndex)
+                {
+                    case 2:
+                        PhotonLobby.RoomHandler();
+                        SceneManager.LoadScene(8, LoadSceneMode.Single);
+                        break;
+                    case 3:
+                        PhotonLobby.RoomHandler();
+                        SceneManager.LoadScene(11, LoadSceneMode.Single);
+                        break;
+                    case 13:
+                        PhotonLobby.RoomHandler();
+                        SceneManager.LoadScene(14, LoadSceneMode.Single);
+                        break;
+                }
+
                 break;
         }
-    }
-
-    //Button:Module1.OnClick()
-    private void LaunchMod1Multi()
-    {
-        SceneManager.LoadScene(8, LoadSceneMode.Single);
-    }
-
-    private void LaunchMod1Single()
-    {
-        SceneManager.LoadScene(4, LoadSceneMode.Single);
     }
 
 }

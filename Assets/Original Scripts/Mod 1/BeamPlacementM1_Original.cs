@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.MagicLeap;
 using UnityEngine.UI;
+using UnityEngine.XR;
 
 /*  BeamPlacementM1.cs handles user input and the scene's state for Module 1
  *  This script handles placing the controller beam, opening/closing menus,
@@ -17,9 +18,9 @@ public class BeamPlacementM1_Original : MonoBehaviour
     // Content root
     private GameObject _root;
     // Origin of coordinate system
-    private GameObject _origin;
+    [HideInInspector] public GameObject _origin;
     // Input controller
-    private MLInputController _controller = null;
+    private MLInput.Controller _controller = null;
     // LineRenderer from controller
     private LineRenderer _beamline = null;
     // Position of end of the beam
@@ -38,7 +39,7 @@ public class BeamPlacementM1_Original : MonoBehaviour
     GiveInstructions _giveInstructions = null;
 
     [SerializeField, Tooltip("The vector")]
-    private VectorControlM1_Original _vector;
+    public VectorControlM1_Original _vector;
     [SerializeField, Tooltip("The angles")]
     private AngleControl_Original _angles;
 
@@ -46,7 +47,6 @@ public class BeamPlacementM1_Original : MonoBehaviour
     {
         _root = GameObject.Find("Content Root");
         _origin = _root.transform.Find("Origin").gameObject;
-        _controller = MLInput.GetController(MLInput.Hand.Left);
         _beamline = GetComponent<LineRenderer>();
         _beamSphere = GameObject.Find("BeamSphere");
         _giveInstructions = GetComponent<GiveInstructions>();
@@ -56,6 +56,8 @@ public class BeamPlacementM1_Original : MonoBehaviour
             MLInput.Start();
         MLInput.OnControllerButtonUp += OnButtonUp;
         MLInput.OnTriggerUp += OnTriggerUp;
+        _controller = MLInput.GetController(MLInput.Hand.Left);
+
         _beamline.startWidth = 0.007f;
         _beamline.endWidth = 0.01f;
         _origin.SetActive(false);
@@ -72,6 +74,11 @@ public class BeamPlacementM1_Original : MonoBehaviour
         HandleBeamPlacement();
         HandleTouchpadInput();
 
+        if (!GLOBALS.soundOn)
+            GetComponent<AudioSource>().mute = true;
+        else GetComponent<AudioSource>().mute = false;
+
+
         // if placingHead, then have vector head follow beam
         if (placingHead && !menuPanel.activeSelf)
         {
@@ -83,7 +90,7 @@ public class BeamPlacementM1_Original : MonoBehaviour
             }
             else if (GLOBALS.displayMode == DispMode.Units)
             {
-                _origin.GetComponent<OriginControlM1_Original>().DisplayUnitVectors();
+                _origin.GetComponent<OriginControlM1_Original>().DisplayUnitVectors(_vector.GetVectorComponents(), _origin.transform.position);
             }
         }
     }
@@ -150,10 +157,12 @@ public class BeamPlacementM1_Original : MonoBehaviour
     }
 
     // listener for HOME and BUMPER presses
-    private void OnButtonUp(byte controllerId, MLInputControllerButton button)
+    private void OnButtonUp(byte controllerId, MLInput.Controller.Button button)
     {
-        if (button == MLInputControllerButton.HomeTap)
+        Debug.Log("Button press recognized");
+        if (button == MLInput.Controller.Button.HomeTap)
         {
+            Debug.Log("Home Tap");
             // if opening up the menu, make sure there is a beam and no instructions
             if (!menuPanel.activeSelf)
                 _beamline.enabled = true;
@@ -162,8 +171,13 @@ public class BeamPlacementM1_Original : MonoBehaviour
             // display instructions only when no menu
             _giveInstructions.EnableText(!menuPanel.activeSelf);
         }
-        else if (button == MLInputControllerButton.Bumper)
+
+
+
+
+        if (button == MLInput.Controller.Button.Bumper)
         {
+            Debug.Log("that button is the bumper button");
             // change the display mode
             if (GLOBALS.stage != Stage.m1view)
                 return;
@@ -184,9 +198,10 @@ public class BeamPlacementM1_Original : MonoBehaviour
                     _angles.SetActive(false);
                     break;
                 case DispMode.Units:
-                    // todo make the origin display unit vectors
-                    // ...
-                    //
+                    Vector3 relVec = _vector.GetComponent<VectorControlM1_Original>()._head.position - _vector.GetComponent<VectorControlM1_Original>()._origin.transform.position;
+                    float relMag = relVec.magnitude;
+                    Vector3 uVc = new Vector3(relVec.x / relMag, relVec.y / relMag, relVec.z / relMag);
+                    _origin.GetComponent<OriginControlM1_Original>().DisplayUnitVectors(uVc, _vector.GetComponent<VectorControlM1_Original>()._origin.transform.position);
                     _angles.SetActive(false);
                     break;
                 case DispMode.Angles:
@@ -205,16 +220,63 @@ public class BeamPlacementM1_Original : MonoBehaviour
         {
             if (GLOBALS.stage == Stage.m1rotate)
             {
-                switch (_controller.TouchpadGesture.Direction)
+                switch (_controller.CurrentTouchpadGesture.Direction)
                 {
-                    case MLInputControllerTouchpadGestureDirection.Clockwise:
+                    case MLInput.Controller.TouchpadGesture.GestureDirection.Clockwise:
                         _root.transform.RotateAround(_origin.transform.position, Vector3.up, 80f * Time.deltaTime);
                         break;
-                    case MLInputControllerTouchpadGestureDirection.CounterClockwise:
+                    case MLInput.Controller.TouchpadGesture.GestureDirection.CounterClockwise:
                         _root.transform.RotateAround(_origin.transform.position, Vector3.up, -80f * Time.deltaTime);
                         break;
                 }
             }
+
+           /* else if (GLOBALS.stage == Stage.m1view)
+            {
+                switch (_controller.CurrentTouchpadGesture.Type)
+                {
+                   // _controller.CurrentTouchpadGesture.Direction
+                    case MLInput.Controller.TouchpadGesture.GestureType.Swipe: //go to next
+                        
+                        Debug.Log("swipe to the right in the view mode in m1");
+                    if (GLOBALS.displayMode == DispMode.Angles)
+                        GLOBALS.displayMode = DispMode.Vector;
+                    else
+                        GLOBALS.displayMode++;
+
+                    switch (GLOBALS.displayMode)
+                    {
+                        case DispMode.Vector:
+                            _origin.GetComponent<OriginControlM1_Original>().Reset();
+                            _angles.SetActive(false);
+                        break;
+                        case DispMode.Components:
+                        _origin.GetComponent<OriginControlM1_Original>().DisplayVectorComponents(_vector.GetVectorComponents());
+                        _angles.SetActive(false);
+                        break;
+                        case DispMode.Units:
+                                // _origin.GetComponent<OriginControlM1_Original>().DisplayUnitVectors(_vector.GetVectorComponents(), _origin.transform.position, _vector.GetMagnitude());
+                                // _angles.SetActive(false);
+
+                                Vector3 relVec = _vector.GetComponent<VectorControlM1_Original>()._head.position - _vector.GetComponent<VectorControlM1_Original>()._origin.transform.position;
+                                float relMag = relVec.magnitude;
+                                Vector3 uVc = new Vector3(relVec.x / relMag, relVec.y / relMag, relVec.z / relMag);
+
+                                _origin.GetComponent<OriginControlM1_Original>().DisplayUnitVectors(uVc, _vector.GetComponent<VectorControlM1_Original>()._origin.transform.position);
+
+                        break;
+                    case DispMode.Angles:
+                        _origin.GetComponent<OriginControlM1_Original>().Reset();
+                        _angles.SetActive(true);
+                        break;
+                }
+                break;
+            
+                        /* FOR LATER-- ADD A CASE WHERE THEY CAN GO BACKWARDS 
+                         
+                }
+
+        }*/
             else
             {
                 //swipe up or down to adjust beam length

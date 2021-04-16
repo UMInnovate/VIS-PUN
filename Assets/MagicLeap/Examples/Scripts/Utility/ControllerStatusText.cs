@@ -2,9 +2,9 @@
 // ---------------------------------------------------------------------
 // %COPYRIGHT_BEGIN%
 //
-// Copyright (c) 2018-present, Magic Leap, Inc. All Rights Reserved.
-// Use of this file is governed by the Creator Agreement, located
-// here: https://id.magicleap.com/creator-terms
+// Copyright (c) 2019-present, Magic Leap, Inc. All Rights Reserved.
+// Use of this file is governed by the Developer Agreement, located
+// here: https://auth.magicleap.com/terms/developer
 //
 // %COPYRIGHT_END%
 // ---------------------------------------------------------------------
@@ -25,14 +25,11 @@ namespace MagicLeap
     [RequireComponent(typeof(Text))]
     public class ControllerStatusText : MonoBehaviour
     {
-        #region Private Variables
-        [SerializeField, Tooltip("ControllerConnectionHandler reference.")]
-        private ControllerConnectionHandler _controllerConnectionHandler = null;
+        [SerializeField, Tooltip("MLControllerConnectionHandlerBehavior reference.")]
+        private MLControllerConnectionHandlerBehavior _controllerConnectionHandler = null;
 
         private Text _controllerStatusText = null;
-        #endregion
 
-        #region Unity Methods
         /// <summary>
         /// Initializes component data and starts MLInput.
         /// </summary>
@@ -70,9 +67,7 @@ namespace MagicLeap
                 UpdateStatus();
             }
         }
-        #endregion
 
-        #region Private Methods
         /// <summary>
         /// Update the text for the currently connected Control or MCA device.
         /// </summary>
@@ -82,13 +77,14 @@ namespace MagicLeap
             {
                 if (_controllerConnectionHandler.IsControllerValid())
                 {
-                    MLInputController controller = _controllerConnectionHandler.ConnectedController;
-                    if (controller.Type == MLInputControllerType.Control)
+                    #if PLATFORM_LUMIN
+                    MLInput.Controller controller = _controllerConnectionHandler.ConnectedController;
+                    if (controller.Type == MLInput.Controller.ControlType.Control)
                     {
                         _controllerStatusText.text = "Controller Connected";
                         _controllerStatusText.color = Color.green;
                     }
-                    else if (controller.Type == MLInputControllerType.MobileApp)
+                    else if (controller.Type == MLInput.Controller.ControlType.MobileApp)
                     {
                         _controllerStatusText.text = "MLA Connected";
                         _controllerStatusText.color = Color.green;
@@ -98,6 +94,10 @@ namespace MagicLeap
                         _controllerStatusText.text = "Unknown";
                         _controllerStatusText.color = Color.red;
                     }
+                    #else
+                    _controllerStatusText.text = "Unknown";
+                    _controllerStatusText.color = Color.red;
+                    #endif
                 }
                 else
                 {
@@ -111,13 +111,10 @@ namespace MagicLeap
                 _controllerStatusText.color = Color.red;
             }
         }
-        #endregion
 
-        #region Event Handlers
         private void HandleOnControllerChanged(byte controllerId)
         {
             UpdateStatus();
         }
-        #endregion
     }
 }

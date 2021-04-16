@@ -2,9 +2,9 @@
 // ---------------------------------------------------------------------
 // %COPYRIGHT_BEGIN%
 //
-// Copyright (c) 2018-present, Magic Leap, Inc. All Rights Reserved.
-// Use of this file is governed by the Creator Agreement, located
-// here: https://id.magicleap.com/creator-terms
+// Copyright (c) 2019-present, Magic Leap, Inc. All Rights Reserved.
+// Use of this file is governed by the Developer Agreement, located
+// here: https://auth.magicleap.com/terms/developer
 //
 // %COPYRIGHT_END%
 // ---------------------------------------------------------------------
@@ -13,6 +13,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.XR.MagicLeap;
+using MagicLeap.Core;
+using MagicLeap.Core.StarterKit;
 
 namespace MagicLeap
 {
@@ -20,7 +22,7 @@ namespace MagicLeap
     /// This example demonstrates using the magic leap raycast functionality to calculate intersection with the physical space.
     /// It demonstrates casting rays from the users headpose, controller, and eyes position and orientation.
     ///
-    /// This example uses several raycast visualizers which represent this intersection with the physical space.
+    /// This example uses a raycast visualizer which represents these intersections with the physical space.
     /// </summary>
     public class RaycastExample : MonoBehaviour
     {
@@ -31,37 +33,38 @@ namespace MagicLeap
             Eyes
         }
 
-        #region Private Variables
-        [SerializeField, Tooltip("The headpose canvas for example status text.")]
-        private Text _statusLabel = null;
+        [SerializeField, Tooltip("The overview status text for the UI interface.")]
+        private Text _overviewStatusText = null;
+
+        [SerializeField, Tooltip("Raycast Visualizer.")]
+        private MLRaycastVisualizer _raycastVisualizer = null;
 
         [SerializeField, Tooltip("Raycast from controller.")]
-        private WorldRaycastController _raycastController = null;
+        private MLRaycastBehavior _raycastController = null;
 
         [SerializeField, Tooltip("Raycast from headpose.")]
-        private WorldRaycastHead _raycastHead = null;
+        private MLRaycastBehavior _raycastHead = null;
 
         [SerializeField, Tooltip("Raycast from eyegaze.")]
-        private WorldRaycastEyes _raycastEyes = null;
+        private MLRaycastBehavior _raycastEyes = null;
 
-        [Space, SerializeField, Tooltip("ControllerConnectionHandler reference.")]
-        private ControllerConnectionHandler _controllerConnectionHandler = null;
+        [Space, SerializeField, Tooltip("MLControllerConnectionHandlerBehavior reference.")]
+        private MLControllerConnectionHandlerBehavior _controllerConnectionHandler = null;
 
         private RaycastMode _raycastMode = RaycastMode.Controller;
         private int _modeCount = System.Enum.GetNames(typeof(RaycastMode)).Length;
 
         private float _confidence = 0.0f;
-        #endregion
 
-        #region Unity Methods
         /// <summary>
         /// Validate all required components and sets event handlers.
         /// </summary>
         void Awake()
         {
-            if (_statusLabel == null)
+
+            if (_overviewStatusText == null)
             {
-                Debug.LogError("Error: RaycastExample._statusLabel is not set, disabling script.");
+                Debug.LogError("Error: RaycastExample._overviewStatusText is not set, disabling script.");
                 enabled = false;
                 return;
             }
@@ -94,8 +97,21 @@ namespace MagicLeap
                 return;
             }
 
-            MLInput.OnControllerButtonDown += OnButtonDown;
+            _raycastController.gameObject.SetActive(false);
+            _raycastHead.gameObject.SetActive(false);
+            _raycastEyes.gameObject.SetActive(false);
+            _raycastMode = RaycastMode.Controller;
+
             UpdateRaycastMode();
+
+            #if PLATFORM_LUMIN
+            MLInput.OnControllerButtonDown += OnButtonDown;
+            #endif
+        }
+
+        void Update()
+        {
+            UpdateStatusText();
         }
 
         /// <summary>
@@ -103,41 +119,65 @@ namespace MagicLeap
         /// </summary>
         void OnDestroy()
         {
+            #if PLATFORM_LUMIN
             MLInput.OnControllerButtonDown -= OnButtonDown;
+            #endif
         }
-        #endregion
 
-        #region Private Methods
         /// <summary>
         /// Updates type of raycast and enables correct cursor.
         /// </summary>
         private void UpdateRaycastMode()
         {
-            // Default all objects to inactive and then set active to the appropriate ones.
-            _raycastController.gameObject.SetActive(false);
-            _raycastController.Controller.gameObject.SetActive(false);
-
-            _raycastHead.gameObject.SetActive(false);
-            _raycastEyes.gameObject.SetActive(false);
+            DisableRaycast(_raycastVisualizer.raycast);
 
             switch (_raycastMode)
             {
                 case RaycastMode.Controller:
                 {
-                    _raycastController.gameObject.SetActive(true);
-                    _raycastController.Controller.gameObject.SetActive(true);
+                    EnableRaycast(_raycastController);
                     break;
                 }
                 case RaycastMode.Head:
                 {
-                    _raycastHead.gameObject.SetActive(true);
+                    EnableRaycast(_raycastHead);
                     break;
                 }
                 case RaycastMode.Eyes:
                 {
-                    _raycastEyes.gameObject.SetActive(true);
+                    EnableRaycast(_raycastEyes);
                     break;
                 }
+            }
+        }
+
+        /// <summary>
+        /// Enables raycast behavior and raycast visualizer
+        /// </summary>
+        private void EnableRaycast(MLRaycastBehavior raycast)
+        {
+            raycast.gameObject.SetActive(true);
+            _raycastVisualizer.raycast = raycast;
+
+            #if PLATFORM_LUMIN
+            _raycastVisualizer.raycast.OnRaycastResult += _raycastVisualizer.OnRaycastHit;
+            _raycastVisualizer.raycast.OnRaycastResult += OnRaycastHit;
+            #endif
+        }
+
+        /// <summary>
+        /// Disables raycast behavior and raycast visualizer
+        /// </summary>
+        private void DisableRaycast(MLRaycastBehavior raycast)
+        {
+            if(raycast != null)
+            {
+                raycast.gameObject.SetActive(false);
+
+                #if PLATFORM_LUMIN
+                raycast.OnRaycastResult -= _raycastVisualizer.OnRaycastHit;
+                raycast.OnRaycastResult -= OnRaycastHit;
+                #endif
             }
         }
 
@@ -146,27 +186,42 @@ namespace MagicLeap
         /// </summary>
         private void UpdateStatusText()
         {
-            _statusLabel.text = string.Format("Raycast Mode: {0}\nRaycast Hit Confidence: {1}", _raycastMode.ToString(), _confidence.ToString());
-            if(_raycastMode == RaycastMode.Eyes && MLEyes.IsStarted)
+            _overviewStatusText.text = string.Format("<color=#dbfb76><b>{0} {1}</b></color>\n{2}: {3}\n\n",
+                LocalizeManager.GetString("Controller"),
+                LocalizeManager.GetString("Data"),
+                LocalizeManager.GetString("Status"),
+                LocalizeManager.GetString(ControllerStatus.Text));
+
+            _overviewStatusText.text += string.Format("<color=#dbfb76><b>{0} {1}</b></color>\n{2}: {3} \n{4}: {5}\n\n",
+                LocalizeManager.GetString("Raycast"),
+                LocalizeManager.GetString("Data"),
+                LocalizeManager.GetString("Mode"),
+                LocalizeManager.GetString(_raycastMode.ToString()),
+                LocalizeManager.GetString("Confidence"),
+                LocalizeManager.GetString(_confidence.ToString()));
+
+            if (_raycastMode == RaycastMode.Eyes)
             {
-                _statusLabel.text += string.Format("\n\nEye Calibration Status: {0}", MLEyes.CalibrationStatus.ToString());
+                _overviewStatusText.text += string.Format("<color=#dbfb76><b>{0} {1}</b></color>\n{2} {3}:{4}\n\n",
+                LocalizeManager.GetString("Eye"),
+                LocalizeManager.GetString("Data"),
+                LocalizeManager.GetString("Calibration"),
+                LocalizeManager.GetString("Status"),
+                LocalizeManager.GetString(MLEyesStarterKit.CalibrationStatus));
             }
         }
-        #endregion
 
-        #region Event Handlers
         /// <summary>
         /// Handles the event for button down and cycles the raycast mode.
         /// </summary>
         /// <param name="controllerId">The id of the controller.</param>
         /// <param name="button">The button that is being pressed.</param>
-        private void OnButtonDown(byte controllerId, MLInputControllerButton button)
+        private void OnButtonDown(byte controllerId, MLInput.Controller.Button button)
         {
-            if (_controllerConnectionHandler.IsControllerValid(controllerId) && button == MLInputControllerButton.Bumper)
+            if (_controllerConnectionHandler.IsControllerValid(controllerId) && button == MLInput.Controller.Button.Bumper)
             {
                 _raycastMode = (RaycastMode)((int)(_raycastMode + 1) % _modeCount);
                 UpdateRaycastMode();
-                UpdateStatusText();
             }
         }
 
@@ -175,13 +230,13 @@ namespace MagicLeap
         /// Updates the confidence value to the new confidence value.
         /// </summary>
         /// <param name="state"> The state of the raycast result.</param>
+        /// <param name="mode">The mode that the raycast was in (physical, virtual, or combination).</param>
+        /// <param name="ray">A ray that contains the used direction and origin for this raycast.</param>
         /// <param name="result">The hit results (point, normal, distance).</param>
         /// <param name="confidence">Confidence value of hit. 0 no hit, 1 sure hit.</param>
-        public void OnRaycastHit(MLWorldRays.MLWorldRaycastResultState state, RaycastHit result, float confidence)
+        public void OnRaycastHit(MLRaycast.ResultState state, MLRaycastBehavior.Mode mode, Ray ray, RaycastHit result, float confidence)
         {
             _confidence = confidence;
-            UpdateStatusText();
         }
-        #endregion
     }
 }

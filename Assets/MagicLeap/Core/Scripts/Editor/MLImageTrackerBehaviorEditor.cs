@@ -2,9 +2,9 @@
 // ---------------------------------------------------------------------
 // %COPYRIGHT_BEGIN%
 //
-// Copyright (c) 2018-present, Magic Leap, Inc. All Rights Reserved.
-// Use of this file is governed by the Creator Agreement, located
-// here: https://id.magicleap.com/creator-terms
+// Copyright (c) 2019-present, Magic Leap, Inc. All Rights Reserved.
+// Use of this file is governed by the Developer Agreement, located
+// here: https://auth.magicleap.com/terms/developer
 //
 // %COPYRIGHT_END%
 // ---------------------------------------------------------------------
@@ -13,6 +13,7 @@
 using System.IO;
 using UnityEngine;
 using UnityEditor;
+using MagicLeap.Core;
 
 namespace UnityEngine.XR.MagicLeap
 {
@@ -31,7 +32,7 @@ namespace UnityEngine.XR.MagicLeap
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
-            Texture2D image = (target as MLImageTrackerBehavior).Image;
+            Texture2D image = (target as MLImageTrackerBehavior).image;
 
             if (image == null)
             {

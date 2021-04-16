@@ -2,9 +2,9 @@
 // ---------------------------------------------------------------------
 // %COPYRIGHT_BEGIN%
 //
-// Copyright (c) 2018-present, Magic Leap, Inc. All Rights Reserved.
-// Use of this file is governed by the Creator Agreement, located
-// here: https://id.magicleap.com/creator-terms
+// Copyright (c) 2019-present, Magic Leap, Inc. All Rights Reserved.
+// Use of this file is governed by the Developer Agreement, located
+// here: https://auth.magicleap.com/terms/developer
 //
 // %COPYRIGHT_END%
 // ---------------------------------------------------------------------
@@ -12,6 +12,7 @@
 
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace MagicLeap
 {
@@ -28,7 +29,6 @@ namespace MagicLeap
             LookAwayFromCamera = 2
         }
 
-        #region Private Variables
         [SerializeField, Tooltip("The distance from the camera through its forward vector.")]
         private float _distance = 0.0f;
 
@@ -53,9 +53,29 @@ namespace MagicLeap
 
         [SerializeField, Tooltip("Toggle to set position on update.")]
         private bool _placeOnUpdate = false;
-        #endregion
 
-        #region Public Properties
+        [SerializeField, Tooltip("Prevents the object from rotating around the Z axis.")]
+        private bool _lockZRotation = false;
+
+        [SerializeField, Tooltip("When this is enabled, movement is restricted by threshold conditions.")]
+        private bool _useThreshold = false;
+
+        [SerializeField, Tooltip("When [UseThreshold] is enabled the (x, y) euler limits will force an update.")]
+        private Vector2 _movementThreshold = new Vector2(10f, 5f);
+
+        [SerializeField, Tooltip("When [UseThreshold] is enabled distance from the camera will force an update.")]
+        private float _distanceThreshold = 0.15f;
+
+        [SerializeField, Tooltip("When enabled, used local space instead of world space.")]
+        private bool _useLocalSpace = true;
+
+        private Vector3 _movePosition = Vector3.zero;
+        private Vector3 _lastCameraEuler = Vector3.zero;
+        private Vector3 _lastCameraPosition = Vector3.zero;
+
+        private bool _forceUpdate = false;
+        private Camera _mainCamera = null;
+
         /// <summary>
         /// When enabled automatic placement will occur on each Update cycle.
         /// </summary>
@@ -64,14 +84,21 @@ namespace MagicLeap
             get { return _placeOnUpdate; }
             set { _placeOnUpdate = value; }
         }
-        #endregion
 
-        #region Unity Methods
+        public float Distance
+        {
+            get { return _distance; }
+            set { _distance = value; }
+        }
+
         /// <summary>
         /// Set the transform from latest position if flag is checked.
         /// </summary>
         void Awake()
         {
+            _mainCamera = Camera.main;
+            SceneManager.activeSceneChanged += ChangedActiveScene;
+
             if (_placeOnAwake)
             {
                 StartCoroutine(UpdateTransformEndOfFrame());
@@ -80,10 +107,9 @@ namespace MagicLeap
 
         void Update()
         {
-            Camera mainCamera = Camera.main;
-            if (_placeOnUpdate && mainCamera.transform.hasChanged)
+            if (!_placeOnAwake && _placeOnUpdate)
             {
-                UpdateTransform(mainCamera);
+                UpdateTransform(_mainCamera);
             }
         }
 
@@ -92,9 +118,27 @@ namespace MagicLeap
             _positionSmoothTime = Mathf.Max(0.01f, _positionSmoothTime);
             _rotationSmoothTime = Mathf.Max(0.01f, _rotationSmoothTime);
         }
-        #endregion
 
-        #region Private Methods
+        void OnDestroy()
+        {
+            SceneManager.activeSceneChanged -= ChangedActiveScene;
+        }
+
+        public void ForceUpdate()
+        {
+            _forceUpdate = true;
+        }
+
+        public void ToggleThreshold()
+        {
+            _useThreshold = !_useThreshold;
+        }
+
+        private void ChangedActiveScene(Scene current, Scene next)
+        {
+            _mainCamera = Camera.main;
+        }
+
         /// <summary>
         /// Reset position and rotation to match current camera values, after the end of frame.
         /// </summary>
@@ -102,8 +146,7 @@ namespace MagicLeap
         {
             // Wait until the camera has finished the current frame.
             yield return new WaitForEndOfFrame();
-
-            UpdateTransform(Camera.main);
+            UpdateTransform(_mainCamera);
         }
 
         /// <summary>
@@ -113,32 +156,68 @@ namespace MagicLeap
         {
             // Move the object in front of the camera with specified offsets.
             Vector3 offsetVector = (camera.transform.up * _heightOffset) + (camera.transform.right * _lateralOffset);
-            Vector3 targetPosition = camera.transform.position + offsetVector + (camera.transform.forward * _distance);
-            transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref _positionVelocity, _positionSmoothTime);
+            Vector3 targetPosition = (_useLocalSpace ? camera.transform.localPosition : camera.transform.position) + offsetVector + (camera.transform.forward * _distance);
 
-            Quaternion targetRotation = transform.rotation;
+            if (_forceUpdate || !_useThreshold || Vector3.Distance((_useLocalSpace ? transform.localPosition : transform.position), _movePosition) > 0.01f ||
+                Quaternion.Angle(Quaternion.Euler((_useLocalSpace ? camera.transform.localEulerAngles.x : camera.transform.eulerAngles.x), 0, 0), Quaternion.Euler(_lastCameraEuler.x, 0, 0)) > _movementThreshold.y ||
+                Quaternion.Angle(Quaternion.Euler(0, (_useLocalSpace ? camera.transform.localEulerAngles.y : camera.transform.eulerAngles.y), 0), Quaternion.Euler(0, _lastCameraEuler.y, 0)) > _movementThreshold.x ||
+                Vector3.Distance((_useLocalSpace? camera.transform.localPosition : camera.transform.position), _lastCameraPosition) > _distanceThreshold)
+            {
+                if (_forceUpdate)
+                    _forceUpdate = false;
+
+                _movePosition = targetPosition;
+
+                _lastCameraEuler = _useLocalSpace ? camera.transform.localEulerAngles : camera.transform.eulerAngles;
+                _lastCameraPosition = _useLocalSpace ? camera.transform.localPosition : camera.transform.position;
+            }
+
+            if (_useLocalSpace)
+            {
+                transform.localPosition = _placeOnAwake ? targetPosition : Vector3.SmoothDamp(transform.localPosition, _movePosition, ref _positionVelocity, _positionSmoothTime);
+            }
+            else
+            {
+                transform.position = _placeOnAwake ? targetPosition : Vector3.SmoothDamp(transform.position, _movePosition, ref _positionVelocity, _positionSmoothTime);
+            }
+
+            Quaternion targetRotation = Quaternion.identity;
 
             // Rotate the object to face the camera.
             if (_lookDirection == LookDirection.LookAwayFromCamera)
             {
-                targetRotation = Quaternion.LookRotation(transform.position - camera.transform.position, camera.transform.up);
+                targetRotation = Quaternion.LookRotation((_useLocalSpace ? transform.localPosition : transform.position) - (_useLocalSpace ? camera.transform.localPosition : camera.transform.position), camera.transform.up);
             }
             else if (_lookDirection == LookDirection.LookAtCamera)
             {
-                targetRotation = Quaternion.LookRotation(camera.transform.position - transform.position, camera.transform.up);
+                targetRotation = Quaternion.LookRotation((_useLocalSpace ? camera.transform.localPosition : camera.transform.position) - (_useLocalSpace ? transform.localPosition : transform.position), camera.transform.up);
             }
 
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime / _rotationSmoothTime);
+            if (_useLocalSpace)
+            {
+                transform.localRotation = _placeOnAwake ? targetRotation : Quaternion.Slerp(transform.localRotation, targetRotation, Time.deltaTime / _rotationSmoothTime);
+            }
+            else
+            {
+                transform.rotation = _placeOnAwake ? targetRotation : Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime / _rotationSmoothTime);
+            }
 
             if (_placeOnAwake)
             {
-                // Snap to the location right away.
-                transform.position = targetPosition;
-                transform.rotation = targetRotation;
-
                 _placeOnAwake = false;
             }
+
+            if (_lockZRotation)
+            {
+                if (_useLocalSpace)
+                {
+                    transform.localRotation = Quaternion.Euler(transform.localRotation.eulerAngles.x, transform.localRotation.eulerAngles.y, 0);
+                }
+                else
+                {
+                    transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, 0);
+                }
+            }
         }
-        #endregion
     }
 }

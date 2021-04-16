@@ -8,6 +8,7 @@ using UnityEngine.XR.MagicLeap;
 public class 
     VectorPropertiesM3 : MonoBehaviour
 {
+    public Vector3 relativeVec;
     [HideInInspector]
     public bool isValidPlacement; //is the head or tail component colliding?
 
@@ -15,26 +16,21 @@ public class
     public Vector3 forceVec;
 
     [HideInInspector]
-    public float correctForceValue; // DEPRECATED
+    public float correctForceValue;
 
     [HideInInspector]
     public Vector3 uVec;
-    public float magnitude; 
 
     [HideInInspector]
     public bool isForceKnown; //has the user selected/inputted a constant force value
 
     [HideInInspector]
-    public bool isGivenForceValue = false; //is this the known force value
+    public bool isGivenForceValue; //is this the known force value
 
 
     [HideInInspector] public int forceValue; //user-inputted force value
 
-    [HideInInspector] public bool isHeadCollidingWithPOC = true;
-    [HideInInspector] public Vector3 relativeVec; 
-
     private bool nameLabelHovered;
-
     [SerializeField] private MLInput.Controller inputController;
     public GameObject keypad;
 
@@ -94,12 +90,42 @@ public class
         MLInput.OnTriggerDown += OnTriggerDown;
     }
 
+    //relative vec is HEAD - TAIL
+
     public void BuildForceVector()
     {
-        Console.WriteLine("entering build force vector with vector " + gameObject.name);
+
+        if (GetComponent<VectorControlM3>().canPlaceHead) //head was placed, tail is POC, so we do reltailpos - adjpocpos
+        {
+            if (beamPlacement.bIsViewer)
+            {
+                relativeVec = GetComponent<VectorControlM3>().photonPos - beamPlacement.adjPOCPos;
+            }
+            else
+            {
+                relativeVec = (GetComponent<VectorControlM3>()._head.position - GLOBALS.pocPos) - beamPlacement.adjPOCPos;
+                Console.WriteLine("my relhead= " + (GetComponent<VectorControlM3>()._head.position - GLOBALS.pocPos).ToString(GLOBALS.format));
+                Console.WriteLine("RELHEAD FROM VC  " + GetComponent<VectorControlM3>().relHeadPos.ToString("F2"));
+
+                //Console.WriteLine("relative vec is " + GetComponent<VectorControlM3>().relHeadPos.ToString(GLOBALS.format) + " - " + beamPlacement.adjPOCPos.ToString("F2"));
+            }
+        }
+        else
+        {
+            if (beamPlacement.bIsViewer)
+            {
+                relativeVec = beamPlacement.adjPOCPos - GetComponent<VectorControlM3>().photonPos;
+            }
+            else
+            {
+                relativeVec = beamPlacement.adjPOCPos - GetComponent<VectorControlM3>().relTailPos;
+                Console.WriteLine("relative vec is " + beamPlacement.adjPOCPos.ToString(GLOBALS.format) + " - " + GetComponent<VectorControlM3>().relTailPos.ToString(GLOBALS.format));
+            }
+        }
+
+        Console.WriteLine("relativevec: " + relativeVec.ToString(GLOBALS.format));
         float floatrelMag = relativeVec.magnitude;
-        magnitude = floatrelMag;
-        uVec = new Vector3(relativeVec.x / floatrelMag, relativeVec.y / floatrelMag, -1*relativeVec.z / floatrelMag);
+        uVec = new Vector3(relativeVec.x / floatrelMag, relativeVec.y / floatrelMag, -1 * relativeVec.z / floatrelMag);
 
         if (isGivenForceValue)
         {
@@ -109,14 +135,8 @@ public class
         }
         else
         {
-            //GLOBALS.unknownUVecs.RemoveAt(GLOBALS.unknownUVecs.Count);
             GLOBALS.unknownUVecs.Add(uVec); //unknownUVecs holds a list of unit vectors that dont have given force vals
-            Console.WriteLine("vector " + gameObject.name + " added its uvec " + uVec.ToString("F2") + " to the unknownVecs list, list size is now: " + GLOBALS.unknownVecs.Count);
-           // GLOBALS.unknownVecs.RemoveAt(GLOBALS.unknownVecs.Count);
             GLOBALS.unknownVecs.Add(gameObject);
-            Console.WriteLine("vector " + gameObject.name + " added its gameobject to the unknown vecs list, size is now " + GLOBALS.unknownVecs.Count);
-
-            Console.WriteLine("uvecs at v is " + GLOBALS.unknownUVecs[GLOBALS.unknownVecs.Count].ToString(GLOBALS.format) + " relativeVec: " + GLOBALS.unknownVecs[GLOBALS.unknownVecs.Count].GetComponent<VectorPropertiesM3>().relativeVec.ToString(GLOBALS.format));
         }
     }
 

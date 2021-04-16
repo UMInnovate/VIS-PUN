@@ -31,7 +31,6 @@
     <uses-privilege ml:name="LocalAreaNetwork" />
     <uses-privilege ml:name="AudioCaptureMic" />
     <uses-privilege ml:name="AudioRecognizer" />
-    <uses-privilege ml:name="CameraCapture" />
     <uses-privilege ml:name="CoarseLocation" />
     <uses-privilege ml:name="ComputerVision" />
     <uses-privilege ml:name="VoiceInput" />

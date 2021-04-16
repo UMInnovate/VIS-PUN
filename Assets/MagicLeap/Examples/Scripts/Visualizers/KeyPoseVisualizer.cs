@@ -2,9 +2,9 @@
 // ---------------------------------------------------------------------
 // %COPYRIGHT_BEGIN%
 //
-// Copyright (c) 2018-present, Magic Leap, Inc. All Rights Reserved.
-// Use of this file is governed by the Creator Agreement, located
-// here: https://id.magicleap.com/creator-terms
+// Copyright (c) 2019-present, Magic Leap, Inc. All Rights Reserved.
+// Use of this file is governed by the Developer Agreement, located
+// here: https://auth.magicleap.com/terms/developer
 //
 // %COPYRIGHT_END%
 // ---------------------------------------------------------------------
@@ -12,6 +12,7 @@
 
 using UnityEngine;
 using UnityEngine.XR.MagicLeap;
+using MagicLeap.Core.StarterKit;
 
 namespace MagicLeap
 {
@@ -22,12 +23,13 @@ namespace MagicLeap
     [RequireComponent(typeof(SpriteRenderer))]
     public class KeyPoseVisualizer : MonoBehaviour
     {
-        #region Private Variables
         private const float ROTATION_SPEED = 100.0f;
         private const float CONFIDENCE_THRESHOLD = 0.95f;
 
+        #pragma warning disable 414
         [SerializeField, Tooltip("KeyPose to track.")]
-        private MLHandKeyPose _keyPoseToTrack = MLHandKeyPose.NoPose;
+        private MLHandTracking.HandKeyPose _keyPoseToTrack = MLHandTracking.HandKeyPose.NoPose;
+        #pragma warning restore 414
 
         [Space, SerializeField, Tooltip("Flag to specify if left hand should be tracked.")]
         private bool _trackLeftHand = true;
@@ -36,11 +38,9 @@ namespace MagicLeap
         private bool _trackRightHand = true;
 
         private SpriteRenderer _spriteRenderer = null;
-        #endregion
 
-        #region Unity Methods
         /// <summary>
-        /// Initialize variables.
+        /// Initializes variables.
         /// </summary>
         void Awake()
         {
@@ -48,18 +48,53 @@ namespace MagicLeap
         }
 
         /// <summary>
-        /// Update color of sprite renderer material based on confidence of the KeyPose.
+        /// Calls Start on MLHandTrackingStarterKit.
+        /// </summary>
+        void Start()
+        {
+            MLResult result = MLHandTrackingStarterKit.Start();
+
+            #if PLATFORM_LUMIN
+            if (!result.IsOk)
+            {
+                Debug.LogErrorFormat("Error: KeyPoseVisualizer failed on MLHandTrackingStarterKit.Start, disabling script. Reason: {0}", result);
+                _spriteRenderer.material.color = Color.red;
+                enabled = false;
+                return;
+            }
+            #endif
+        }
+
+        /// <summary>
+        /// Clean up.
+        /// </summary>
+        void OnDestroy()
+        {
+            MLHandTrackingStarterKit.Stop();
+        }
+
+        /// <summary>
+        /// Updates color of sprite renderer material based on confidence of the KeyPose.
         /// </summary>
         void Update()
         {
-            if (!MLHands.IsStarted)
+            float confidenceLeft =  0.0f;
+            float confidenceRight = 0.0f;
+
+            if (_trackLeftHand)
             {
-                _spriteRenderer.material.color = Color.red;
-                return;
+                #if PLATFORM_LUMIN
+                confidenceLeft = GetKeyPoseConfidence(MLHandTrackingStarterKit.Left);
+                #endif
             }
 
-            float confidenceLeft = _trackLeftHand ? GetKeyPoseConfidence(MLHands.Left) : 0.0f;
-            float confidenceRight = _trackRightHand ? GetKeyPoseConfidence(MLHands.Right) : 0.0f;
+            if (_trackRightHand)
+            {
+                #if PLATFORM_LUMIN
+                confidenceRight = GetKeyPoseConfidence(MLHandTrackingStarterKit.Right);
+                #endif
+            }
+
             float confidenceValue = Mathf.Max(confidenceLeft, confidenceRight);
 
             Color currentColor = Color.white;
@@ -78,36 +113,34 @@ namespace MagicLeap
             }
             else if(confidenceValue > 0.0f && confidenceRight > confidenceLeft)
             {
-                // Show Right-Hand Orientation
+                // Shows Right-Hand Orientation.
                 transform.localRotation = Quaternion.RotateTowards(transform.localRotation, Quaternion.Euler(0, 180, 0), ROTATION_SPEED * Time.deltaTime);
             }
             else
             {
-                // Show Left-Hand Orientation (Default)
+                // Shows Left-Hand Orientation (Default).
                 transform.localRotation = Quaternion.RotateTowards(transform.localRotation, Quaternion.Euler(0, 0, 0), ROTATION_SPEED * Time.deltaTime);
             }
 
             _spriteRenderer.material.color = currentColor;
         }
-        #endregion
 
-        #region Private Methods
+        #if PLATFORM_LUMIN
         /// <summary>
-        /// Get the confidence value for the hand being tracked.
+        /// Gets the confidence value for the hand being tracked.
         /// </summary>
-        /// <param name="hand">Hand to check the confidence value on. </param>
-        /// <returns></returns>
-        private float GetKeyPoseConfidence(MLHand hand)
+        /// <param name="hand">Hand to check the confidence value on.</param>
+        private float GetKeyPoseConfidence(MLHandTracking.Hand hand)
         {
             if (hand != null)
             {
                 if (hand.KeyPose == _keyPoseToTrack)
                 {
-                    return hand.KeyPoseConfidence;
+                    return hand.HandKeyPoseConfidence;
                 }
             }
             return 0.0f;
         }
-        #endregion
+        #endif
     }
 }

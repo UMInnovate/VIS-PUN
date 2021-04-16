@@ -25,9 +25,9 @@ public class VectorControlM3_Original : MonoBehaviour
     private const float textSize = 0.005f;
     private const float textOffset = 0.05f;
     private const float viewOffset = 0.07f;
-    private Vector3 relHeadPos;
-    private Vector3 relTailPos;
-    private Vector3 vectorComponents;
+    [HideInInspector] public Vector3 relHeadPos;
+    [HideInInspector] public Vector3 relTailPos;
+    [HideInInspector] private Vector3 vectorComponents;
 
     public bool isCorrectPlacement = false;
     [HideInInspector] public bool unitVec;
@@ -48,7 +48,6 @@ public class VectorControlM3_Original : MonoBehaviour
         _body = GetComponent<LineRenderer>();
         _tail = transform.Find("Tail");
         _head = transform.Find("Head");
-
         _body.startWidth = beamWidth;
         _body.endWidth = beamWidth;
         InitLabels();
@@ -239,7 +238,9 @@ public class VectorControlM3_Original : MonoBehaviour
         if (_componentLabel.enabled)
         {
             _componentLabel.transform.localPosition = vectorComponents * 0.5f;
-            _componentLabel.text = MakeCompLabel(vectorComponents);
+            if(unitVec)
+                _componentLabel.text = MakeCompLabel(vectorComponents/vectorComponents.magnitude);
+            else _componentLabel.text = MakeCompLabel(vectorComponents);
             Quaternion compRotation = Quaternion.LookRotation(_componentLabel.transform.position - _camera.transform.position);
             _componentLabel.transform.rotation = Quaternion.Slerp(_componentLabel.transform.rotation, compRotation, 1.5f);
             _componentLabel.transform.position -= _componentLabel.transform.forward * viewOffset;
@@ -250,9 +251,9 @@ public class VectorControlM3_Original : MonoBehaviour
             _yCompLabel.transform.position = comps[1].GetPosition(1);
             _zCompLabel.transform.position = comps[2].GetPosition(1);
 
-            _xCompLabel.text = "|" + _nameLabel.text + "x|\n(" + vectorComponents.x.ToString(GLOBALS.format) + ")";
-            _yCompLabel.text = "|" + _nameLabel.text + "y|\n(" + vectorComponents.y.ToString(GLOBALS.format) + ")";
-            _zCompLabel.text = "|" + _nameLabel.text + "z|\n(" + vectorComponents.z.ToString(GLOBALS.format) + ")";
+            _xCompLabel.text = "|" + _nameLabel.text.Substring(0,1) + "x|\n(" + vectorComponents.x.ToString(GLOBALS.format) + ")";
+            _yCompLabel.text = "|" + _nameLabel.text.Substring(0, 1) + "y|\n(" + vectorComponents.y.ToString(GLOBALS.format) + ")";
+            _zCompLabel.text = "|" + _nameLabel.text.Substring(0, 1) + "z|\n(" + vectorComponents.z.ToString(GLOBALS.format) + ")";
 
             Quaternion xRotation = Quaternion.LookRotation(_xCompLabel.transform.position - _camera.transform.position);
             _xCompLabel.transform.rotation = Quaternion.Slerp(_xCompLabel.transform.rotation, xRotation, 1.5f);

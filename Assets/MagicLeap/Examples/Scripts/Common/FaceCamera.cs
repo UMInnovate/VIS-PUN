@@ -2,9 +2,9 @@
 // ---------------------------------------------------------------------
 // %COPYRIGHT_BEGIN%
 //
-// Copyright (c) 2018-present, Magic Leap, Inc. All Rights Reserved.
-// Use of this file is governed by the Creator Agreement, located
-// here: https://id.magicleap.com/creator-terms
+// Copyright (c) 2019-present, Magic Leap, Inc. All Rights Reserved.
+// Use of this file is governed by the Developer Agreement, located
+// here: https://auth.magicleap.com/terms/developer
 //
 // %COPYRIGHT_END%
 // ---------------------------------------------------------------------
@@ -21,12 +21,9 @@ namespace MagicLeap
     /// </summary>
     public class FaceCamera : MonoBehaviour
     {
-        #region Private Variables
         [SerializeField, Tooltip("Rotation Offset in Euler Angles")]
         Vector3 _rotationOffset = Vector3.zero;
-        #endregion
 
-        #region Unity Methods
         /// <summary>
         /// Initialize rotation
         /// </summary>
@@ -43,6 +40,5 @@ namespace MagicLeap
             transform.LookAt(Camera.main.transform);
             transform.rotation *= Quaternion.Euler(_rotationOffset);
         }
-        #endregion
     }
 }

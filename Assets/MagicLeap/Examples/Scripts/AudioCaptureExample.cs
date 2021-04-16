@@ -2,16 +2,16 @@
 // ---------------------------------------------------------------------
 // %COPYRIGHT_BEGIN%
 //
-// Copyright (c) 2018-present, Magic Leap, Inc. All Rights Reserved.
-// Use of this file is governed by the Creator Agreement, located
-// here: https://id.magicleap.com/creator-terms
+// Copyright (c) 2019-present, Magic Leap, Inc. All Rights Reserved.
+// Use of this file is governed by the Developer Agreement, located
+// here: https://auth.magicleap.com/terms/developer
 //
 // %COPYRIGHT_END%
 // ---------------------------------------------------------------------
 // %BANNER_END%
 
+using System.Collections;
 using System.Linq;
-
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.XR.MagicLeap;
@@ -23,7 +23,6 @@ namespace MagicLeap
     /// using the Unity Microphone class. The audio is then played
     /// through an audio source attached to the parrot in the scene.
     /// </summary>
-    [RequireComponent(typeof(PrivilegeRequester))]
     public class AudioCaptureExample : MonoBehaviour
     {
         public enum CaptureMode
@@ -33,9 +32,14 @@ namespace MagicLeap
             Delayed
         }
 
-        #region Private Variables
-        [SerializeField, Tooltip("The reference to the controller connection handler in the scene.")]
-        private ControllerConnectionHandler _controllerConnectionHandler = null;
+        [SerializeField, Tooltip("The reference to the MLControllerConnectionHandlerBehavior in the scene.")]
+        private MLControllerConnectionHandlerBehavior _controllerConnectionHandler = null;
+
+        [SerializeField, Tooltip("The reference to the place from camera script for the parrot.")]
+        private PlaceFromCamera _placeFromCamera = null;
+
+        [SerializeField, Tooltip("The reference to the privilege requester in the scene.")]
+        private MLPrivilegeRequesterBehavior _privilegeRequester = null;
 
         [SerializeField, Tooltip("The audio source that should capture the microphone input.")]
         private AudioSource _inputAudioSource = null;
@@ -57,8 +61,6 @@ namespace MagicLeap
         [SerializeField, Range(1, 2), Tooltip("The pitch used for delayed audio playback.")]
         private float _pitch = 1.5f;
 
-        private PrivilegeRequester _privilegeRequester = null;
-
         private bool _canCapture = false;
         private bool _isCapturing = false;
         private CaptureMode _captureMode = CaptureMode.Inactive;
@@ -66,6 +68,10 @@ namespace MagicLeap
 
         private float _audioMaxSample = 0;
         private float[] _audioSamples = new float[128];
+
+        private int _numSyncIterations = 30;
+        private int _numSamplesLatency = 1024;
+        private bool _playbackStarted = false;
 
         private bool _isAudioDetected = false;
         private float _audioLastDetectionTime = 0;
@@ -78,6 +84,9 @@ namespace MagicLeap
         private const float AUDIO_CLIP_TIMEOUT_SECONDS = 2;
         private const float AUDIO_CLIP_FALLOFF_SECONDS = 0.5f;
         private const float ROTATION_DAMPING = 100;
+
+        private const int NUM_SYNC_ITERATIONS = 30;
+        private const int NUM_SAMPLES_LATENCY = 1024;
 
         private Quaternion CameraDirection
         {
@@ -96,9 +105,7 @@ namespace MagicLeap
                 }
             }
         }
-        #endregion
 
-        #region Unity Methods
         void Awake()
         {
             if (_inputAudioSource == null)
@@ -143,17 +150,30 @@ namespace MagicLeap
                 return;
             }
 
-            // Before enabling the microphone, the scene must wait until the privileges have been granted.
-            _privilegeRequester = GetComponent<PrivilegeRequester>();
+            if (_placeFromCamera == null)
+            {
+                Debug.LogError("Error: AudioCaptureExample._placeFromCamera is not set, disabling script.");
+                enabled = false;
+                return;
+            }
 
+            UpdateStatus();
+
+            #if PLATFORM_LUMIN
+            // Before enabling the microphone, the scene must wait until the privileges have been granted.
             _privilegeRequester.OnPrivilegesDone += HandleOnPrivilegesDone;
             MLInput.OnControllerButtonDown += HandleOnButtonDown;
+            MLInput.OnTriggerDown += HandleOnTriggerDown;
+            #endif
         }
 
         void OnDestroy()
         {
+            #if PLATFORM_LUMIN
             _privilegeRequester.OnPrivilegesDone -= HandleOnPrivilegesDone;
             MLInput.OnControllerButtonDown -= HandleOnButtonDown;
+            MLInput.OnTriggerDown -= HandleOnTriggerDown;
+            #endif
 
             StopCapture();
         }
@@ -166,6 +186,11 @@ namespace MagicLeap
 
             if (_isCapturing)
             {
+                ProcessAudioPlayback();
+            }
+
+            if (_playbackStarted)
+            {
                 if (_captureMode == CaptureMode.Delayed)
                 {
                     DetectAudio();
@@ -173,30 +198,30 @@ namespace MagicLeap
 
                 AnimateParrot((_captureMode == CaptureMode.Realtime) ? _inputAudioSource : _playbackAudioSource);
             }
+
+            UpdateStatus();
         }
 
         void OnApplicationPause(bool pause)
         {
             if (pause)
             {
-                if (_isCapturing)
-                {
-                    // require privledges to be checked again.
-                    _canCapture = false;
-                    _captureMode = CaptureMode.Inactive;
+                // require privledges to be checked again.
+                _canCapture = false;
+                _captureMode = CaptureMode.Inactive;
 
+                if (_playbackStarted)
+                {
                     StopCapture();
                 }
             }
         }
-        #endregion
 
-        #region Private Methods
-        private void StartCapture()
+        private void StartMicrophone()
         {
             if (_captureMode == CaptureMode.Inactive)
             {
-                Debug.LogError("Error: AudioCaptureExample.StartCapture() cannot start with CaptureMode.Inactive.");
+                Debug.LogError("Error: AudioCaptureExample.StartMicrophone() cannot start with CaptureMode.Inactive.");
                 return;
             }
 
@@ -209,44 +234,66 @@ namespace MagicLeap
             // If no microphone is detected, exit early and log the error.
             if (string.IsNullOrEmpty(_deviceMicrophone))
             {
-                Debug.LogError("Error: AudioCaptureExample._deviceMicrophone is not set.");
+                Debug.LogError("Error: AudioCaptureExample._deviceMicrophone could not find a microphone device, disabling script.");
+                enabled = false;
                 return;
             }
 
-            _isCapturing = true;
-            _inputAudioSource.clip = Microphone.Start(_deviceMicrophone, true, AUDIO_CLIP_LENGTH_SECONDS, AUDIO_CLIP_FREQUENCY_HERTZ);
+            _playbackAudioSource.Stop();
             _inputAudioSource.loop = true;
+            _inputAudioSource.clip = Microphone.Start(_deviceMicrophone, true, AUDIO_CLIP_LENGTH_SECONDS, AUDIO_CLIP_FREQUENCY_HERTZ);
 
-            // Delay to produce realtime playback effect.
-            while (!(Microphone.GetPosition(_deviceMicrophone) > 0)) { }
-            _inputAudioSource.Play();
+            _isCapturing = true;
+            _numSamplesLatency = NUM_SAMPLES_LATENCY;
+            _numSyncIterations = NUM_SYNC_ITERATIONS;
+        }
 
-            switch (_captureMode)
+        private void ProcessAudioPlayback()
+        {
+            if (_numSyncIterations > 0)
             {
-                case CaptureMode.Realtime:
-                {
-                    _playbackAudioSource.pitch = 1;
-                    _playbackAudioSource.clip = _inputAudioSource.clip;
-                    _playbackAudioSource.loop = true;
-                    _playbackAudioSource.Play();
+                --_numSyncIterations;
+            }
 
-                    break;
-                }
+            if (!_playbackStarted && (_numSyncIterations == 0) && (Microphone.GetPosition(_deviceMicrophone) > _numSamplesLatency))
+            {
+                _inputAudioSource.Play();
+                _inputAudioSource.timeSamples = Microphone.GetPosition(_deviceMicrophone) - _numSamplesLatency;
+                _playbackStarted = true;
 
-                case CaptureMode.Delayed:
+                switch (_captureMode)
                 {
-                    _playbackAudioSource.pitch = _pitch;
-                    _playbackAudioSource.loop = false;
-                    break;
+                    case CaptureMode.Realtime:
+                        {
+                            _playbackAudioSource.pitch = 1;
+                            _playbackAudioSource.clip = _inputAudioSource.clip;
+                            _playbackAudioSource.loop = true;
+                            _playbackAudioSource.Play();
+
+                            break;
+                        }
+
+                    case CaptureMode.Delayed:
+                        {
+                            _playbackAudioSource.pitch = _pitch;
+                            _playbackAudioSource.loop = false;
+                            break;
+                        }
                 }
             }
 
-            UpdateStatus();
+            // Increasing latency
+            if ((_inputAudioSource.timeSamples > Microphone.GetPosition(_deviceMicrophone)) && (Microphone.GetPosition(_deviceMicrophone) > _numSamplesLatency * 4))
+            {
+                _numSamplesLatency = _numSamplesLatency * 2;
+                _inputAudioSource.timeSamples = Microphone.GetPosition(_deviceMicrophone) - _numSamplesLatency;
+            }
         }
 
         private void StopCapture()
         {
             _isCapturing = false;
+            _playbackStarted = false;
 
             // Stop microphone and input audio source.
             _inputAudioSource.Stop();
@@ -260,8 +307,6 @@ namespace MagicLeap
             _playbackAudioSource.Stop();
             _playbackAudioSource.loop = false;
             _playbackAudioSource.clip = null;
-
-            UpdateStatus();
         }
 
         /// <summary>
@@ -269,13 +314,20 @@ namespace MagicLeap
         /// </summary>
         private void UpdateStatus()
         {
+            _statusLabel.text = string.Format("<color=#dbfb76><b>{0} {1}</b></color>\n{2}: {3}\n",
+                LocalizeManager.GetString("Controller"),
+                LocalizeManager.GetString("Data"),
+                LocalizeManager.GetString("Status"),
+                LocalizeManager.GetString(ControllerStatus.Text));
+
+            _statusLabel.text += string.Format("\n<color=#dbfb76><b>{0} {1}</b></color>\n", LocalizeManager.GetString("AudioCapture"), LocalizeManager.GetString("Data"));
             if (!_canCapture)
             {
-                _statusLabel.text = (_privilegeRequester.State != PrivilegeRequester.PrivilegeState.Failed) ? "Status: Requesting Privileges" : "Status: Privileges Denied";
+                _statusLabel.text += (_privilegeRequester.State != MLPrivilegeRequesterBehavior.PrivilegeState.Failed) ? string.Format("{0}: {1}", LocalizeManager.GetString("Status"), LocalizeManager.GetString("Requesting Privileges")) : string.Format("{0}: {1}", LocalizeManager.GetString("Status"), LocalizeManager.GetString("Privileges Denied"));
             }
             else
             {
-                _statusLabel.text = string.Format("Status: {0}", _captureMode);
+                _statusLabel.text += string.Format("{0}: {1}", LocalizeManager.GetString("Status"), LocalizeManager.GetString(_captureMode.ToString()));
             }
         }
 
@@ -369,54 +421,60 @@ namespace MagicLeap
             _parrotAnimator.SetBool("IsTalking", enabled);
             _parrotAnimator.SetFloat("TalkingRate", rate);
         }
-        #endregion
 
-        #region Event Handlers
         /// <summary>
         /// Responds to privilege requester result.
         /// </summary>
         /// <param name="result"/>
         private void HandleOnPrivilegesDone(MLResult result)
         {
+            #if PLATFORM_LUMIN
             if (!result.IsOk)
             {
-                if (result.Code == MLResultCode.PrivilegeDenied)
-                {
-                    Instantiate(Resources.Load("PrivilegeDeniedError"));
-                }
-
                 Debug.LogErrorFormat("Error: AudioCaptureExample failed to get all requested privileges, disabling script. Reason: {0}", result);
+                UpdateStatus();
                 enabled = false;
                 return;
             }
+            #endif
 
             _canCapture = true;
             Debug.Log("Succeeded in requesting all privileges");
 
-            UpdateStatus();
         }
 
-        private void HandleOnButtonDown(byte controllerId, MLInputControllerButton button)
+        private void HandleOnTriggerDown(byte controllerId, float triggerValue)
         {
-            if (_controllerConnectionHandler.IsControllerValid(controllerId))
+            if (_canCapture)
             {
-                if (_canCapture && button == MLInputControllerButton.Bumper)
+                _captureMode = (_captureMode == CaptureMode.Delayed) ? CaptureMode.Inactive : _captureMode + 1;
+
+                // Stop & Start to clear the previous mode.
+                if (_isCapturing)
                 {
-                    _captureMode = (_captureMode == CaptureMode.Delayed) ? CaptureMode.Inactive : _captureMode + 1;
+                    StopCapture();
+                }
 
-                    // Stop & Start to clear the previous mode.
-                    if (_isCapturing)
-                    {
-                        StopCapture();
-                    }
-
-                    if (_captureMode != CaptureMode.Inactive)
-                    {
-                        StartCapture();
-                    }
+                if (_captureMode != CaptureMode.Inactive)
+                {
+                    StartMicrophone();
                 }
             }
         }
-        #endregion
+
+        private void HandleOnButtonDown(byte controllerId, MLInput.Controller.Button button)
+        {
+            if(button == MLInput.Controller.Button.Bumper)
+            {
+                StartCoroutine("SingleFrameUpdate");
+            }
+        }
+
+        private IEnumerator SingleFrameUpdate()
+        {
+            _placeFromCamera.PlaceOnUpdate = true;
+            yield return new WaitForEndOfFrame();
+            _placeFromCamera.PlaceOnUpdate = false;
+        }
     }
 }

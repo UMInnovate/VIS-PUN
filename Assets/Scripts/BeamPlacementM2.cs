@@ -26,7 +26,7 @@ public class BeamPlacementM2 : MonoBehaviour
     // Origin of coordinate system
     private GameObject _origin;
     // Input controller
-    private MLInputController _controller = null;
+    private MLInput.Controller _controller = null;
     // LineRenderer from controller
     private PhotonLineRenderer _beamline = null; //***PUN
     // VectorMath handles vector positioning
@@ -143,7 +143,7 @@ public class BeamPlacementM2 : MonoBehaviour
     // Note - the trigger click handles what happens upon EXITING the stage given in the switch statement.
     private void OnTriggerUp(byte controllerId, float pressure)
     {
-        if (!aMenuIsActive)
+        if (!aMenuIsActive && !GLOBALS.isInCoroutine)
         {
             switch (GLOBALS.stage)
             {
@@ -194,7 +194,8 @@ public class BeamPlacementM2 : MonoBehaviour
                     break;
 
                 case Stage.v1calc:
-                        // the user must click to launch the animation of the component calculations
+                    disableControllerInput();
+                    // the user must click to launch the animation of the component calculations
                     StartCoroutine(ComponentCalculation(0));
                     // this Corroutine animates the display of calculations
                     // it increments the stage AFTER completion            
@@ -234,6 +235,7 @@ public class BeamPlacementM2 : MonoBehaviour
                     IncrementStage();
                     break;
                 case Stage.v2calc:
+                    disableControllerInput();
                     StartCoroutine(ComponentCalculation(1));
                     // this case it should make the operations panel launch upon completion
                     break;
@@ -249,9 +251,9 @@ public class BeamPlacementM2 : MonoBehaviour
     }
 
     // Home or Bumper clicks handled here
-    private void OnButtonUp(byte controllerId, MLInputControllerButton button)
+    private void OnButtonUp(byte controllerId, MLInput.Controller.Button button)
     {
-        if (button == MLInputControllerButton.HomeTap)
+        if (button == MLInput.Controller.Button.HomeTap)
         {
             // if opening up the menu, make sure there is a beam and no instructions
             if (!menuPanel.activeSelf)
@@ -264,7 +266,7 @@ public class BeamPlacementM2 : MonoBehaviour
             // display instructions only when no menu
             _giveInstructions.EnableText(!menuPanel.activeSelf);
         }
-        else if (button == MLInputControllerButton.Bumper)
+        else if (button == MLInput.Controller.Button.Bumper)
         {
             // If we're viewing the completed operation, bumper will toggle the labels we are viewing
             if(GLOBALS.stage == Stage.opView)
@@ -315,14 +317,14 @@ public class BeamPlacementM2 : MonoBehaviour
             // Touchpad handles rotating the origin
             if(GLOBALS.stage == Stage.m2rotate)
             {
-                switch (_controller.TouchpadGesture.Direction)
+                switch (_controller.CurrentTouchpadGesture.Direction)
                 {
-                    case MLInputControllerTouchpadGestureDirection.Clockwise:
+                    case MLInput.Controller.TouchpadGesture.GestureDirection.Clockwise:
                         _root.transform.RotateAround(_origin.transform.position, Vector3.up, 80f * Time.deltaTime);
 
                         _origin.GetComponent<OriginControl>().SetAxesPositions(); //***PUN
                         break;
-                    case MLInputControllerTouchpadGestureDirection.CounterClockwise:
+                    case MLInput.Controller.TouchpadGesture.GestureDirection.CounterClockwise:
                         _root.transform.RotateAround(_origin.transform.position, Vector3.up, -80f * Time.deltaTime);
 
                         _origin.GetComponent<OriginControl>().SetAxesPositions(); //***PUN
@@ -344,6 +346,22 @@ public class BeamPlacementM2 : MonoBehaviour
     }
     #endregion
 
+    //Controller Input is disabled while a coroutine is running
+    //Required when calculations are being displayed so the unknown state error doesn't occur
+    //Unknown state error is when the user spams the trigger while being shown the component calculations
+    private void disableControllerInput()
+    {
+        GLOBALS.isInCoroutine = true;
+        Debug.Log("MLInput disabled");
+    }
+
+    private void enableControllerInput()
+    {
+        GLOBALS.isInCoroutine = false;
+        _beamline.enabled = true;
+        Debug.Log("MLInput enabled");
+    }
+
     // this happens whenever the vector head has been placed
     private IEnumerator ComponentCalculation(int v)
     {
@@ -354,7 +372,7 @@ public class BeamPlacementM2 : MonoBehaviour
             // *** POTENTIAL BUG? ***
             operationsPanel.SetActive(true);           
         }
-
+        enableControllerInput();
         IncrementStage();
     }
 

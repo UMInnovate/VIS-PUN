@@ -2,9 +2,9 @@
 // ---------------------------------------------------------------------
 // %COPYRIGHT_BEGIN%
 //
-// Copyright (c) 2018-present, Magic Leap, Inc. All Rights Reserved.
-// Use of this file is governed by the Creator Agreement, located
-// here: https://id.magicleap.com/creator-terms
+// Copyright (c) 2019-present, Magic Leap, Inc. All Rights Reserved.
+// Use of this file is governed by the Developer Agreement, located
+// here: https://auth.magicleap.com/terms/developer
 //
 // %COPYRIGHT_END%
 // ---------------------------------------------------------------------
@@ -15,7 +15,7 @@ using UnityEngine;
 using UnityEngine.XR.MagicLeap;
 using System.Collections.Generic;
 
-namespace UnityEngine.XR.MagicLeap
+namespace MagicLeap.Core
 {
     /// <summary>
     /// This class extends the inspector for the MLMovementBehavior component, providing visual runtime information.
@@ -27,11 +27,11 @@ namespace UnityEngine.XR.MagicLeap
         {
             public static readonly GUIContent ControllerHandler = new GUIContent(
                 "Controller Connection Handler",
-                "Reference to the ControllerConnectionHandler script to drive the movement.");
+                "Reference to the MLControllerConnectionHandlerBehavior script to drive the movement.");
 
             public static readonly GUIContent SettingsManager = new GUIContent(
                 "Movement Session Settings Manager",
-                "Reference to the MLMovementSettingsManager script containing the session settings.");
+                "Reference to the MLMovementSettingsManagerBehavior script containing the session settings.");
 
             public static readonly GUIContent RunOnStart = new GUIContent(
                 "Run On Start",
@@ -39,7 +39,7 @@ namespace UnityEngine.XR.MagicLeap
 
             public static readonly GUIContent AllowCollision = new GUIContent(
                 "Allow Collision",
-                "When enabled, object will collide against objects with the MLMovementCollider component");
+                "When enabled, object will collide against objects with the MLMovementColliderBehavior component");
 
             public static readonly GUIContent UseTouchForDepth = new GUIContent(
                 "Use Touch For Depth",
@@ -86,11 +86,11 @@ namespace UnityEngine.XR.MagicLeap
             EditorGUILayout.Space();
             EditorGUILayout.Space();
 
-            myTarget.ControllerHandler = (ControllerConnectionHandler)EditorGUILayout.ObjectField(Tooltips.ControllerHandler, (Object)myTarget.ControllerHandler, typeof(ControllerConnectionHandler), true);
+            myTarget.ControllerHandler = (MLControllerConnectionHandlerBehavior)EditorGUILayout.ObjectField(Tooltips.ControllerHandler, (Object)myTarget.ControllerHandler, typeof(MLControllerConnectionHandlerBehavior), true);
 
             EditorGUILayout.Space();
 
-            myTarget.SettingsManager = (MLMovementSettingsManager)EditorGUILayout.ObjectField(Tooltips.SettingsManager, (Object)myTarget.SettingsManager, typeof(MLMovementSettingsManager), true);
+            myTarget.SettingsManager = (MLMovementSettingsManagerBehavior)EditorGUILayout.ObjectField(Tooltips.SettingsManager, (Object)myTarget.SettingsManager, typeof(MLMovementSettingsManagerBehavior), true);
 
             EditorGUILayout.Space();
 

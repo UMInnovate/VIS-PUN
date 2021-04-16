@@ -21,7 +21,7 @@ public class BeamPlacementM1 : MonoBehaviour
     // Origin of coordinate system
     private GameObject _origin;
     // Input controller
-    private MLInputController _controller = null;
+    private MLInput.Controller _controller = null;
     // LineRenderer from controller
     private PhotonLineRenderer _beamline = null; //***PUN
     // Position of end of the beam
@@ -99,7 +99,10 @@ public class BeamPlacementM1 : MonoBehaviour
             }
             else if (GLOBALS.displayMode == DispMode.Units)
             {
-                _origin.GetComponent<OriginControlM1>().DisplayUnitVectors();
+                Vector3 relVec = _vector.GetComponent<VectorControlM1>()._head.position - _vector.GetComponent<VectorControlM1>()._origin.transform.position;
+                float relMag = relVec.magnitude;
+                Vector3 uVc = new Vector3(relVec.x / relMag, relVec.y / relMag, relVec.z / relMag);
+                _origin.GetComponent<OriginControlM1>().DisplayUnitVectors(uVc, _vector.GetComponent<VectorControlM1>()._origin.transform.position);
             }
         }
     }
@@ -167,9 +170,9 @@ public class BeamPlacementM1 : MonoBehaviour
     }
 
     // listener for HOME and BUMPER presses
-    private void OnButtonUp(byte controllerId, MLInputControllerButton button)
+    private void OnButtonUp(byte controllerId, MLInput.Controller.Button button)
     {
-        if (button == MLInputControllerButton.HomeTap)
+        if (button == MLInput.Controller.Button.HomeTap)
         {
             // if opening up the menu, make sure there is a beam and no instructions
             if (!menuPanel.activeSelf)
@@ -179,7 +182,7 @@ public class BeamPlacementM1 : MonoBehaviour
             // display instructions only when no menu
             _giveInstructions.EnableText(!menuPanel.activeSelf);
         }
-        else if (button == MLInputControllerButton.Bumper)
+        else if (button == MLInput.Controller.Button.Bumper)
         {
             // change the display mode
             if (GLOBALS.stage != Stage.m1view)
@@ -205,9 +208,11 @@ public class BeamPlacementM1 : MonoBehaviour
                     _angles.SetActive(false);
                     break;
                 case DispMode.Units:
-                    // todo make the origin display unit vectors
-                    // ...
-                    //
+                    Vector3 relVec = _vector.GetComponent<VectorControlM1>()._head.position - _vector.GetComponent<VectorControlM1>()._origin.transform.position;
+                    float relMag = relVec.magnitude;
+                    Vector3 uVc = new Vector3(relVec.x / relMag, relVec.y / relMag, relVec.z / relMag);
+                    _origin.GetComponent<OriginControlM1>().DisplayUnitVectors(uVc, _vector.GetComponent<VectorControlM1>()._origin.transform.position);
+                   // _angles.SetActive(false);
                     _angles.SetActive(false);
                     break;
                 case DispMode.Angles:
@@ -226,13 +231,13 @@ public class BeamPlacementM1 : MonoBehaviour
         {
             if (GLOBALS.stage == Stage.m1rotate)
             {
-                switch (_controller.TouchpadGesture.Direction)
+                switch (_controller.CurrentTouchpadGesture.Direction)
                 {
-                    case MLInputControllerTouchpadGestureDirection.Clockwise:
+                    case MLInput.Controller.TouchpadGesture.GestureDirection.Clockwise:
                         _root.transform.RotateAround(_origin.transform.position, Vector3.up, 80f * Time.deltaTime);
                         _origin.GetComponent<OriginControl>().SetAxesPositions(); //***PUN
                         break;
-                    case MLInputControllerTouchpadGestureDirection.CounterClockwise:
+                    case MLInput.Controller.TouchpadGesture.GestureDirection.CounterClockwise:
                         _root.transform.RotateAround(_origin.transform.position, Vector3.up, -80f * Time.deltaTime);
                         _origin.GetComponent<OriginControl>().SetAxesPositions(); //***PUN
                         break;

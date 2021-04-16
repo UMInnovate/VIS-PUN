@@ -2,9 +2,9 @@
 // ---------------------------------------------------------------------
 // %COPYRIGHT_BEGIN%
 //
-// Copyright (c) 2018-present, Magic Leap, Inc. All Rights Reserved.
-// Use of this file is governed by the Creator Agreement, located
-// here: https://id.magicleap.com/creator-terms
+// Copyright (c) 2019-present, Magic Leap, Inc. All Rights Reserved.
+// Use of this file is governed by the Developer Agreement, located
+// here: https://auth.magicleap.com/terms/developer
 //
 // %COPYRIGHT_END%
 // ---------------------------------------------------------------------
@@ -22,7 +22,6 @@ namespace MagicLeap
     /// </summary>
     public class RawVideoCaptureVisualizer : MonoBehaviour
     {
-        #region Private Variables
         [SerializeField, Tooltip("The renderer to show the video capture on")]
         private Renderer _screenRenderer = null;
 
@@ -30,13 +29,13 @@ namespace MagicLeap
         [SerializeField, Tooltip("Object that will show up when recording")]
         private GameObject _recordingIndicator = null;
 
+        #pragma warning disable 414
         [SerializeField, Tooltip("Posterization levels of the frame processor")]
         private byte _posterizationLevels = 4;
 
         private Texture2D _rawVideoTexture = null;
-        #endregion
+        #pragma warning restore 414
 
-        #region Unity Methods
         /// <summary>
         /// Check for all required variables to be initialized.
         /// </summary>
@@ -58,15 +57,14 @@ namespace MagicLeap
 
             _screenRenderer.enabled = true;
         }
-        #endregion
 
-        #region Event Handlers
         /// <summary>
         /// Handles video capture being started.
         /// </summary>
         public void OnCaptureStarted()
         {
             // Manage canvas visuals
+            _screenRenderer.enabled = true;
             _recordingIndicator.SetActive(true);
         }
 
@@ -79,15 +77,16 @@ namespace MagicLeap
             _recordingIndicator.SetActive(false);
         }
 
+        #if PLATFORM_LUMIN
         /// <summary>
         /// Display the raw video frame on the texture object.
         /// </summary>
         /// <param name="extras">Unused.</param>
         /// <param name="frameData">Contains raw frame bytes to manipulate.</param>
         /// <param name="frameMetadata">Unused.</param>
-        public void OnRawCaptureDataReceived(MLCameraResultExtras extras, YUVFrameInfo frameData, MLCameraFrameMetadata frameMetadata)
+        public void OnRawCaptureDataReceived(MLCamera.ResultExtras extras, MLCamera.YUVFrameInfo frameData, MLCamera.FrameMetadata frameMetadata)
         {
-            YUVBuffer yBuffer = frameData.Y;
+            MLCamera.YUVBuffer yBuffer = frameData.Y;
 
             if (_rawVideoTexture == null)
             {
@@ -100,6 +99,15 @@ namespace MagicLeap
             ProcessImage(yBuffer.Data, _posterizationLevels);
             _rawVideoTexture.LoadRawTextureData(yBuffer.Data);
             _rawVideoTexture.Apply();
+        }
+        #endif
+
+        /// <summary>
+        /// Disables the rendere.
+        /// </summary>
+        public void OnRawCaptureEnded()
+        {
+            _screenRenderer.enabled = false;
         }
 
         /// <summary>
@@ -115,6 +123,5 @@ namespace MagicLeap
                 data[i] = (byte) (data[i] / factor * factor);
             }
         }
-        #endregion
     }
 }

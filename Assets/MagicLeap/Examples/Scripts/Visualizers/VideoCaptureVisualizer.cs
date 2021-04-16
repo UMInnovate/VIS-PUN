@@ -2,9 +2,9 @@
 // ---------------------------------------------------------------------
 // %COPYRIGHT_BEGIN%
 //
-// Copyright (c) 2018-present, Magic Leap, Inc. All Rights Reserved.
-// Use of this file is governed by the Creator Agreement, located
-// here: https://id.magicleap.com/creator-terms
+// Copyright (c) 2019-present, Magic Leap, Inc. All Rights Reserved.
+// Use of this file is governed by the Developer Agreement, located
+// here: https://auth.magicleap.com/terms/developer
 //
 // %COPYRIGHT_END%
 // ---------------------------------------------------------------------
@@ -22,24 +22,20 @@ namespace MagicLeap
     /// </summary>
     public class VideoCaptureVisualizer : MonoBehaviour
     {
-        #region Private Variables
         [SerializeField, Tooltip("The screen to show the video capture preview")]
         private GameObject _screen = null;
         private Renderer _screenRenderer = null;
-        private MLMediaPlayer _mediaPlayer = null;
 
-        [Header("Visuals")]
-        [SerializeField, Tooltip("Text to show instructions for capturing video")]
-        private UnityEngine.UI.Text _previewText = null;
+        #pragma warning disable 414
+        private MLMediaPlayer _mediaPlayer = null;
+        #pragma warning restore 414
 
         [SerializeField, Tooltip("Object that will show up when recording")]
         private GameObject _recordingIndicator = null;
 
         // time delay between video preparation and enabling screen preview
         private const float SCREEN_PREVIEW_DELAY = 0.6f;
-        #endregion
 
-        #region Unity Methods
         /// <summary>
         /// Check for all required variables to be initialized.
         /// </summary>
@@ -52,13 +48,6 @@ namespace MagicLeap
                 return;
             }
 
-            if(_previewText == null)
-            {
-                Debug.LogError("Error: VideoCaptureVisualizer._previewText is not set, disabling script.");
-                enabled = false;
-                return;
-            }
-
             if (_recordingIndicator == null)
             {
                 Debug.LogError("Error: VideoCaptureVisualizer._recordingIndicator is not set, disabling script.");
@@ -66,22 +55,24 @@ namespace MagicLeap
                 return;
             }
 
+            #if PLATFORM_LUMIN
             _mediaPlayer = _screen.AddComponent<MLMediaPlayer>();
             _mediaPlayer.OnVideoPrepared += HandleVideoPrepared;
+            #endif
 
             _screenRenderer = _screen.GetComponent<Renderer>();
         }
 
         void OnDestroy()
         {
+            #if PLATFORM_LUMIN
             if (_mediaPlayer != null)
             {
                 _mediaPlayer.OnVideoPrepared -= HandleVideoPrepared;
             }
+            #endif
         }
-        #endregion
 
-        #region Private Methods
         private IEnumerator EnablePreview()
         {
             // delay is needed for Media Player to load the video after preparing it
@@ -89,22 +80,29 @@ namespace MagicLeap
             yield return new WaitForSeconds(SCREEN_PREVIEW_DELAY);
             _screenRenderer.enabled = true;
         }
-        #endregion
 
-        #region Event Handlers
+        /// <summary>
+        /// Disables rendering of the video.
+        /// </summary>
+        public void DisablePreview()
+        {
+            _screenRenderer.enabled = false;
+        }
+
         /// <summary>
         /// Handles video capture being started.
         /// </summary>
         public void OnCaptureStarted()
         {
+            #if PLATFORM_LUMIN
             if (_mediaPlayer.IsPlaying)
             {
                 _mediaPlayer.Stop();
             }
+            #endif
 
             // Manage canvas visuals
             _recordingIndicator.SetActive(true);
-            _previewText.text = "Press the bumper to stop capturing a video.";
 
             // Disable the preview
             _screenRenderer.enabled = false;
@@ -118,15 +116,20 @@ namespace MagicLeap
         {
             // Manage canvas visuals
             _recordingIndicator.SetActive(false);
-            _previewText.text = "Press the bumper to start capturing a video.";
 
-            // Load the captured video
-            _mediaPlayer.VideoSource = path;
-            MLResult result = _mediaPlayer.PrepareVideo();
-            if (!result.IsOk)
+            #if PLATFORM_LUMIN
+            // Only attempt to display video if we have a valid filename.
+            if (!string.IsNullOrEmpty(path))
             {
-                Debug.LogErrorFormat("Error: VideoCaptureVisualizer failed to prepare video on capture end. Reason: {0}", result);
+                // Load the captured video
+                _mediaPlayer.VideoSource = path;
+                MLResult result = _mediaPlayer.PrepareVideo();
+                if (!result.IsOk)
+                {
+                    Debug.LogErrorFormat("Error: VideoCaptureVisualizer failed to prepare video on capture end. Reason: {0}", result);
+                }
             }
+            #endif
         }
 
         /// <summary>
@@ -134,10 +137,11 @@ namespace MagicLeap
         /// </summary>
         private void HandleVideoPrepared()
         {
+            #if PLATFORM_LUMIN
             _mediaPlayer.IsLooping = true;
+            #endif
 
             StartCoroutine(EnablePreview());
         }
-        #endregion
     }
 }

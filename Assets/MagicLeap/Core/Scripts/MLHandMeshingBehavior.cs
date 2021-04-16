@@ -2,9 +2,9 @@
 // ---------------------------------------------------------------------
 // %COPYRIGHT_BEGIN%
 //
-// Copyright (c) 2018-present, Magic Leap, Inc. All Rights Reserved.
-// Use of this file is governed by the Creator Agreement, located
-// here: https://id.magicleap.com/creator-terms
+// Copyright (c) 2019-present, Magic Leap, Inc. All Rights Reserved.
+// Use of this file is governed by the Developer Agreement, located
+// here: https://auth.magicleap.com/terms/developer
 //
 // %COPYRIGHT_END%
 // ---------------------------------------------------------------------
@@ -20,43 +20,38 @@ namespace UnityEngine.XR.MagicLeap
     [AddComponentMenu("XR/MagicLeap/MLHandMeshingBehavior")]
     public class MLHandMeshingBehavior : MonoBehaviour
     {
-        #region Public Delegates
-        public delegate void OnHandMeshFoundCallback(MLHandMesh meshData);
-        public delegate void OnHandMeshLostCallback();
-        #endregion
-
-        #region Public Events
+        #if PLATFORM_LUMIN
         /// <summary>
         /// Triggered when mesh data is found
         /// </summary>
-        public event OnHandMeshFoundCallback OnHandMeshFound;
+        public event MLHandMeshing.RequestHandMeshCallback OnHandMeshFound = delegate { };
 
         /// <summary>
         /// Triggered when mesh data is updated
         /// </summary>
-        public event OnHandMeshFoundCallback OnHandMeshUpdated;
+        public event MLHandMeshing.RequestHandMeshCallback OnHandMeshUpdated = delegate { };
 
         /// <summary>
         /// Triggered when mesh data is lost
         /// </summary>
-        public event OnHandMeshLostCallback OnHandMeshLost;
-        #endregion
+        public event MLHandMeshing.RequestHandMeshCallback OnHandMeshLost = delegate { };
+        #endif
 
-        #region Private Variables
         [SerializeField, Tooltip("A Prefab with a Mesh Filter and Mesh Renderer")]
         private GameObject _meshBlockPrefab = null;
 
         [SerializeField, Tooltip("Material applied on the mesh")]
         private Material _meshMaterial = null;
 
+        #pragma warning disable 414
         [SerializeField, Tooltip("Recalculate normals")]
         private bool _recalculateNormals = false;
 
-        private List<MeshFilter> _meshFilters = new List<MeshFilter>();
         private bool _hasPendingRequest = false;
-        #endregion
+        #pragma warning restore 414
 
-        #region Public Properties
+        private List<MeshFilter> _meshFilters = new List<MeshFilter>();
+
         /// <summary>
         /// Setter for the Mesh Material.
         /// </summary>
@@ -76,14 +71,13 @@ namespace UnityEngine.XR.MagicLeap
         /// Getter for availability of hand mesh data.
         /// </summary>
         public bool HandMeshFound { get; private set; }
-        #endregion
 
-        #region Unity Methods
         /// <summary>
         /// Starts MLHandMeshing, validates inspector variables and public properties, starts requesting for hand mesh data.
         /// </summary>
         void Start()
         {
+            #if PLATFORM_LUMIN
             MLResult result = MLHandMeshing.Start();
             if (!result.IsOk)
             {
@@ -91,6 +85,7 @@ namespace UnityEngine.XR.MagicLeap
                 enabled = false;
                 return;
             }
+            #endif
 
             if (_meshBlockPrefab == null)
             {
@@ -107,7 +102,11 @@ namespace UnityEngine.XR.MagicLeap
             }
 
             HandMeshFound = false;
+
+            #if PLATFORM_LUMIN
             MLHandMeshing.RequestHandMesh(HandMeshRequestCallback);
+            #endif
+
             _hasPendingRequest = true;
         }
 
@@ -116,11 +115,13 @@ namespace UnityEngine.XR.MagicLeap
         /// </summary>
         void OnDestroy()
         {
+            #if PLATFORM_LUMIN
             if (MLHandMeshing.IsStarted)
             {
                 // Stop() cancels all hand mesh requests
                 MLHandMeshing.Stop();
             }
+            #endif
         }
 
         /// <summary>
@@ -128,24 +129,26 @@ namespace UnityEngine.XR.MagicLeap
         /// </summary>
         void OnEnable()
         {
+            #if PLATFORM_LUMIN
             // resume mesh requesting
             if (!_hasPendingRequest && MLHandMeshing.IsStarted)
             {
                 MLHandMeshing.RequestHandMesh(HandMeshRequestCallback);
                 _hasPendingRequest = true;
             }
+            #endif
         }
-        #endregion
 
-        #region Private Methods
+        #if PLATFORM_LUMIN
         /// <summary>
         /// Invoke callbacks.
         /// </summary>
+        /// <param name="result">Result</param>
         /// <param name="meshData">Mesh Data</param>
-        private void HandleCallbacks(MLHandMesh meshData)
+        private void HandleCallbacks(MLResult result, MLHandMeshing.Mesh meshData)
         {
             bool hasMeshData = false;
-            foreach (MLHandMeshBlock meshBlock in meshData.MeshBlock)
+            foreach (MLHandMeshing.Mesh.Block meshBlock in meshData.MeshBlock)
             {
                 if (meshBlock.Vertex.Length > 0)
                 {
@@ -160,10 +163,11 @@ namespace UnityEngine.XR.MagicLeap
                 {
                     if (OnHandMeshLost != null)
                     {
-                        OnHandMeshLost();
+                        OnHandMeshLost(result,meshData);
                     }
                     HandMeshFound = false;
                 }
+
             }
             else
             {
@@ -171,29 +175,27 @@ namespace UnityEngine.XR.MagicLeap
                 {
                     if (OnHandMeshUpdated != null)
                     {
-                        OnHandMeshUpdated(meshData);
+                        OnHandMeshUpdated(result,meshData);
                     }
                 }
                 else
                 {
                     if (OnHandMeshFound != null)
                     {
-                        OnHandMeshFound(meshData);
+                        OnHandMeshFound(result,meshData);
                     }
                     HandMeshFound = true;
                 }
             }
         }
-        #endregion
 
-        #region Event Handlers
         /// <summary>
         /// Handler when Mesh Request is complete.
         /// Builds the mesh if available. Invokes the callbacks.
         /// </summary>
         /// <param name="result">Status of the request.</param>
         /// <param name="meshData">Mesh Data, only valid when result is Ok.</param>
-        private void HandMeshRequestCallback(MLResult result, MLHandMesh meshData)
+        private void HandMeshRequestCallback(MLResult result, MLHandMeshing.Mesh meshData)
         {
             if (!result.IsOk)
             {
@@ -238,7 +240,7 @@ namespace UnityEngine.XR.MagicLeap
                 _meshFilters[j].gameObject.SetActive(false);
             }
 
-            HandleCallbacks(meshData);
+            HandleCallbacks(result,meshData);
 
             if (enabled)
             {
@@ -246,6 +248,6 @@ namespace UnityEngine.XR.MagicLeap
                 _hasPendingRequest = true;
             }
         }
-        #endregion
+        #endif
     }
 }
