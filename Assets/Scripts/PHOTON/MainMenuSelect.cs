@@ -1,10 +1,15 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class MainMenuSelect : MonoBehaviour
 {
+    // main menu panel and credits panel to be toggled off and on for credits viewing
+    public GameObject menuPanel;
+    public GameObject creditPanel;
+
+
     // module 1
     public void Module1Selec()
     {
@@ -28,4 +33,16 @@ public class MainMenuSelect : MonoBehaviour
     {
         Application.Quit();
     }
+
+    // credits
+    public void EnterCredits()
+    {
+        menuPanel.SetActive(false);
+        creditPanel.SetActive(true);
+    }
+    public void ExitCredits()
+    {
+        menuPanel.SetActive(true);
+        creditPanel.SetActive(false);
+    } 
 }
